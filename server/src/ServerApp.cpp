@@ -21,7 +21,10 @@ int ServerApp::Run()
 {
 	using namespace Console;
 	Out << TextColors::BrightFgYellow
-		<< "===================== Server running ======================\n";
+		<< "===================== Server running ======================\n"
+		<< TextColors::FgCyan
+		<< "Press ESC to shutdown.\n"
+		<< TextColors::Reset;
 
 	while (!IsQuitKeyPressed())
 	{
