@@ -203,7 +203,7 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\ClientApp.cpp" />
     <ClCompile Include="src\client.cpp" />
     <ClCompile Include="src\PongDisplay.cpp" />
   </ItemGroup>
@@ -213,7 +213,7 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\App.h" />
+    <ClInclude Include="src\ClientApp.h" />
     <ClInclude Include="src\PongDisplay.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

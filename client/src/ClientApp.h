@@ -5,11 +5,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-class App
+class ClientApp
 {
 public:
 
-	App();
+	ClientApp();
 	int Run();
 
 private:

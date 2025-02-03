@@ -1,7 +1,7 @@
-#include "App.h"
+#include "ClientApp.h"
 #include <cstdlib>
 
-App::App()
+ClientApp::ClientApp()
 	: m_Window(sf::VideoMode{sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY})}, "Pong")
 	, m_Font("res/fonts/JuliaMono-Regular.ttf")
 	, m_Music("res/Su Turno.ogg")
@@ -14,7 +14,7 @@ App::App()
 	m_Music.setLooping(true);
 }
 
-int App::Run()
+int ClientApp::Run()
 {
 	if (!m_Window.isOpen())
 	{
@@ -55,7 +55,7 @@ static PaddlesBehaviour operator~(PaddlesBehaviour rhs)
 	return static_cast<PaddlesBehaviour>(~static_cast<UType>(rhs));
 }
 
-void App::PollEvents()
+void ClientApp::PollEvents()
 {
 	while (const std::optional event = m_Window.pollEvent())
 	{
@@ -108,7 +108,7 @@ void App::PollEvents()
 	}
 }
 
-void App::Update(float dt)
+void ClientApp::Update(float dt)
 {
 	m_PongGame.Update(dt);
 	m_PongDisplay.Update(m_PongGame);
@@ -132,7 +132,7 @@ void App::Update(float dt)
 	m_PongDisplay.SetScore(m_LeftScore, m_RightScore);
 }
 
-void App::Display()
+void ClientApp::Display()
 {
 	m_Window.clear();
 	m_PongDisplay.Draw(m_Window);

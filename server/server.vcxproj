@@ -156,11 +156,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\server.cpp" />
+    <ClCompile Include="src\ServerApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{1bdc83b2-f5a0-4ee2-b0a9-26d26634e3ac}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ServerApp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

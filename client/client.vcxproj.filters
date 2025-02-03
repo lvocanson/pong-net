@@ -21,7 +21,7 @@
     <ClCompile Include="src\PongDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\App.cpp">
+    <ClCompile Include="src\ClientApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="src\PongDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\App.h">
+    <ClInclude Include="src\ClientApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
