@@ -1,5 +1,5 @@
 #include "ButtonComponent.h"
-//#include "src/core/Managers/PlayerManager.h"
+#include <Window/InputHandler.h>
 
 ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor)
     : m_IdleColor(idleColor)
@@ -27,11 +27,11 @@ void ButtonComponent::Update(float dt)
     {
         m_Shape.setFillColor(m_HoverColor);
 
-        //if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left) && onClickCallback)
-        //{
-        //    onClickCallback();
-        //    m_Shape.setFillColor(m_ClickedColor);
-        //}
+        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left) && onClickCallback)
+        {
+            onClickCallback();
+            m_Shape.setFillColor(m_ClickedColor);
+        }
     }
     else
     {
@@ -51,14 +51,12 @@ void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 bool ButtonComponent::IsMouseOver()
 {
-    //sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+    sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
     sf::Vector2f buttonPos = m_Shape.getPosition();
     sf::Vector2f buttonSize = m_Shape.getSize();
 
-    //return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
-    //    mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
-
-    return false;
+    return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
+        mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
 }
 
 void ButtonComponent::SetPosition(const sf::Vector2f& position)

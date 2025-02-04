@@ -1,4 +1,6 @@
 #include "InsertFieldComponent.h"
+#include <Window/InputHandler.h>
+#include <SFML/Window/Keyboard.hpp>
 //#include "src/core/Managers/InputHandler.h"
 
 
@@ -67,79 +69,79 @@ void InsertFieldComponent::BlinkCursor(float dt)
 
 void InsertFieldComponent::Update(float dt)
 {
-    /*if (IsMouseOver())
+    if (IsMouseOver())
     {
         m_Rectangle.setOutlineThickness(2.0f);
 
-        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
+        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left))
         {
             m_Focus = true;
             m_Cursor.SetVisible(true);
         }
     }
-    else if (InputHandler::IsKeyPressed(sf::Keyboard::Enter) || InputHandler::IsMouseButtonPressed(sf::Mouse::Left))
+    else if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Enter) || InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left))
     {
         m_Focus = false;
         m_Rectangle.setOutlineThickness(0.0f);
         m_Cursor.SetVisible(false);
         m_CursorTimer = 0.0f;
-    }*/
+    }
 
 
     if (!m_Focus) return;
 
     BlinkCursor(dt);
 
-    //if (Window::IsFocused())
-    //{
-    //    if (GetTextSize() > 0 && InputHandler::IsKeyPressed(sf::Keyboard::BackSpace))
-    //    {
-    //        m_TextContent.pop_back();
-    //        m_Text.SetText(m_TextContent);
-    //        ReplaceCursor();
-    //    }
+    if (Window::IsFocused())
+    {
+        if (GetTextSize() > 0 && InputHandler::IsKeyPressed(sf::Keyboard::Key::Backspace))
+        {
+            m_TextContent.pop_back();
+            m_Text.SetText(m_TextContent);
+            ReplaceCursor();
+        }
 
-    //    if (GetTextSize() < m_CharacterLimit)
-    //    {
-    //        // Handle all the letters of the alphabet
-    //        for (sf::Keyboard::Key key = sf::Keyboard::A; key <= sf::Keyboard::Z; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-    //        {
-    //            if (InputHandler::IsKeyPressed(key))
-    //            {
-    //                const char baseChar = InputHandler::IsKeyHeld(sf::Keyboard::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::RShift) ? 'A' : 'a';
-    //                AppendCharacter(static_cast<const char>(baseChar + (key - sf::Keyboard::A)));
-    //            }
-    //        }
+        if (GetTextSize() < m_CharacterLimit)
+        {
+            // Handle all the letters of the alphabet
+            for (sf::Keyboard::Key key = sf::Keyboard::Key::A; key <= sf::Keyboard::Key::Z; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
+            {
+                if (InputHandler::IsKeyPressed(key))
+                {
+                    const char baseChar = InputHandler::IsKeyHeld(sf::Keyboard::Key::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::Key::RShift) ? 'A' : 'a';
+                    AppendCharacter(static_cast<const char>(baseChar + ((int)key - (int)sf::Keyboard::Key::A)));
+                }
+            }
 
-    //        // Handle all the numbers
-    //        for (sf::Keyboard::Key key = sf::Keyboard::Num0; key <= sf::Keyboard::Num9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-    //        {
-    //            if (InputHandler::IsKeyPressed(key))
-    //            {
-    //                AppendCharacter(static_cast<const char>('0' + (key - sf::Keyboard::Num0)));
-    //            }
-    //        }
+            // Handle all the numbers
+            for (sf::Keyboard::Key key = sf::Keyboard::Key::Num0; key <= sf::Keyboard::Key::Num9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
+            {
+                if (InputHandler::IsKeyPressed(key))
+                {
+                    AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Num0)));
+                }
+            }
 
-    //        // Handle all the numpad numbers
-    //        for (sf::Keyboard::Key key = sf::Keyboard::Numpad0; key <= sf::Keyboard::Numpad9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-    //        {
-    //            if (InputHandler::IsKeyPressed(key))
-    //            {
-    //                AppendCharacter(static_cast<const char>('0' + (key - sf::Keyboard::Numpad0)));
-    //            }
-    //        }
+            // Handle all the numpad numbers
+            for (sf::Keyboard::Key key = sf::Keyboard::Key::Numpad0; key <= sf::Keyboard::Key::Numpad9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
+            {
+                if (InputHandler::IsKeyPressed(key))
+                {
+                    AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Numpad0)));
+                }
+            }
 
-    //        // Handle the dot
-    //        if (InputHandler::IsKeyPressed(sf::Keyboard::Period))
-    //        {
-    //            AppendCharacter('.');
-    //        }
-    //        else if (InputHandler::IsKeyPressed(sf::Keyboard::Delete))
-    //        {
-    //            SetText("");
-    //        }
-    //    }
-    //}
+            // Handle the dot
+            if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Period))
+            {
+                AppendCharacter('.');
+            }
+            else if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Delete))
+            {
+                SetText("");
+            }
+        }
+    }
 }
 
 void InsertFieldComponent::SetText(const std::string& text)
@@ -171,14 +173,12 @@ void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates state
 
 bool InsertFieldComponent::IsMouseOver()
 {
-    //const sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
-    //const sf::Vector2f buttonPos = m_Rectangle.getPosition();
-    //const sf::Vector2f buttonSize = m_Rectangle.getSize();
+    const sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+    const sf::Vector2f buttonPos = m_Rectangle.getPosition();
+    const sf::Vector2f buttonSize = m_Rectangle.getSize();
 
-    //return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
-    //    mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
-
-    return true;
+    return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
+        mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
 }
 
 void InsertFieldComponent::AppendCharacter(const char& c)

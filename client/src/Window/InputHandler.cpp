@@ -1,1 +1,60 @@
 #include "InputHandler.h"
+
+bool InputHandler::m_CurrentKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
+bool InputHandler::m_PreviousKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
+
+const unsigned int InputHandler::m_MouseButtonCount = sf::Mouse::ButtonCount;
+const unsigned int InputHandler::m_KeyCount = sf::Keyboard::KeyCount;
+
+void InputHandler::Update()
+{
+    for (unsigned int i = 0; i < m_KeyCount + m_MouseButtonCount; i++)
+    {
+        if (i > m_KeyCount)
+        {
+            // Save the mouse's state from the previous frame
+            m_PreviousKeyState[i] = m_CurrentKeyState[i];
+
+            // And save the mouse's state in the current frame
+            m_CurrentKeyState[i] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i - m_KeyCount - 1));
+        }
+        else
+        {
+            // Save the keyboard's state from the previous frame
+            m_PreviousKeyState[i] = m_CurrentKeyState[i];
+
+            // And save the keyboard's state in the current frame
+            m_CurrentKeyState[i] = sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i));
+        }
+    }
+}
+
+bool InputHandler::IsKeyPressed(sf::Keyboard::Key key)
+{
+    return (m_CurrentKeyState[(int)key] && !m_PreviousKeyState[(int)key]);
+}
+
+bool InputHandler::IsKeyReleased(sf::Keyboard::Key key)
+{
+    return (!m_CurrentKeyState[(int)key] && m_PreviousKeyState[(int)key]);
+}
+
+bool InputHandler::IsKeyHeld(sf::Keyboard::Key key)
+{
+    return m_CurrentKeyState[(int)key];
+}
+
+bool InputHandler::IsMouseButtonPressed(sf::Mouse::Button button)
+{
+    return (m_CurrentKeyState[m_KeyCount + (int)button + 1] && !m_PreviousKeyState[m_KeyCount + (int)button + 1]);
+}
+
+bool InputHandler::IsMouseButtonReleased(sf::Mouse::Button button)
+{
+    return (!m_CurrentKeyState[m_KeyCount + (int)button + 1] && m_PreviousKeyState[m_KeyCount + (int)button + 1]);
+}
+
+bool InputHandler::IsMouseButtonHeld(sf::Mouse::Button button)
+{
+    return (m_CurrentKeyState[m_KeyCount + (int)button + 1]);
+}
