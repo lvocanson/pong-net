@@ -11,8 +11,8 @@ enum TextAlignment
 class TextComponent : public BaseComponent
 {
 public:
-    TextComponent();
-    TextComponent(const std::string& text, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment);
+    TextComponent(sf::Font& font);
+    TextComponent(const std::string& text, sf::Font& font, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment);
 
     void Update(float dt) override;
 

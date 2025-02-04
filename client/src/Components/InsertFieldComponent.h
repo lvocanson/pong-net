@@ -11,8 +11,8 @@ class InsertFieldComponent : public BaseComponent
 {
 public:
 
-    InsertFieldComponent();
-    InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
+    InsertFieldComponent(sf::Font& font);
+    InsertFieldComponent(sf::Font& font, const sf::Vector2f& pos, const sf::Vector2f& size,
         const sf::Color& idleColor, const sf::Color& hoverColor,
         float outlineThickness, unsigned int characterLimit);
 

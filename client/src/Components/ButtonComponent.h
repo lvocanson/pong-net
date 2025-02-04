@@ -7,7 +7,6 @@ class ButtonComponent : public BaseComponent
 {
 public:
     ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor);
-
     ~ButtonComponent() override;
 
     void Update(float dt) override;
@@ -18,8 +17,7 @@ public:
     sf::Vector2f GetSize() const override;
 
     void SetOnClickCallback(std::function<void()> onClickCallback);
-
-    void SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
+    void SetButtonText(const std::string& text, sf::Font& font, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment);
 
 private:
     sf::RectangleShape m_Shape;

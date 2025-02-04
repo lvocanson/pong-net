@@ -1,11 +1,13 @@
 #pragma once
-#include "Window/Window.h"
 #include "Game/Pong.h"
 #include "Network/NetHelper.h"
 #include "PongDisplay.h"
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+
+class Window;
+class StateMachine;
 
 class ClientApp
 {
@@ -18,7 +20,6 @@ private:
 
 	void PollEvents();
 	void Update(float dt);
-	void Display();
 
 private:
 
@@ -26,12 +27,12 @@ private:
 
 private:
 
-	Window m_Window;
-	sf::Font m_Font;
+	Window* m_Window = nullptr;
+	StateMachine* m_StateMachine = nullptr;
 	sf::Music m_Music;
 
 	Pong m_PongGame;
-	PongDisplay m_PongDisplay;
+	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;
 
 	Timer m_Timer;

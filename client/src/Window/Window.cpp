@@ -25,12 +25,12 @@ void Window::Create(const char* title, unsigned int width, unsigned int height)
 
     m_Window->create(sf::VideoMode(sf::Vector2(width, height)), title/*, sf::Style::Close, settings*/);
 
-    auto image = sf::Image{};
-    if (!image.loadFromFile("resources/icon.png"))
-    {
-        throw std::runtime_error("Failed to load icon");
-    }
-    m_Window->setIcon(image);
+    //auto image = sf::Image{};
+    //if (!image.loadFromFile("res/icon.png"))
+    //{
+    //    throw std::runtime_error("Failed to load icon");
+    //}
+    //m_Window->setIcon(image);
 
     m_Window->setVerticalSyncEnabled(true);
     m_Window->setFramerateLimit(60);

@@ -1,19 +1,36 @@
 #include "ClientApp.h"
+
 #include <cstdlib>
 
-ClientApp::ClientApp()
-	: m_Font("res/fonts/JuliaMono-Regular.ttf")
-	, m_Music("res/Su Turno.ogg")
-	, m_PongGame()
-	, m_PongDisplay(m_Font)
-	, m_LeftScore(0), m_RightScore(0)
-	, m_Timer()
+#include "Window/Window.h"
+#include "../FontRegistry.h"
 
+#include <StateMachine/StateMachine.h>
+#include "StateMachine/AppState/MenuState.h"
+
+ClientApp::ClientApp()
+	: m_Music("res/Su Turno.ogg")
+	, m_PongGame()
+	, m_PongDisplay(nullptr)
+	, m_LeftScore(0)
+	, m_RightScore(0)
+	, m_Timer()
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr(NetHelper::UdpAddress::None)
 {
-	m_Window.Create("Pong", GameSizeX, GameSizeY);
+	m_Window = new Window();
+	m_Window->Create("Pong", GameSizeX, GameSizeY);
+
+	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
+	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));	
+	
+	m_StateMachine = new StateMachine();
+	{
+		m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
+		m_StateMachine->InitState("MenuState");
+		m_StateMachine->Start();
+	}
 
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
@@ -28,7 +45,7 @@ ClientApp::ClientApp()
 
 int ClientApp::Run()
 {
-	if (!m_Window.IsOpen())
+	if (!m_Window->IsOpen())
 	{
 		return EXIT_FAILURE;
 	}
@@ -37,7 +54,7 @@ int ClientApp::Run()
 	ConnectToServer("127.0.0.1");
 
 	Timer dtTimer;
-	do
+	while (m_Window->IsOpen())
 	{
 		PollEvents();
 
@@ -45,9 +62,8 @@ int ClientApp::Run()
 		dtTimer.Restart();
 		Update(dt);
 
-		m_Window.Render();
-
-	} while (m_Window.IsOpen());
+		m_Window->Render();
+	}
 
 	return EXIT_SUCCESS;
 }
@@ -117,13 +133,13 @@ void ClientApp::PollEvents()
 			}
 		};
 
-	m_Window.PollEvents(onKeyPressed, onKeyReleased);
+	m_Window->PollEvents(onKeyPressed, onKeyReleased);
 }
 
 void ClientApp::Update(float dt)
 {
 	m_PongGame.Update(dt);
-	m_PongDisplay.Update(m_PongGame);
+	m_PongDisplay->Update(m_PongGame);
 
 	switch (m_PongGame.GetGameState())
 	{
@@ -141,7 +157,7 @@ void ClientApp::Update(float dt)
 	}
 
 	m_PongGame.Reset();
-	m_PongDisplay.SetScore(m_LeftScore, m_RightScore);
+	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);
 }
 
 void ClientApp::ConnectToServer(std::string_view address)

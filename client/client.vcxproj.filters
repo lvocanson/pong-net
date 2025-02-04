@@ -45,6 +45,9 @@
     <ClCompile Include="src\StateMachine\AppState\MenuState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FontRegistry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PongDisplay.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\StateMachine\AppState\MenuState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FontRegistry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

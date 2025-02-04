@@ -1,5 +1,6 @@
 #include "MenuState.h"
 #include "../../ClientApp.h"
+#include "../../../FontRegistry.h"
 
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
@@ -18,7 +19,7 @@ void MenuState::OnEnter()
     {
         sf::Color Emerald(1, 215, 88);
         m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 100), sf::Vector2f(200, 100), Emerald);
-        m_ConnectButton->SetButtonText("Play", sf::Color::White, 50, TextAlignment::Center);
+        m_ConnectButton->SetButtonText("Play", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
         m_ConnectButton->SetOnClickCallback([this]()
             {
                 m_StateMachine->SwitchState("LobbyState");
@@ -26,7 +27,7 @@ void MenuState::OnEnter()
         m_Window->RegisterDrawable(m_ConnectButton);
 
         m_DisconnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), sf::Color::Red);
-        m_DisconnectButton->SetButtonText("Disconnect", sf::Color::White, 50, TextAlignment::Center);
+        m_DisconnectButton->SetButtonText("Disconnect", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
         m_DisconnectButton->SetOnClickCallback([this]()
             {
                 //ClientConnectionHandler::GetInstance().Disconnect();
@@ -45,7 +46,7 @@ void MenuState::OnEnter()
 
     sf::Color OrangeRed(231, 62, 1);
     m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 400), sf::Vector2f(200, 100), OrangeRed);
-    m_QuitButton->SetButtonText("Quit", sf::Color::White, 50, TextAlignment::Center);
+    m_QuitButton->SetButtonText("Quit", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
     m_QuitButton->SetOnClickCallback([this]()
         {
            /* ClientApp::GetInstance().Shutdown();*/
@@ -58,7 +59,7 @@ void MenuState::ShowConnectionButton()
 {
     sf::Color Lime(24, 165, 88);
     m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 200), sf::Vector2f(200, 100), Lime);
-    m_ConnectButton->SetButtonText("Connection", sf::Color::White, 50, TextAlignment::Center);
+    m_ConnectButton->SetButtonText("Connection", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
     m_ConnectButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("ConnectionState");

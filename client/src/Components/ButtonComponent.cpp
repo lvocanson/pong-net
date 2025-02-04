@@ -91,7 +91,7 @@ void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
     this->onClickCallback = onClickCallback;
 }
 
-void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
+void ButtonComponent::SetButtonText(const std::string& text, sf::Font& font, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
 {
     if (m_Text)
     {
@@ -102,7 +102,7 @@ void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& te
     }
     else
     {
-        m_Text = new TextComponent(text, this, textColor, textSize, textAlignment);
+        m_Text = new TextComponent(text, font, this, textColor, textSize, textAlignment);
     }
 
     sf::Vector2f buttonPosition = GetPosition();

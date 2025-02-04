@@ -2,10 +2,14 @@
 //#include "src/core/Managers/InputHandler.h"
 
 
-InsertFieldComponent::InsertFieldComponent()
+InsertFieldComponent::InsertFieldComponent(sf::Font& font)
     : m_CharacterLimit(DEFAULT_CHARACTER_LIMIT)
     , m_Focus(false)
     , m_CursorTimer(0.0f)
+    , m_Text(font)
+    , m_Label(font)
+    , m_Cursor(font)
+    , m_ErrorText(font)
 {
     m_Rectangle.setSize(sf::Vector2f(300, 30));
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
@@ -29,12 +33,16 @@ InsertFieldComponent::InsertFieldComponent()
     SetPosition(sf::Vector2f(0.0f, 0.0f));
 }
 
-InsertFieldComponent::InsertFieldComponent(const sf::Vector2f& pos, const sf::Vector2f& size,
+InsertFieldComponent::InsertFieldComponent(sf::Font& font, const sf::Vector2f& pos, const sf::Vector2f& size,
     const sf::Color& idleColor, const sf::Color& hoverColor,
     float outlineThickness, unsigned int characterLimit)
     : m_CharacterLimit(characterLimit)
     , m_Focus(false)
     , m_CursorTimer(0.0f)
+    , m_Text(font)
+    , m_Label(font)
+    , m_Cursor(font)
+    , m_ErrorText(font)
 {
     m_Rectangle.setSize(size);
     m_Rectangle.setFillColor(idleColor);
@@ -169,6 +177,8 @@ bool InsertFieldComponent::IsMouseOver()
 
     //return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
     //    mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
+
+    return true;
 }
 
 void InsertFieldComponent::AppendCharacter(const char& c)
