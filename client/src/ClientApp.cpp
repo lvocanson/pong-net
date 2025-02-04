@@ -7,6 +7,8 @@
 
 #include <StateMachine/StateMachine.h>
 #include "StateMachine/AppState/MenuState.h"
+#include "StateMachine/AppState/ConnectionState.h"
+#include <Window/InputHandler.h>
 
 ClientApp::ClientApp()
 	: m_Music("res/Su Turno.ogg")
@@ -28,6 +30,7 @@ ClientApp::ClientApp()
 	m_StateMachine = new StateMachine();
 	{
 		m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
+		m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
 		m_StateMachine->InitState("MenuState");
 		m_StateMachine->Start();
 	}
@@ -57,6 +60,7 @@ int ClientApp::Run()
 	while (m_Window->IsOpen())
 	{
 		PollEvents();
+		InputHandler::Update();
 
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
@@ -138,7 +142,9 @@ void ClientApp::PollEvents()
 
 void ClientApp::Update(float dt)
 {
-	m_PongGame.Update(dt);
+	m_StateMachine->Update(dt);
+
+	/*m_PongGame.Update(dt);
 	m_PongDisplay->Update(m_PongGame);
 
 	switch (m_PongGame.GetGameState())
@@ -157,7 +163,7 @@ void ClientApp::Update(float dt)
 	}
 
 	m_PongGame.Reset();
-	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);
+	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);*/
 }
 
 void ClientApp::ConnectToServer(std::string_view address)

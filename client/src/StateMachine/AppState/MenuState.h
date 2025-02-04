@@ -7,7 +7,10 @@ class MenuState : public State
 {
 public:
     void OnEnter() override;
+    void ShowPlayButton();
     void ShowConnectionButton();
+    void ShowDisconnectButton();
+    void ShowQuitButton();
     void OnUpdate(float dt) override;
     void OnExit() override;
 

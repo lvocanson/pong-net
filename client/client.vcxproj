@@ -203,6 +203,7 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
     <ClCompile Include="FontRegistry.cpp" />
     <ClCompile Include="src\StateMachine\AppState\MenuState.cpp" />
     <ClCompile Include="src\Window\InputHandler.cpp" />
@@ -221,6 +222,7 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
     <ClInclude Include="FontRegistry.h" />
     <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
     <ClInclude Include="src\StateMachine\State.h" />

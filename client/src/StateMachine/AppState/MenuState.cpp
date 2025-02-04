@@ -15,44 +15,29 @@ MenuState::~MenuState()
 
 void MenuState::OnEnter()
 {
-    if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ true)
+    if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
     {
-        sf::Color Emerald(1, 215, 88);
-        m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 100), sf::Vector2f(200, 100), Emerald);
-        m_ConnectButton->SetButtonText("Play", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-        m_ConnectButton->SetOnClickCallback([this]()
-            {
-                m_StateMachine->SwitchState("LobbyState");
-            });
-        m_Window->RegisterDrawable(m_ConnectButton);
-
-        m_DisconnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), sf::Color::Red);
-        m_DisconnectButton->SetButtonText("Disconnect", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-        m_DisconnectButton->SetOnClickCallback([this]()
-            {
-                //ClientConnectionHandler::GetInstance().Disconnect();
-                m_Window->UnregisterDrawable(m_ConnectButton);
-                RELEASE(m_ConnectButton);
-                ShowConnectionButton();
-                m_Window->UnregisterDrawable(m_DisconnectButton);
-            });
-
-        m_Window->RegisterDrawable(m_DisconnectButton);
+        ShowPlayButton();
+        ShowDisconnectButton();
     }
     else
     {
         ShowConnectionButton();
     }
 
-    sf::Color OrangeRed(231, 62, 1);
-    m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 400), sf::Vector2f(200, 100), OrangeRed);
-    m_QuitButton->SetButtonText("Quit", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-    m_QuitButton->SetOnClickCallback([this]()
-        {
-           /* ClientApp::GetInstance().Shutdown();*/
-        });
+    ShowQuitButton();
+}
 
-    m_Window->RegisterDrawable(m_QuitButton);
+void MenuState::ShowPlayButton()
+{
+    sf::Color Emerald(1, 215, 88);
+    m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 100), sf::Vector2f(200, 100), Emerald);
+    m_ConnectButton->SetButtonText("Play", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
+    m_ConnectButton->SetOnClickCallback([this]()
+        {
+            m_StateMachine->SwitchState("LobbyState");
+        });
+    m_Window->RegisterDrawable(m_ConnectButton);
 }
 
 void MenuState::ShowConnectionButton()
@@ -65,6 +50,35 @@ void MenuState::ShowConnectionButton()
             m_StateMachine->SwitchState("ConnectionState");
         });
     m_Window->RegisterDrawable(m_ConnectButton);
+}
+
+void MenuState::ShowDisconnectButton()
+{
+    m_DisconnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), sf::Color::Red);
+    m_DisconnectButton->SetButtonText("Disconnect", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
+    m_DisconnectButton->SetOnClickCallback([this]()
+        {
+            //ClientConnectionHandler::GetInstance().Disconnect();
+            m_Window->UnregisterDrawable(m_ConnectButton);
+            RELEASE(m_ConnectButton);
+            ShowConnectionButton();
+            m_Window->UnregisterDrawable(m_DisconnectButton);
+        });
+
+    m_Window->RegisterDrawable(m_DisconnectButton);
+}
+
+void MenuState::ShowQuitButton()
+{
+    sf::Color OrangeRed(231, 62, 1);
+    m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 400), sf::Vector2f(200, 100), OrangeRed);
+    m_QuitButton->SetButtonText("Quit", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
+    m_QuitButton->SetOnClickCallback([this]()
+        {
+            /* ClientApp::GetInstance().Shutdown();*/
+        });
+
+    m_Window->RegisterDrawable(m_QuitButton);
 }
 
 
