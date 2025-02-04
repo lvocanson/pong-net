@@ -9,7 +9,18 @@ ClientApp::ClientApp()
 	, m_PongDisplay(m_Font)
 	, m_LeftScore(0), m_RightScore(0)
 	, m_Timer()
+
+	, m_WsaData()
+	, m_Socket()
+	, m_ServerAddr(NetHelper::UdpAddress::None)
 {
+	if (m_WsaData.error || !m_Socket.IsValid())
+	{
+		// TODO: error handling
+		m_Window.close();
+		return;
+	}
+
 	m_Music.play();
 	m_Music.setLooping(true);
 }
@@ -20,6 +31,9 @@ int ClientApp::Run()
 	{
 		return EXIT_FAILURE;
 	}
+
+	// TODO: call from UI
+	ConnectToServer("127.0.0.1");
 
 	Timer dtTimer;
 	do
@@ -137,4 +151,23 @@ void ClientApp::Display()
 	m_Window.clear();
 	m_PongDisplay.Draw(m_Window);
 	m_Window.display();
+}
+
+void ClientApp::ConnectToServer(std::string_view address)
+{
+	m_ServerAddr = NetHelper::UdpAddress(address.data());
+
+	// TODO: encapsulate
+	int msgLength = 4;
+	int bytesSent = sendto(m_Socket, "Test", msgLength, 0, &m_ServerAddr, NetHelper::UdpAddress::size());
+	if (bytesSent == SOCKET_ERROR)
+	{
+		// TODO: error handling
+		m_Window.close();
+	}
+	if (bytesSent != msgLength)
+	{
+		// TODO: error handling
+		m_Window.close();
+	}
 }

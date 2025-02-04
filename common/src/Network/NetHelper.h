@@ -47,11 +47,11 @@ struct UdpAddress
 		Loopback
 	};
 
-	UdpAddress(const char* address, u_short port);
-	UdpAddress(AddrSpecialType address, u_short port);
+	UdpAddress(const char* address);
+	UdpAddress(AddrSpecialType address);
 
 	SOCKADDR* operator&() { return (SOCKADDR*)&addr; }
-	static consteval size_t size() { return sizeof(addr); }
+	static consteval int size() { return sizeof(addr); }
 
 	sockaddr_in addr;
 };

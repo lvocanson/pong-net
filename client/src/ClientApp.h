@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Pong.h"
+#include "Network/NetHelper.h"
 #include "PongDisplay.h"
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
@@ -20,6 +21,10 @@ private:
 
 private:
 
+	void ConnectToServer(std::string_view address);
+
+private:
+
 	sf::RenderWindow m_Window;
 	sf::Font m_Font;
 	sf::Music m_Music;
@@ -29,4 +34,10 @@ private:
 	unsigned m_LeftScore, m_RightScore;
 
 	Timer m_Timer;
+
+private: // server communication
+
+	NetHelper::WsaData m_WsaData;
+	NetHelper::UdpSocket m_Socket;
+	NetHelper::UdpAddress m_ServerAddr;
 };

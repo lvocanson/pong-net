@@ -29,24 +29,26 @@ UdpSocket::~UdpSocket()
 
 int UdpSocket::BindTo(UdpAddress& addr)
 {
-	return bind(socket, &addr, addr.size());
+	return bind(socket, &addr, UdpAddress::size());
 }
 
-UdpAddress::UdpAddress(const char* address, u_short port)
+inline constexpr u_short DefaultPort = 9551;
+
+UdpAddress::UdpAddress(const char* address)
 	: addr
 	{
 		.sin_family = AF_INET,
-		.sin_port = htons(port),
+		.sin_port = htons(DefaultPort),
 	}
 {
 	inet_pton(addr.sin_family, address, &addr.sin_addr.s_addr);
 }
 
-UdpAddress::UdpAddress(AddrSpecialType address, u_short port)
+UdpAddress::UdpAddress(AddrSpecialType address)
 	: addr
 	{
 		.sin_family = AF_INET,
-		.sin_port = htons(port),
+		.sin_port = htons(DefaultPort),
 	}
 {
 	switch (address)

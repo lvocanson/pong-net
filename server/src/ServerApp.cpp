@@ -17,7 +17,7 @@ ServerApp::ServerApp()
 	, m_Status(Running)
 	, m_WsaData()
 	, m_Socket()
-	, m_Addr(NetHelper::UdpAddress::Any, 9551)
+	, m_Addr(NetHelper::UdpAddress::Any)
 {
 	int error;
 
@@ -106,6 +106,34 @@ int ServerApp::Run()
 				<< "Server quit key pressed.\n";
 
 			m_Status = QuitRequest;
+		}
+
+		// TODO: encapsulate
+		char buffer[512];
+		int size = NetHelper::UdpAddress::size();
+		int bytesReceived = recvfrom(m_Socket, buffer, sizeof(buffer) - 1, 0, &m_Addr, &size);
+		if (bytesReceived == SOCKET_ERROR)
+		{
+			int error = WSAGetLastError();
+			if (error != WSAEWOULDBLOCK)
+			{
+				LogPrefix("ERR")
+					<< TextColors::FgRed
+					<< "Error while receiving: "
+					<< NetHelper::GetWsaErrorExplanation(error)
+					<< "\n";
+			}
+		}
+		else
+		{
+			buffer[bytesReceived] = '\0';
+
+			LogPrefix("RUN")
+				<< TextColors::FgCyan
+				<< "Message received:\n"
+				<< TextColors::BrightFgBlack
+				<< buffer
+				<< "\n";
 		}
 
 		// Sleep for 1ms to avoid 100% CPU usage
