@@ -70,8 +70,10 @@ void TextComponent::SetCharacterSize(unsigned int size)
 void TextComponent::SetPositionCentered(const sf::Vector2f& position)
 {
     sf::FloatRect bounds = m_Text.getLocalBounds();
-    //m_Text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
-    //m_Text.setPosition(position.x + bounds.width / 2.0f, position.y + bounds.height / 2.0f);
+    sf::Vector2f newOrigin = sf::Vector2f(bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f);
+    m_Text.setOrigin(newOrigin);
+    sf::Vector2f newPosition = sf::Vector2f(position.x + bounds.size.x / 2.0f, position.y + bounds.size.y / 2.0f);
+    m_Text.setPosition(newPosition);
 }
 
 void TextComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
