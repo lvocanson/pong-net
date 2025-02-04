@@ -137,13 +137,13 @@ std::string_view GetWsaErrorExplanation(int error)
 	case WSAEWOULDBLOCK: return "Resource temporarily unavailable.";
 	case WSAEINPROGRESS: return "Operation now in progress.";
 	case WSAEALREADY: return "Operation already in progress.";
-	case WSAENOTSOCK: return "UdpSocket operation on nonsocket.";
+	case WSAENOTSOCK: return "Socket operation on nonsocket.";
 	case WSAEDESTADDRREQ: return "Destination address required.";
 	case WSAEMSGSIZE: return "Message too long.";
 	case WSAEPROTOTYPE: return "Protocol wrong type for socket.";
 	case WSAENOPROTOOPT: return "Bad protocol option.";
 	case WSAEPROTONOSUPPORT: return "Protocol not supported.";
-	case WSAESOCKTNOSUPPORT: return "UdpSocket type not supported.";
+	case WSAESOCKTNOSUPPORT: return "Socket type not supported.";
 	case WSAEOPNOTSUPP: return "Operation not supported.";
 	case WSAEPFNOSUPPORT: return "Protocol family not supported.";
 	case WSAEAFNOSUPPORT: return "Address family not supported by protocol family.";
@@ -155,8 +155,8 @@ std::string_view GetWsaErrorExplanation(int error)
 	case WSAECONNABORTED: return "Software caused connection abort.";
 	case WSAECONNRESET: return "Connection reset by peer.";
 	case WSAENOBUFS: return "No buffer space available.";
-	case WSAEISCONN: return "UdpSocket is already connected.";
-	case WSAENOTCONN: return "UdpSocket is not connected.";
+	case WSAEISCONN: return "Socket is already connected.";
+	case WSAENOTCONN: return "Socket is not connected.";
 	case WSAESHUTDOWN: return "Cannot send after socket shutdown.";
 	case WSAETOOMANYREFS: return "Too many references.";
 	case WSAETIMEDOUT: return "Connection timed out.";
