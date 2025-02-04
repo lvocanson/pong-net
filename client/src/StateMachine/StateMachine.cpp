@@ -1,9 +1,58 @@
 #include "StateMachine.h"
 
+#pragma region Constructor
+
 StateMachine::~StateMachine()
 {
-	Cleanup();
+    Cleanup();
 }
+
+#pragma endregion
+
+#pragma region StateMachine Methods
+
+void StateMachine::Start() const
+{
+    if (!m_CurrentState)
+    {
+        std::cout << "State machine isn't init" << std::endl;
+        return;
+    }
+
+    m_CurrentState->OnEnter();
+}
+
+void StateMachine::Update(float dt)
+{
+    if (m_NextState)
+    {
+        m_CurrentState->OnExit();
+        m_CurrentState = m_NextState;
+        m_CurrentState->OnEnter();
+        NULLPTR(m_NextState);
+    }
+    m_CurrentState->OnUpdate(dt);
+}
+
+void StateMachine::Cleanup()
+{
+    if (m_CurrentState)
+    {
+        m_CurrentState->OnExit();
+    }
+
+    for (auto state : m_States)
+    {
+        RELEASE(state.second);
+    }
+
+    m_States.clear();
+
+}
+
+#pragma endregion
+
+#pragma region State Methods
 
 void StateMachine::InitState(const std::string& initState)
 {
@@ -27,34 +76,6 @@ const State* StateMachine::GetState(const std::string& stateName)
     return state;
 }
 
-void StateMachine::Start() const
-{
-    if (!m_CurrentState)
-    {
-        std::cout << "State machine isn't init" << std::endl;
-        return;
-    }
-
-    m_CurrentState->OnEnter();
-}
-
-//void StateMachine::OnReceiveData(const Json& data) const
-//{
-//    m_CurrentState->OnReceiveData(data);
-//}
-
-void StateMachine::Update(float dt)
-{
-    if (m_NextState)
-    {
-        m_CurrentState->OnExit();
-        m_CurrentState = m_NextState;
-        m_CurrentState->OnEnter();
-        NULLPTR(m_NextState);
-    }
-    m_CurrentState->OnUpdate(dt);
-}
-
 void StateMachine::SwitchState(const std::string& newState)
 {
     State* state = m_States[newState];
@@ -67,18 +88,4 @@ void StateMachine::SwitchState(const std::string& newState)
     m_NextState = state;
 }
 
-void StateMachine::Cleanup()
-{
-    if (m_CurrentState)
-    {
-        m_CurrentState->OnExit();
-    }
-
-    for (auto state : m_States)
-    {
-        RELEASE(state.second);
-    }
-
-    m_States.clear();
-
-}
+#pragma endregion

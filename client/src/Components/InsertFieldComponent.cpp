@@ -9,20 +9,21 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font)
     , m_Focus(false)
     , m_CursorTimer(0.0f)
     , m_Text(font)
-    , m_Label(font)
+    , m_Label(nullptr)
     , m_Cursor(font)
     , m_ErrorText(font)
 {
-    m_Rectangle.setSize(sf::Vector2f(300, 30));
+    m_Rectangle.setSize(FIELD_SIZE);
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
     m_Rectangle.setOutlineColor(sf::Color::White);
     m_Rectangle.setOutlineThickness(1.0f);
 
     m_Text.SetColor(sf::Color::Black);
 
-    m_Label.SetText("InsertField");
-    m_Label.SetColor(sf::Color(171, 171, 171));
-    m_Label.SetCharacterSize(25);
+    m_Label = new TextComponent(font);
+    m_Label->SetText("InsertField");
+    m_Label->SetColor(sf::Color(171, 171, 171));
+    m_Label->SetCharacterSize(25);
 
     m_Cursor.SetText("|");
     m_Cursor.SetColor(sf::Color::Black);
@@ -42,10 +43,11 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font, const sf::Vector2f& p
     , m_Focus(false)
     , m_CursorTimer(0.0f)
     , m_Text(font)
-    , m_Label(font)
+    , m_Label(nullptr)
     , m_Cursor(font)
     , m_ErrorText(font)
 {
+    m_Label = new TextComponent(font);
     m_Rectangle.setSize(size);
     m_Rectangle.setFillColor(idleColor);
     m_Rectangle.setOutlineColor(hoverColor);
@@ -192,7 +194,7 @@ void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
 {
     m_Rectangle.setPosition(position);
 
-    m_Label.SetPosition(m_Rectangle.getPosition() - sf::Vector2f(0, m_Label.GetSize().y + m_Rectangle.getOutlineThickness() + 5));
+    m_Label->SetPosition(m_Rectangle.getPosition() - sf::Vector2f(0, m_Label->GetSize().y + m_Rectangle.getOutlineThickness() + 5));
     m_ErrorText.SetPosition(m_Rectangle.getPosition() + sf::Vector2f(0, m_Rectangle.getSize().y + m_Rectangle.getOutlineThickness()));
 
     const float xPos = position.x + m_Rectangle.getOutlineThickness();

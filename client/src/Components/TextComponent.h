@@ -1,6 +1,10 @@
 #pragma once
 #include "BaseComponent.h"
 
+#define TEXT_SIZE 50
+#define TEXT_COLOR sf::Color::White
+#define TEXT_DEFAULT_ALIGNEMENT TextAlignment::Center
+
 enum TextAlignment
 {
     Left,
@@ -24,6 +28,7 @@ public:
     void SetCharacterSize(unsigned int size);
 
     sf::Vector2f GetPosition() const override;
+    const sf::Text& GetText() const;
     sf::Vector2f GetSize() const override { return m_Text.getLocalBounds().size; }
     unsigned int GetCharacterSize() const { return m_Text.getCharacterSize(); }
 

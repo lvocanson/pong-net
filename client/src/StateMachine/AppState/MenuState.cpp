@@ -2,10 +2,13 @@
 #include "../../ClientApp.h"
 #include "../../../FontRegistry.h"
 
+#pragma region  Constructor
+
 MenuState::MenuState(StateMachine* stateMachine, Window* window)
     : State(stateMachine)
     , m_Window(window)
 {
+    _btns = std::vector<ButtonComponent*>();
 }
 
 MenuState::~MenuState()
@@ -13,94 +16,126 @@ MenuState::~MenuState()
     NULLPTR(m_Window);
 }
 
+#pragma endregion
+
+#pragma region  Override
+
 void MenuState::OnEnter()
 {
+    float yOffset = 100.f;
+    sf::Vector2f size = BUTTON_SIZE;
+    sf::Vector2f pos = sf::Vector2f(m_Window->GetWidth() * 0.5f - (size.x * 0.5f), 2.f * yOffset);
+
     if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
     {
-        ShowPlayButton();
-        ShowDisconnectButton();
+        ShowPlayButton(pos);
+        pos.y += yOffset;
+        ShowDisconnectButton(pos);
     }
     else
     {
-        ShowConnectionButton();
+        ShowConnectionButton(pos);
     }
-
-    ShowQuitButton();
+    pos.y += 2.f * yOffset;
+    ShowQuitButton(pos);
 }
-
-void MenuState::ShowPlayButton()
-{
-    sf::Color Emerald(1, 215, 88);
-    m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 100), sf::Vector2f(200, 100), Emerald);
-    m_ConnectButton->SetButtonText("Play", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-    m_ConnectButton->SetOnClickCallback([this]()
-        {
-            m_StateMachine->SwitchState("LobbyState");
-        });
-    m_Window->RegisterDrawable(m_ConnectButton);
-}
-
-void MenuState::ShowConnectionButton()
-{
-    sf::Color Lime(24, 165, 88);
-    m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 200), sf::Vector2f(200, 100), Lime);
-    m_ConnectButton->SetButtonText("Connection", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-    m_ConnectButton->SetOnClickCallback([this]()
-        {
-            m_StateMachine->SwitchState("ConnectionState");
-        });
-    m_Window->RegisterDrawable(m_ConnectButton);
-}
-
-void MenuState::ShowDisconnectButton()
-{
-    m_DisconnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), sf::Color::Red);
-    m_DisconnectButton->SetButtonText("Disconnect", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-    m_DisconnectButton->SetOnClickCallback([this]()
-        {
-            //ClientConnectionHandler::GetInstance().Disconnect();
-            m_Window->UnregisterDrawable(m_ConnectButton);
-            RELEASE(m_ConnectButton);
-            ShowConnectionButton();
-            m_Window->UnregisterDrawable(m_DisconnectButton);
-        });
-
-    m_Window->RegisterDrawable(m_DisconnectButton);
-}
-
-void MenuState::ShowQuitButton()
-{
-    sf::Color OrangeRed(231, 62, 1);
-    m_QuitButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 400), sf::Vector2f(200, 100), OrangeRed);
-    m_QuitButton->SetButtonText("Quit", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
-    m_QuitButton->SetOnClickCallback([this]()
-        {
-            /* ClientApp::GetInstance().Shutdown();*/
-        });
-
-    m_Window->RegisterDrawable(m_QuitButton);
-}
-
 
 void MenuState::OnUpdate(float dt)
 {
-    m_ConnectButton->Update(dt);
-    m_QuitButton->Update(dt);
-
-    if (m_DisconnectButton)
-        m_DisconnectButton->Update(dt);
+    for (auto btn : _btns)
+    {
+        btn->Update(dt);
+    }
 }
 
 void MenuState::OnExit()
 {
-    if (m_DisconnectButton)
+    for (auto btn = _btns.begin(); btn != _btns.end();)
     {
-        m_Window->UnregisterDrawable(m_DisconnectButton);
-        RELEASE(m_DisconnectButton);
+        m_Window->UnregisterDrawable(*btn);
+        RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
+        btn = _btns.erase(btn);  // erase() returns the next valid iterator
     }
-
-    m_Window->ClearAllDrawables();
-
-    NULLPTR(m_ConnectButton);
-    NULLPTR(m_QuitButton);
 }
+
+#pragma endregion
+
+#pragma region  Class Methods
+
+void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function)
+{
+    ButtonComponent* btn = new ButtonComponent(pos, color);
+    btn->SetButtonText(text, *FontRegistry::GetFont());
+    btn->SetOnClickCallback(function);
+    m_Window->RegisterDrawable(btn);
+    _btns.push_back(btn);
+}
+
+ButtonComponent* MenuState::FindButtonByText(const std::string& text)
+{
+    for (auto btn : _btns)
+    {
+        sf::Text textBtn = btn->GetTextComponent()->GetText();
+        if (textBtn.getString() == text)
+        {
+            return btn;
+        }
+    }
+    return nullptr;
+}
+
+void MenuState::ShowPlayButton(const sf::Vector2f& pos)
+{
+    sf::Color Emerald(1, 215, 88);
+    std::string btnText = "Play";
+    std::function<void()> function = [this]()
+        {
+            m_StateMachine->SwitchState("LobbyState");
+        };
+
+    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function);
+}
+
+void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
+{
+    sf::Color Lime(24, 165, 88);
+    std::string btnText = "Connection";
+    std::function<void()> function = [this]()
+        {
+            m_StateMachine->SwitchState("ConnectionState");
+        };
+
+    AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function);
+}
+
+void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
+{
+    std::string btnText = "Disconnect";
+    std::function<void()> function = [this, pos]()
+        {
+            //ClientConnectionHandler::GetInstance().Disconnect();
+            ButtonComponent* btnConnect = FindButtonByText("Connection");
+            m_Window->UnregisterDrawable(btnConnect);
+            RELEASE(btnConnect);
+
+            ShowConnectionButton(pos);
+            ButtonComponent* btnDisconnect = FindButtonByText("Disconnect");
+            m_Window->UnregisterDrawable(btnDisconnect);
+        };
+
+    AddButton(pos, sf::Color::Red, btnText, FontRegistry::GetFont(), function);
+}
+
+void MenuState::ShowQuitButton(const sf::Vector2f& pos)
+{
+    sf::Color OrangeRed(231, 62, 1);
+    std::string btnText = "Quit";
+    std::function<void()> function = [this]()
+        {
+            /* ClientApp::GetInstance().Shutdown();*/
+        };
+
+    AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);
+}
+
+#pragma endregion

@@ -2,11 +2,13 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+#define FONT_DEFAULT "JuliaMono-Regular.ttf"
+
 class FontRegistry
 {
 public:
 
-    static sf::Font* GetFont(const std::string& fontName);
+    static sf::Font* GetFont(const std::string& fontName = FONT_DEFAULT);
     static void LoadFont(const std::string& fontName);
 
     static void ClearFonts();

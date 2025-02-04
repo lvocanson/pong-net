@@ -85,3 +85,8 @@ sf::Vector2f TextComponent::GetPosition() const
 {
     return m_Text.getPosition();
 }
+
+const sf::Text& TextComponent::GetText() const
+{
+    return m_Text;
+}

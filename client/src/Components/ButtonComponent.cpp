@@ -1,7 +1,7 @@
 #include "ButtonComponent.h"
 #include <Window/InputHandler.h>
 
-ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Vector2f size, const sf::Color& idleColor)
+ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, const sf::Vector2f size)
     : m_IdleColor(idleColor)
     , m_HoverColor(idleColor - sf::Color(50, 50, 50, 0))
     , m_ClickedColor(idleColor + sf::Color(50, 50, 50, 0))
@@ -84,6 +84,11 @@ sf::Vector2f ButtonComponent::GetPosition() const
 sf::Vector2f ButtonComponent::GetSize() const
 {
     return m_Shape.getSize();
+}
+
+const TextComponent* ButtonComponent::GetTextComponent() const
+{
+    return m_Text;
 }
 
 void ButtonComponent::SetOnClickCallback(std::function<void()> onClickCallback)
