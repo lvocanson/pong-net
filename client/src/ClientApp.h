@@ -1,4 +1,5 @@
 #pragma once
+#include "Window/Window.h"
 #include "Game/Pong.h"
 #include "Network/NetHelper.h"
 #include "PongDisplay.h"
@@ -25,7 +26,7 @@ private:
 
 private:
 
-	sf::RenderWindow m_Window;
+	Window m_Window;
 	sf::Font m_Font;
 	sf::Music m_Music;
 

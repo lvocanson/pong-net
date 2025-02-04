@@ -2,8 +2,7 @@
 #include <cstdlib>
 
 ClientApp::ClientApp()
-	: m_Window(sf::VideoMode{sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY})}, "Pong")
-	, m_Font("res/fonts/JuliaMono-Regular.ttf")
+	: m_Font("res/fonts/JuliaMono-Regular.ttf")
 	, m_Music("res/Su Turno.ogg")
 	, m_PongGame()
 	, m_PongDisplay(m_Font)
@@ -14,10 +13,12 @@ ClientApp::ClientApp()
 	, m_Socket()
 	, m_ServerAddr(NetHelper::UdpAddress::None)
 {
+	m_Window.Create("Pong", GameSizeX, GameSizeY);
+
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
 		// TODO: error handling
-		m_Window.close();
+		//m_Window.close();
 		return;
 	}
 
@@ -27,7 +28,7 @@ ClientApp::ClientApp()
 
 int ClientApp::Run()
 {
-	if (!m_Window.isOpen())
+	if (!m_Window.IsOpen())
 	{
 		return EXIT_FAILURE;
 	}
@@ -44,9 +45,9 @@ int ClientApp::Run()
 		dtTimer.Restart();
 		Update(dt);
 
-		Display();
+		m_Window.Render();
 
-	} while (m_Window.isOpen());
+	} while (m_Window.IsOpen());
 
 	return EXIT_SUCCESS;
 }
@@ -71,16 +72,12 @@ static PaddlesBehaviour operator~(PaddlesBehaviour rhs)
 
 void ClientApp::PollEvents()
 {
-	while (const std::optional event = m_Window.pollEvent())
-	{
-		if (event->is<sf::Event::Closed>())
-			m_Window.close();
-
-		if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>())
+	std::function<void(sf::Keyboard::Key)> onKeyPressed = [this](sf::Keyboard::Key code)
 		{
 			using enum sf::Keyboard::Key;
 			using enum PaddlesBehaviour;
-			switch (keyEvent->code)
+
+			switch (code)
 			{
 			case W:
 			case Z:
@@ -96,13 +93,13 @@ void ClientApp::PollEvents()
 				m_PongGame.Behaviours |= RightDown;
 				break;
 			}
-		}
+		};
 
-		if (auto* keyEvent = event->getIf<sf::Event::KeyReleased>())
+	std::function<void(sf::Keyboard::Key)> onKeyReleased = [this](sf::Keyboard::Key code)
 		{
 			using enum sf::Keyboard::Key;
 			using enum PaddlesBehaviour;
-			switch (keyEvent->code)
+			switch (code)
 			{
 			case W:
 			case Z:
@@ -118,8 +115,9 @@ void ClientApp::PollEvents()
 				m_PongGame.Behaviours &= ~RightDown;
 				break;
 			}
-		}
-	}
+		};
+
+	m_Window.PollEvents(onKeyPressed, onKeyReleased);
 }
 
 void ClientApp::Update(float dt)
@@ -146,13 +144,6 @@ void ClientApp::Update(float dt)
 	m_PongDisplay.SetScore(m_LeftScore, m_RightScore);
 }
 
-void ClientApp::Display()
-{
-	m_Window.clear();
-	m_PongDisplay.Draw(m_Window);
-	m_Window.display();
-}
-
 void ClientApp::ConnectToServer(std::string_view address)
 {
 	m_ServerAddr = NetHelper::UdpAddress(address.data());
@@ -163,11 +154,11 @@ void ClientApp::ConnectToServer(std::string_view address)
 	if (bytesSent == SOCKET_ERROR)
 	{
 		// TODO: error handling
-		m_Window.close();
+		//m_Window.close();
 	}
 	if (bytesSent != msgLength)
 	{
 		// TODO: error handling
-		m_Window.close();
+		//m_Window.close();
 	}
 }
