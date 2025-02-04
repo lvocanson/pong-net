@@ -1,10 +1,11 @@
 #pragma once
 
+#include "NetMessage.h"
+#include <string_view>
+
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
 #include <Ws2tcpip.h>
-
-#include <string_view>
 
 namespace NetHelper
 {
@@ -29,10 +30,26 @@ struct UdpSocket
 
 	bool IsValid() const { return socket != INVALID_SOCKET; }
 
-	int BindTo(UdpAddress&);
+	int BindTo(const UdpAddress&) const;
 
-	operator SOCKET() { return socket; }
+	template <NetMessageType T>
+	bool Send(const NetMessage<T>& message, const UdpAddress& recipient) const
+	{
+		auto header = NetHeader::For<T>();
+		if (!Send(reinterpret_cast<char*>(&header), sizeof(NetHeader), recipient))
+			return false;
+
+		return Send(reinterpret_cast<const char*>(&message), sizeof(NetMessage<T>), recipient);
+	};
+
+	bool Send(const char* data, int size, const UdpAddress& recipient) const;
+
+	bool CheckPendingMessage(long delay = 500) const;
+	bool ReceiveMessage(NetHeader& outHeader, NetMessage<NetMessageType::Unknown>& outMessage, UdpAddress& outSender) const;
+
+	operator SOCKET() const { return socket; }
 	SOCKET* operator&() { return &socket; }
+	const SOCKET* operator&() const { return &socket; }
 
 	SOCKET socket;
 };
@@ -51,6 +68,7 @@ struct UdpAddress
 	UdpAddress(AddrSpecialType address);
 
 	SOCKADDR* operator&() { return (SOCKADDR*)&addr; }
+	const SOCKADDR* operator&() const { return (SOCKADDR*)&addr; }
 	static consteval int size() { return sizeof(addr); }
 
 	sockaddr_in addr;

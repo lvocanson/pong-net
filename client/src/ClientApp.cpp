@@ -157,17 +157,11 @@ void ClientApp::ConnectToServer(std::string_view address)
 {
 	m_ServerAddr = NetHelper::UdpAddress(address.data());
 
-	// TODO: encapsulate
-	int msgLength = 4;
-	int bytesSent = sendto(m_Socket, "Test", msgLength, 0, &m_ServerAddr, NetHelper::UdpAddress::size());
-	if (bytesSent == SOCKET_ERROR)
+	NetMessage<NetMessageType::Ping> ping;
+	if (!m_Socket.Send(ping, m_ServerAddr))
 	{
-		// TODO: error handling
-		m_Window.close();
-	}
-	if (bytesSent != msgLength)
-	{
-		// TODO: error handling
+		std::string_view error = NetHelper::GetWsaErrorExplanation();
+		// TODO: print error
 		m_Window.close();
 	}
 }

@@ -108,32 +108,25 @@ int ServerApp::Run()
 			m_Status = QuitRequest;
 		}
 
-		// TODO: encapsulate
-		char buffer[512];
-		int size = NetHelper::UdpAddress::size();
-		int bytesReceived = recvfrom(m_Socket, buffer, sizeof(buffer) - 1, 0, &m_Addr, &size);
-		if (bytesReceived == SOCKET_ERROR)
+		if (m_Socket.CheckPendingMessage())
 		{
-			int error = WSAGetLastError();
-			if (error != WSAEWOULDBLOCK)
+			NetHeader header;
+			NetMessage<NetMessageType::Unknown> message;
+			NetHelper::UdpAddress sender(NetHelper::UdpAddress::None);
+
+			if (m_Socket.ReceiveMessage(header, message, sender))
+			{
+				OnMessageReceived(header, message, sender);
+			}
+
+			else
 			{
 				LogPrefix("ERR")
 					<< TextColors::FgRed
-					<< "Error while receiving: "
-					<< NetHelper::GetWsaErrorExplanation(error)
+					<< "Error while receiving message: "
+					<< NetHelper::GetWsaErrorExplanation()
 					<< "\n";
 			}
-		}
-		else
-		{
-			buffer[bytesReceived] = '\0';
-
-			LogPrefix("RUN")
-				<< TextColors::FgCyan
-				<< "Message received:\n"
-				<< TextColors::BrightFgBlack
-				<< buffer
-				<< "\n";
 		}
 
 		// Sleep for 1ms to avoid 100% CPU usage
@@ -184,4 +177,26 @@ bool ServerApp::IsQuitKeyPressed()
 			return true;
 
 	return false;
+}
+
+void ServerApp::OnMessageReceived(NetHeader& header, NetMessage<NetMessageType::Unknown>& message, NetHelper::UdpAddress& sender)
+{
+	using namespace Console;
+	using enum NetMessageType;
+
+	char ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &(sender.addr.sin_addr), ip, INET_ADDRSTRLEN);
+
+	switch (header.type)
+	{
+	case Ping:
+	{
+		LogPrefix("RUN")
+			<< TextColors::FgCyan
+			<< "Ping received from " << ip << "\n";
+	}
+	break;
+	default:
+		break;
+	}
 }

@@ -27,6 +27,9 @@
     <ClInclude Include="src\Network\NetHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Network\NetMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Pong.cpp">
@@ -41,5 +44,13 @@
     <ClCompile Include="src\Network\NetHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Network\NetMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Network\NetMessage.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -27,9 +27,54 @@ UdpSocket::~UdpSocket()
 	closesocket(socket);
 }
 
-int UdpSocket::BindTo(UdpAddress& addr)
+int UdpSocket::BindTo(const UdpAddress& addr) const
 {
 	return bind(socket, &addr, UdpAddress::size());
+}
+
+bool UdpSocket::Send(const char* data, int size, const UdpAddress& recipient) const
+{
+	return size == sendto(socket, data, size, 0, &recipient, NetHelper::UdpAddress::size());
+}
+
+bool UdpSocket::CheckPendingMessage(long delay) const
+{
+	fd_set readSet;
+	FD_ZERO(&readSet);
+	FD_SET(socket, &readSet);
+
+	TIMEVAL timeout{};
+	timeout.tv_usec = delay; // Microsecondes
+
+	int result = select(0, &readSet, NULL, NULL, &timeout);
+	if (result == SOCKET_ERROR)
+		// TODO: signal error
+		return false;
+
+	if (result > 0)
+		return true;
+
+	// timeout
+	return false;
+}
+
+bool UdpSocket::ReceiveMessage(NetHeader& outHeader, NetMessage<NetMessageType::Unknown>& outMessage, UdpAddress& outSender) const
+{
+	int size = NetHelper::UdpAddress::size();
+	int result = recvfrom(socket, reinterpret_cast<char*>(&outHeader), sizeof(NetHeader), 0, &outSender, &size);
+
+	if (result != sizeof(NetHeader))
+		return false;
+
+	if (outHeader.size == 0)
+		return true;
+
+	result = recv(socket, outMessage.GetBufferOfSize(outHeader.size), outHeader.size, 0);
+
+	if (result != outHeader.size)
+		return false;
+	
+	return true;
 }
 
 inline constexpr u_short DefaultPort = 9551;

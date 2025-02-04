@@ -157,14 +157,19 @@
   <ItemGroup>
     <ClInclude Include="src\Game\Pong.h" />
     <ClInclude Include="src\Network\NetHelper.h" />
+    <ClInclude Include="src\Network\NetMessage.h" />
     <ClInclude Include="src\Utils\Console.h" />
     <ClInclude Include="src\Utils\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Pong.cpp" />
     <ClCompile Include="src\Network\NetHelper.cpp" />
+    <ClCompile Include="src\Network\NetMessage.cpp" />
     <ClCompile Include="src\Utils\Console.cpp" />
     <ClCompile Include="src\Utils\Timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Network\NetMessage.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

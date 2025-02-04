@@ -13,6 +13,7 @@ public:
 private:
 
 	bool IsQuitKeyPressed();
+	void OnMessageReceived(NetHeader& header, NetMessage<NetMessageType::Unknown>& message, NetHelper::UdpAddress& sender);
 
 private:
 
