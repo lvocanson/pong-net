@@ -19,8 +19,7 @@ ConnectionState::~ConnectionState()
 
 void ConnectionState::ShowIpField()
 {
-    sf::Font font = *FontRegistry::GetFont("JuliaMono-Regular.ttf");
-    m_IpField = new InsertFieldComponent(font);
+    m_IpField = new InsertFieldComponent(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));
     m_IpField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 100));
     m_IpField->SetLabel("Server Phrase");
 
@@ -33,8 +32,7 @@ void ConnectionState::ShowIpField()
 
 void ConnectionState::ShowNameField()
 {
-    sf::Font font = *FontRegistry::GetFont("JuliaMono-Regular.ttf");
-    m_NameField = new InsertFieldComponent(font);
+    m_NameField = new InsertFieldComponent(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));
     m_NameField->SetPosition(sf::Vector2f(m_Window->GetWidth() * 0.5f - 190, 200));
     m_NameField->SetLabel("Username");
 
@@ -43,10 +41,9 @@ void ConnectionState::ShowNameField()
 
 void ConnectionState::ShowBackButton()
 {
-    sf::Font font = *FontRegistry::GetFont("JuliaMono-Regular.ttf");
     sf::Color OrangeRed(231, 62, 1);
     m_BackButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 500), sf::Vector2f(200, 100), OrangeRed);
-    m_BackButton->SetButtonText("Return to menu", font, sf::Color::White, 50, TextAlignment::Center);
+    m_BackButton->SetButtonText("Return to menu", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
     m_BackButton->SetOnClickCallback([this]()
         {
             m_StateMachine->SwitchState("MenuState");
@@ -56,10 +53,9 @@ void ConnectionState::ShowBackButton()
 
 void ConnectionState::ShowConnectButton()
 {
-    sf::Font font = *FontRegistry::GetFont("JuliaMono-Regular.ttf");
     sf::Color Emerald(1, 215, 88);
     m_ConnectButton = new ButtonComponent(sf::Vector2f(m_Window->GetWidth() * 0.5f - 150, 300), sf::Vector2f(200, 100), Emerald);
-    m_ConnectButton->SetButtonText("Connect", font, sf::Color::White, 50, TextAlignment::Center);
+    m_ConnectButton->SetButtonText("Connect", *FontRegistry::GetFont("JuliaMono-Regular.ttf"), sf::Color::White, 50, TextAlignment::Center);
     m_ConnectButton->SetOnClickCallback([this]()
         {
             if (m_IsTryingToConnect) return;
@@ -104,16 +100,16 @@ void ConnectionState::OnEnter()
 {
     ShowIpField();
     ShowNameField();
-    //ShowBackButton();
-    //ShowConnectButton();
+    ShowBackButton();
+    ShowConnectButton();
 }
 
 void ConnectionState::OnUpdate(float dt)
 {
     m_IpField->Update(dt);
     m_NameField->Update(dt);
-    //m_BackButton->Update(dt);
-    //m_ConnectButton->Update(dt);
+    m_BackButton->Update(dt);
+    m_ConnectButton->Update(dt);
 
 
     if (m_IsTryingToConnect)
