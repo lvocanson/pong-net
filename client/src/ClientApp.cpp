@@ -28,10 +28,10 @@ ClientApp::ClientApp()
 	m_Music = new sf::Music("res/Su Turno.ogg");
 
 	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
-	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));	
+	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));
 
 	m_inputHandler = new InputHandler();
-	
+
 	SetFirstState<MenuState>();
 	/*changedstat
 	{
@@ -67,6 +67,8 @@ int ClientApp::Run()
 	{
 		PollEvents();
 		m_inputHandler->Update();
+
+		CheckPendingPackets();
 
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
@@ -119,49 +121,49 @@ static PaddlesBehaviour operator~(PaddlesBehaviour rhs)
 void ClientApp::PollEvents()
 {
 	std::function<void(sf::Keyboard::Key)> onKeyPressed = [this](sf::Keyboard::Key code)
-		{
-			using enum sf::Keyboard::Key;
-			using enum PaddlesBehaviour;
+	{
+		using enum sf::Keyboard::Key;
+		using enum PaddlesBehaviour;
 
-			switch (code)
-			{
-			case W:
-			case Z:
-				m_PongGame.Behaviours |= LeftUp;
-				break;
-			case S:
-				m_PongGame.Behaviours |= LeftDown;
-				break;
-			case Up:
-				m_PongGame.Behaviours |= RightUp;
-				break;
-			case Down:
-				m_PongGame.Behaviours |= RightDown;
-				break;
-			}
-		};
+		switch (code)
+		{
+		case W:
+		case Z:
+			m_PongGame.Behaviours |= LeftUp;
+			break;
+		case S:
+			m_PongGame.Behaviours |= LeftDown;
+			break;
+		case Up:
+			m_PongGame.Behaviours |= RightUp;
+			break;
+		case Down:
+			m_PongGame.Behaviours |= RightDown;
+			break;
+		}
+	};
 
 	std::function<void(sf::Keyboard::Key)> onKeyReleased = [this](sf::Keyboard::Key code)
+	{
+		using enum sf::Keyboard::Key;
+		using enum PaddlesBehaviour;
+		switch (code)
 		{
-			using enum sf::Keyboard::Key;
-			using enum PaddlesBehaviour;
-			switch (code)
-			{
-			case W:
-			case Z:
-				m_PongGame.Behaviours &= ~LeftUp;
-				break;
-			case S:
-				m_PongGame.Behaviours &= ~LeftDown;
-				break;
-			case Up:
-				m_PongGame.Behaviours &= ~RightUp;
-				break;
-			case Down:
-				m_PongGame.Behaviours &= ~RightDown;
-				break;
-			}
-		};
+		case W:
+		case Z:
+			m_PongGame.Behaviours &= ~LeftUp;
+			break;
+		case S:
+			m_PongGame.Behaviours &= ~LeftDown;
+			break;
+		case Up:
+			m_PongGame.Behaviours &= ~RightUp;
+			break;
+		case Down:
+			m_PongGame.Behaviours &= ~RightDown;
+			break;
+		}
+	};
 
 	m_Window->PollEvents(onKeyPressed, onKeyReleased);
 }
@@ -203,5 +205,82 @@ void ClientApp::ConnectToServer(std::string_view address)
 	{
 		std::string_view error = NetHelper::GetWsaErrorExplanation();
 		// TODO: print error
+	}
+}
+
+void ClientApp::CheckPendingPackets()
+{
+	while (m_Socket.CheckPendingPacket(1))
+	{
+		Packet packet;
+		IpAddress sender;
+		if (m_Socket.ReceivePacket(packet, sender))
+		{
+			if (sender != m_ServerAddr)
+			{
+				// ignore
+			}
+			else
+			{
+				OnPacketReceived(packet);
+			}
+		}
+		else
+		{
+			// silent fail
+			NetHelper::GetWsaErrorExplanation();
+		}
+	}
+}
+
+void ClientApp::OnPacketReceived(const Packet& packet)
+{
+	if (!packet.IsValid())
+	{
+		// silent fail
+		return;
+	}
+
+	for (auto it = m_Unwrappers.begin(); it != m_Unwrappers.end(); ++it)
+	{
+		if (it->TryAddPacket(packet) && it->IsComplete())
+		{
+			auto& message = it->Unwrap<Message>();
+			OnMessageReceived(message);
+
+			// Remove it from the list
+			if (std::next(it) != m_Unwrappers.end())
+			{
+				*it = std::move(m_Unwrappers.back());
+			}
+			m_Unwrappers.pop_back();
+			return;
+		}
+	}
+
+	PacketUnwrapper unwrapper(packet);
+	if (unwrapper.IsComplete())
+	{
+		auto& message = unwrapper.Unwrap<Message>();
+		OnMessageReceived(message);
+	}
+	else
+	{
+		m_Unwrappers.emplace_back(std::move(unwrapper));
+	}
+}
+
+void ClientApp::OnMessageReceived(const Message& message)
+{
+	using enum MessageType;
+	switch (message.type)
+	{
+	case ConnectResponse:
+	{
+		auto& response = message.As<Message_ConnectResponse>();
+		m_Signature = response.signature;
+		// TODO: signal connect success
+	}
+	break;
 	}
 }

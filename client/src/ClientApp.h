@@ -3,11 +3,12 @@
 #include "Network/WsaData.h"
 #include "Network/UdpSocket.h"
 #include "Network/IpAddress.h"
+#include "Network/PacketUnwrapper.h"
 #include "PongDisplay.h"
+#include "StateMachine/StateMachine.h"
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "StateMachine/StateMachine.h"
 
 class Window;
 class InputHandler;
@@ -19,7 +20,6 @@ public:
 	ClientApp();
 	int Run();
 	void Shutdown();
-	void ConnectToServer(std::string_view address);
 
 	Window* GetWindow();
 	sf::Music* GetMusic();
@@ -29,6 +29,13 @@ private:
 
 	void PollEvents();
 	void Update(float dt);
+
+private:
+
+	void ConnectToServer(std::string_view address);
+	void CheckPendingPackets();
+	void OnPacketReceived(const Packet& packet);
+	void OnMessageReceived(const Message& message);
 
 private: // variables
 
@@ -47,4 +54,5 @@ private: // server communication
 	UdpSocket m_Socket;
 	IpAddress m_ServerAddr;
 	uint16_t m_Signature;
+	std::vector<PacketUnwrapper> m_Unwrappers;
 };
