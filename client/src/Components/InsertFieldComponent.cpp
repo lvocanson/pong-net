@@ -167,9 +167,9 @@ void InsertFieldComponent::SetText(const std::string& text)
 void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_Rectangle, states);
-    //target.draw(m_Text, states);
-    //target.draw(m_Label, states);
-    //target.draw(m_ErrorText, states);
+    target.draw(m_Text, states);
+    target.draw(*m_Label, states);
+    target.draw(m_ErrorText, states);
 
     if (m_Cursor.IsVisible())
         target.draw(m_Cursor, states);
