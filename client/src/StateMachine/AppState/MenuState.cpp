@@ -195,7 +195,7 @@ void MenuState::ActiveButtonFunction()
         }
         case ButtonFunction::Quit: 
         {
-            /* ClientApp::GetInstance().Shutdown();*/
+            m_clientApp->Shutdown();
             break;
         }     
         default: 

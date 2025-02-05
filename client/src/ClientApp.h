@@ -18,6 +18,7 @@ public:
 
 	ClientApp();
 	int Run();
+	void Shutdown() { m_IsRunning = false; }
 
 	Window* GetWindow();
 	sf::Music* GetMusic();
@@ -40,6 +41,7 @@ private:
 	Pong m_PongGame;
 	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;
+	bool m_IsRunning = false;
 
 	Timer m_Timer;
 
