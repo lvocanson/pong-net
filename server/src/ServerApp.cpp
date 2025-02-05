@@ -102,8 +102,8 @@ int ServerApp::Run()
 
 	do
 	{
-		CheckQuitKeyPressed();
-		CheckPendingPackets();
+		UpdateStatus();
+		HandlePendingPackets();
 
 		// Sleep for 1ms to avoid 100% CPU usage
 		using namespace std::chrono_literals;
@@ -144,7 +144,7 @@ ServerApp::~ServerApp()
 }
 
 #include <conio.h>
-void ServerApp::CheckQuitKeyPressed()
+void ServerApp::UpdateStatus()
 {
 	constexpr auto EscapeKey = '\033';
 	while (_kbhit())
@@ -157,7 +157,7 @@ void ServerApp::CheckQuitKeyPressed()
 	}
 }
 
-void ServerApp::CheckPendingPackets()
+void ServerApp::HandlePendingPackets()
 {
 	while (m_Socket.CheckPendingPacket(1))
 	{
@@ -192,13 +192,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 		{
 			auto& message = it->Unwrap<Message>();
 			OnMessageReceived(message, it->Signature());
-
-			// Remove it from the list
-			if (std::next(it) != m_Unwrappers.end())
-			{
-				*it = std::move(m_Unwrappers.back());
-			}
-			m_Unwrappers.pop_back();
+			m_Unwrappers.erase_swap(it);
 			return;
 		}
 	}
@@ -232,9 +226,9 @@ void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
 	case Connect:
 	{
 		uint16_t signature = Misc::GenerateUUID();
-		while (m_Clients.FindBySignature(signature))
+		while (m_Clients.FindBySignature(signature) || signature == 0)
 		{
-			// Generata again until no collision
+			// Generata again until no collision, 0 is reserved
 			signature = Misc::GenerateUUID();
 		}
 

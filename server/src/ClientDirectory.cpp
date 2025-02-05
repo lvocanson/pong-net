@@ -33,11 +33,7 @@ bool ClientDirectory::RemoveBySignature(uint16_t sig)
 		if (it->signature != sig)
 			continue;
 
-		if (std::next(it) != m_Directory.end())
-		{
-			*it = std::move(m_Directory.back());
-		}
-		m_Directory.pop_back();
+		m_Directory.erase_swap(it);
 		return true;
 	}
 
@@ -55,11 +51,7 @@ size_t ClientDirectory::RemoveIfLastContactBefore(Client::lastContact_t timestam
 			continue;
 		}
 
-		if (std::next(it) != m_Directory.end())
-		{
-			*it = std::move(m_Directory.back());
-		}
-		m_Directory.pop_back();
+		m_Directory.erase_swap(it);
 		++count;
 	}
 	return count;

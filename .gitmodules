@@ -1,0 +1,3 @@
+[submodule "common/vendor/stc"]
+	path = common/vendor/stc
+	url = https://github.com/lvocanson/some-templated-containers.git

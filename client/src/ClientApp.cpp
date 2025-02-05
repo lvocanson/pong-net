@@ -244,13 +244,7 @@ void ClientApp::OnPacketReceived(const Packet& packet)
 		{
 			auto& message = it->Unwrap<Message>();
 			OnMessageReceived(message);
-
-			// Remove it from the list
-			if (std::next(it) != m_Unwrappers.end())
-			{
-				*it = std::move(m_Unwrappers.back());
-			}
-			m_Unwrappers.pop_back();
+			m_Unwrappers.erase_swap(it);
 			return;
 		}
 	}

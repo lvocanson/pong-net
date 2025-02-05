@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include <Network/IpAddress.h>
+#include <swap_back_array.h>
 
 struct Client
 {
@@ -22,5 +23,5 @@ public:
 
 private:
 
-	std::vector<Client> m_Directory;
+	stc::swap_back_array<Client> m_Directory;
 };

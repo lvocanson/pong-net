@@ -5,6 +5,7 @@
 #include "Network/PacketUnwrapper.h"
 #include "Network/IpAddress.h"
 #include "Utils/Timer.h"
+#include <swap_back_array.h>
 
 class ServerApp
 {
@@ -16,8 +17,9 @@ public:
 
 private:
 
-	void CheckQuitKeyPressed();
-	void CheckPendingPackets();
+	void UpdateStatus();
+
+	void HandlePendingPackets();
 	void OnPacketReceived(const Packet& packet);
 	void OnMessageReceived(const Message& message, const uint16_t sender);
 
@@ -38,5 +40,7 @@ private:
 	IpAddress m_Addr;
 
 	ClientDirectory m_Clients;
-	std::vector<PacketUnwrapper> m_Unwrappers;
+	stc::swap_back_array<PacketUnwrapper> m_Unwrappers;
+	stc::swap_back_array<PongRoom> m_PlayingRooms;
+	stc::swap_back_array<PongRoom> m_PausedRooms;
 };

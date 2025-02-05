@@ -9,6 +9,7 @@
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <swap_back_array.h>
 
 class Window;
 class InputHandler;
@@ -53,5 +54,5 @@ private: // server communication
 	UdpSocket m_Socket;
 	IpAddress m_ServerAddr;
 	uint16_t m_Signature;
-	std::vector<PacketUnwrapper> m_Unwrappers;
+	stc::swap_back_array<PacketUnwrapper> m_Unwrappers;
 };
