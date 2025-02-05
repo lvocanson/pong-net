@@ -1,15 +1,17 @@
 #pragma once
+
+#include "ClientApp.h"
 #include "../StateMachine.h"
 #include "../../Window/Window.h"
 #include "../../Components/ButtonComponent.h"
 #include "../../Components/InsertFieldComponent.h"
 
-class ConnectionState : public State
+class ConnectionState : public State<ClientApp>
 {
 public:
 #pragma region  Constructor
 
-    ConnectionState(StateMachine* stateMachine, Window* window);
+      ConnectionState();
       ConnectionState(const ConnectionState& other) = delete;
       ConnectionState& operator=(const ConnectionState& other) = delete;
       ~ConnectionState();
@@ -18,9 +20,9 @@ public:
 
 #pragma region  Override
 
-    void OnEnter() override;
-    void OnUpdate(float dt) override;
-    void OnExit() override;
+      void OnEnter(ClientApp& derived) override;
+      void OnUpdate(ClientApp& derived, float deltaTime) override;
+      void OnExit(ClientApp& derived) override;
 
 #pragma endregion
 
@@ -45,10 +47,10 @@ private:
 
     bool m_IsTryingToConnect = false;
 
-    Window* m_Window = nullptr;
-
     std::string m_Name = "";
-    sf::Font* font;
+    sf::Font* m_font;
+
+    ClientApp* m_clientApp;
 
     std::vector< ButtonComponent*> _btns;
     std::vector< InsertFieldComponent*> _fields;

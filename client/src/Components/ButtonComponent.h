@@ -5,10 +5,12 @@
 
 #define BUTTON_SIZE sf::Vector2f(200, 100)
 
+class InputHandler;
+
 class ButtonComponent : public BaseComponent
 {
 public:
-    ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, const sf::Vector2f size = BUTTON_SIZE);
+    ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size = BUTTON_SIZE);
     ~ButtonComponent() override;
 
     void Update(float dt) override;
@@ -30,7 +32,8 @@ private:
 
     std::function<void()> onClickCallback;
 
-    TextComponent* m_Text = nullptr;;
+    InputHandler* m_inputHandler;
+    TextComponent* m_Text = nullptr;
 
     bool IsMouseOver();
 };

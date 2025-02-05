@@ -1,11 +1,12 @@
 #include "ButtonComponent.h"
 #include <Window/InputHandler.h>
 
-ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, const sf::Vector2f size)
+ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size)
     : m_IdleColor(idleColor)
     , m_HoverColor(idleColor - sf::Color(50, 50, 50, 0))
     , m_ClickedColor(idleColor + sf::Color(50, 50, 50, 0))
     , onClickCallback(nullptr)
+    , m_inputHandler(inputHandler)
 {
     m_Shape.setPosition(pos);
     m_Shape.setSize(size);
@@ -27,7 +28,7 @@ void ButtonComponent::Update(float dt)
     {
         m_Shape.setFillColor(m_HoverColor);
 
-        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left) && onClickCallback)
+        if (m_inputHandler->IsMouseButtonPressed(sf::Mouse::Button::Left) && onClickCallback)
         {
             onClickCallback();
             m_Shape.setFillColor(m_ClickedColor);
@@ -51,7 +52,7 @@ void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 bool ButtonComponent::IsMouseOver()
 {
-    sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+    sf::Vector2f mousePos = (sf::Vector2f)m_inputHandler->GetMousePosition();
     sf::Vector2f buttonPos = m_Shape.getPosition();
     sf::Vector2f buttonSize = m_Shape.getSize();
 

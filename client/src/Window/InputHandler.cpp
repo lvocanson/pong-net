@@ -1,31 +1,30 @@
 #include "InputHandler.h"
 
-bool InputHandler::m_CurrentKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
-bool InputHandler::m_PreviousKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
+InputHandler::InputHandler()
+    : m_KeyCount(sf::Keyboard::KeyCount),
+    m_MouseButtonCount(sf::Mouse::ButtonCount)
+{
 
-const unsigned int InputHandler::m_MouseButtonCount = sf::Mouse::ButtonCount;
-const unsigned int InputHandler::m_KeyCount = sf::Keyboard::KeyCount;
+}
 
 void InputHandler::Update()
 {
-    for (unsigned int i = 0; i < m_KeyCount + m_MouseButtonCount; i++)
+    for (unsigned int i = 0; i < m_KeyCount; i++)
     {
-        if (i > m_KeyCount)
-        {
-            // Save the mouse's state from the previous frame
-            m_PreviousKeyState[i] = m_CurrentKeyState[i];
+        // Save the keyboard's state from the previous frame
+        m_PreviousKeyState[i] = m_CurrentKeyState[i];
 
-            // And save the mouse's state in the current frame
-            m_CurrentKeyState[i] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i - m_KeyCount - 1));
-        }
-        else
-        {
-            // Save the keyboard's state from the previous frame
-            m_PreviousKeyState[i] = m_CurrentKeyState[i];
+        // And save the keyboard's state in the current frame
+        m_CurrentKeyState[i] = sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i));
+    }
 
-            // And save the keyboard's state in the current frame
-            m_CurrentKeyState[i] = sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i));
-        }
+    for (unsigned int i = 0; i < m_MouseButtonCount; i++)
+    {
+        // Save the mouse's state from the previous frame
+        m_PreviousButtonState[i] = m_CurrentButtonState[i];
+
+        // And save the mouse's state in the current frame
+        m_CurrentButtonState[i] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i));
     }
 }
 
@@ -46,15 +45,15 @@ bool InputHandler::IsKeyHeld(sf::Keyboard::Key key)
 
 bool InputHandler::IsMouseButtonPressed(sf::Mouse::Button button)
 {
-    return (m_CurrentKeyState[m_KeyCount + (int)button + 1] && !m_PreviousKeyState[m_KeyCount + (int)button + 1]);
+    return (m_CurrentButtonState[(int)button] && !m_PreviousButtonState[(int)button]);
 }
 
 bool InputHandler::IsMouseButtonReleased(sf::Mouse::Button button)
 {
-    return (!m_CurrentKeyState[m_KeyCount + (int)button + 1] && m_PreviousKeyState[m_KeyCount + (int)button + 1]);
+    return (!m_CurrentButtonState[(int)button] && m_PreviousButtonState[(int)button]);
 }
 
 bool InputHandler::IsMouseButtonHeld(sf::Mouse::Button button)
 {
-    return (m_CurrentKeyState[m_KeyCount + (int)button + 1]);
+    return (m_CurrentButtonState[(int)button]);
 }

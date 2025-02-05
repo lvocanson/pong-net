@@ -2,37 +2,41 @@
 
 #include "Window.h"
 #include <SFML/Graphics.hpp>
+#include <bitset>
 
 class InputHandler
 {
 public:
-    InputHandler() = delete;
+    InputHandler();
     ~InputHandler() = delete;
 
-    static void Update();
+    void Update();
 
-    static bool IsKeyPressed(sf::Keyboard::Key key);
-    static bool IsKeyReleased(sf::Keyboard::Key key);
-    static bool IsKeyHeld(sf::Keyboard::Key key);
+    bool IsKeyPressed(sf::Keyboard::Key key);
+    bool IsKeyReleased(sf::Keyboard::Key key);
+    bool IsKeyHeld(sf::Keyboard::Key key);
 
     /// <summary>
     /// Returns whether the given mouse button is pressed.
     /// </summary>
-    static bool IsMouseButtonPressed(sf::Mouse::Button button);
-    static bool IsMouseButtonReleased(sf::Mouse::Button button);
-    static bool IsMouseButtonHeld(sf::Mouse::Button button);
+    bool IsMouseButtonPressed(sf::Mouse::Button button);
+    bool IsMouseButtonReleased(sf::Mouse::Button button);
+    bool IsMouseButtonHeld(sf::Mouse::Button button);
 
     /// <summary>
     /// Returns the mouse position relative to the window.
     /// </summary>
-    static sf::Vector2i GetMousePosition() { return sf::Mouse::getPosition(*Window::m_Window); }
+    sf::Vector2i GetMousePosition() { return sf::Mouse::getPosition(*Window::m_Window); }
 
 private:
 
-    static const unsigned int m_KeyCount;
-    static const unsigned int m_MouseButtonCount;
+    const unsigned int m_KeyCount;
+    const unsigned int m_MouseButtonCount;
 
     // The keyboard's state in the current- and the previous frame
-    static bool m_CurrentKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
-    static bool m_PreviousKeyState[sf::Keyboard::KeyCount + sf::Mouse::ButtonCount];
+    std::bitset<sf::Keyboard::KeyCount> m_CurrentKeyState;
+    std::bitset<sf::Keyboard::KeyCount> m_PreviousKeyState;
+
+    std::bitset<sf::Mouse::ButtonCount> m_CurrentButtonState;
+    std::bitset<sf::Mouse::ButtonCount> m_PreviousButtonState;
 };

@@ -1,30 +1,33 @@
 #include "MenuState.h"
-#include "../../ClientApp.h"
+
+#include "ClientApp.h"
 #include "../../../FontRegistry.h"
+#include "../../../../common/CoreDefinitions.h"
+#include "ConnectionState.h"
 
 #pragma region  Constructor
 
-MenuState::MenuState(StateMachine* stateMachine, Window* window)
-    : State(stateMachine)
-    , m_Window(window)
+MenuState::MenuState()
 {
     _btns = std::vector<ButtonComponent*>();
 }
 
 MenuState::~MenuState()
 {
-    NULLPTR(m_Window);
+
 }
 
 #pragma endregion
 
 #pragma region  Override
 
-void MenuState::OnEnter()
+void MenuState::OnEnter(ClientApp& app)
 {
+    m_clientApp = &app;
+
     float yOffset = 100.f;
     sf::Vector2f size = BUTTON_SIZE;
-    sf::Vector2f pos = sf::Vector2f(m_Window->GetWidth() * 0.5f - (size.x * 0.5f), 2.f * yOffset);
+    sf::Vector2f pos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.5f - (size.x * 0.5f), 2.f * yOffset);
 
     if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
     {
@@ -40,7 +43,7 @@ void MenuState::OnEnter()
     ShowQuitButton(pos);
 }
 
-void MenuState::OnUpdate(float dt)
+void MenuState::OnUpdate(ClientApp& app, float dt)
 {
     for (auto btn : _btns)
     {
@@ -48,11 +51,11 @@ void MenuState::OnUpdate(float dt)
     }
 }
 
-void MenuState::OnExit()
+void MenuState::OnExit(ClientApp& app)
 {
     for (auto btn = _btns.begin(); btn != _btns.end();)
     {
-        m_Window->UnregisterDrawable(*btn);
+        app.GetWindow()->UnregisterDrawable(*btn);
         RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
         btn = _btns.erase(btn);  // erase() returns the next valid iterator
     }
@@ -64,10 +67,10 @@ void MenuState::OnExit()
 
 void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function)
 {
-    ButtonComponent* btn = new ButtonComponent(pos, color);
+    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler());
     btn->SetButtonText(text, *FontRegistry::GetFont());
     btn->SetOnClickCallback(function);
-    m_Window->RegisterDrawable(btn);
+    m_clientApp->GetWindow()->RegisterDrawable(btn);
     _btns.push_back(btn);
 }
 
@@ -90,7 +93,7 @@ void MenuState::ShowPlayButton(const sf::Vector2f& pos)
     std::string btnText = "Play";
     std::function<void()> function = [this]()
         {
-            m_StateMachine->SwitchState("LobbyState");
+            //ChangedState<LobbyState>("LobbyState");
         };
 
     AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function);
@@ -102,7 +105,7 @@ void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
     std::string btnText = "Connection";
     std::function<void()> function = [this]()
         {
-            m_StateMachine->SwitchState("ConnectionState");
+            //ChangeState<ConnectionState>();
         };
 
     AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function);
@@ -115,12 +118,12 @@ void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
         {
             //ClientConnectionHandler::GetInstance().Disconnect();
             ButtonComponent* btnConnect = FindButtonByText("Connection");
-            m_Window->UnregisterDrawable(btnConnect);
+            m_clientApp->GetWindow()->UnregisterDrawable(btnConnect);
             RELEASE(btnConnect);
 
             ShowConnectionButton(pos);
             ButtonComponent* btnDisconnect = FindButtonByText("Disconnect");
-            m_Window->UnregisterDrawable(btnDisconnect);
+            m_clientApp->GetWindow()->UnregisterDrawable(btnDisconnect);
         };
 
     AddButton(pos, sf::Color::Red, btnText, FontRegistry::GetFont(), function);

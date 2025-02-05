@@ -9,13 +9,15 @@ constexpr float CURSOR_BLINK_TIME = 0.5f;
 
 #define FIELD_SIZE sf::Vector2f(300, 30)
 
+class InputHandler;
+
 class InsertFieldComponent : public BaseComponent
 {
 public:
 #pragma region Constructor
 
-    InsertFieldComponent(sf::Font& font);
-    InsertFieldComponent(sf::Font& font, const sf::Vector2f& pos, const sf::Vector2f& size,
+    InsertFieldComponent(sf::Font& font, InputHandler* inputHandler);
+    InsertFieldComponent(sf::Font& font, InputHandler* inputHandler, const sf::Vector2f& pos, const sf::Vector2f& size,
         const sf::Color& idleColor, const sf::Color& hoverColor,
         float outlineThickness, unsigned int characterLimit);
     ~InsertFieldComponent() override = default;
@@ -69,6 +71,7 @@ private:
     TextComponent m_Cursor;
     TextComponent m_ErrorText;
     std::string m_TextContent;
+    InputHandler* m_inputHandler;
 
     unsigned int m_CharacterLimit;
     bool m_Focus;

@@ -214,7 +214,6 @@ exit /b 0</Command>
     <ClCompile Include="src\PongDisplay.cpp" />
     <ClCompile Include="src\Components\TextComponent.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />
-    <ClCompile Include="src\StateMachine\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
@@ -225,7 +224,6 @@ exit /b 0</Command>
     <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
     <ClInclude Include="FontRegistry.h" />
     <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
-    <ClInclude Include="src\StateMachine\State.h" />
     <ClInclude Include="src\Window\InputHandler.h" />
     <ClInclude Include="src\Components\InsertFieldComponent.h" />
     <ClInclude Include="src\Components\ButtonComponent.h" />

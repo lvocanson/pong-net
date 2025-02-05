@@ -26,14 +26,17 @@ ClientApp::ClientApp()
 
 	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
 	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));	
+
+	m_inputHandler = new InputHandler();
 	
-	m_StateMachine = new StateMachine();
+	SetFirstState<MenuState>();
+	/*changedstat
 	{
-		m_StateMachine->AddState("MenuState", new MenuState(m_StateMachine, m_Window));
+		m_StateMachine->AddState("MenuState", new MenuState());
 		m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
 		m_StateMachine->InitState("MenuState");
 		m_StateMachine->Start();
-	}
+	}*/
 
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
@@ -60,7 +63,7 @@ int ClientApp::Run()
 	while (m_Window->IsOpen())
 	{
 		PollEvents();
-		InputHandler::Update();
+		m_inputHandler->Update();
 
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
@@ -70,6 +73,16 @@ int ClientApp::Run()
 	}
 
 	return EXIT_SUCCESS;
+}
+
+Window* ClientApp::GetWindow()
+{
+	return m_Window;
+}
+
+InputHandler* ClientApp::GetInputHandler()
+{
+	return m_inputHandler;
 }
 
 static PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
@@ -142,7 +155,7 @@ void ClientApp::PollEvents()
 
 void ClientApp::Update(float dt)
 {
-	m_StateMachine->Update(dt);
+	StateMachine::Update(dt);
 
 	/*m_PongGame.Update(dt);
 	m_PongDisplay->Update(m_PongGame);

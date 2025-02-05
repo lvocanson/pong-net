@@ -1,14 +1,16 @@
 #pragma once
+
+#include "ClientApp.h"
 #include "../StateMachine.h"
 #include "../../Components/ButtonComponent.h"
 #include "../../Window/Window.h"
 
-class MenuState : public State
+class MenuState : public State<ClientApp>
 {
 public:
 #pragma region  Constructor
 
-    MenuState(StateMachine* stateMachine, Window* window);
+    MenuState();
     MenuState(const MenuState& other) = delete;
     MenuState& operator=(const MenuState& other) = delete;
     ~MenuState() override;
@@ -17,9 +19,9 @@ public:
 
 #pragma region  Override
 
-    void OnEnter() override;
-    void OnUpdate(float dt) override;
-    void OnExit() override;
+    virtual void OnEnter(ClientApp& app) override;
+    virtual void OnUpdate(ClientApp& app, float deltaTime) override;
+    virtual void OnExit(ClientApp& app) override;
 
 #pragma endregion
 
@@ -39,7 +41,7 @@ private:
 #pragma region  Variables
 
     std::vector< ButtonComponent*> _btns;
-    Window* m_Window = nullptr;
+    ClientApp* m_clientApp;
 
 #pragma endregion
 

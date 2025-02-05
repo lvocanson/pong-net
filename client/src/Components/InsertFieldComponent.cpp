@@ -4,7 +4,7 @@
 //#include "src/core/Managers/InputHandler.h"
 
 
-InsertFieldComponent::InsertFieldComponent(sf::Font& font)
+InsertFieldComponent::InsertFieldComponent(sf::Font& font, InputHandler* inputHandler)
     : m_CharacterLimit(DEFAULT_CHARACTER_LIMIT)
     , m_Focus(false)
     , m_CursorTimer(0.0f)
@@ -12,6 +12,7 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font)
     , m_Label(nullptr)
     , m_Cursor(font)
     , m_ErrorText(font)
+    , m_inputHandler(inputHandler)
 {
     m_Rectangle.setSize(FIELD_SIZE);
     m_Rectangle.setFillColor(sf::Color(171, 171, 171));
@@ -36,7 +37,7 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font)
     SetPosition(sf::Vector2f(0.0f, 0.0f));
 }
 
-InsertFieldComponent::InsertFieldComponent(sf::Font& font, const sf::Vector2f& pos, const sf::Vector2f& size,
+InsertFieldComponent::InsertFieldComponent(sf::Font& font, InputHandler* inputHandler, const sf::Vector2f& pos, const sf::Vector2f& size,
     const sf::Color& idleColor, const sf::Color& hoverColor,
     float outlineThickness, unsigned int characterLimit)
     : m_CharacterLimit(characterLimit)
@@ -46,6 +47,7 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font, const sf::Vector2f& p
     , m_Label(nullptr)
     , m_Cursor(font)
     , m_ErrorText(font)
+    , m_inputHandler(inputHandler)
 {
     m_Label = new TextComponent(font);
     m_Rectangle.setSize(size);
@@ -75,13 +77,13 @@ void InsertFieldComponent::Update(float dt)
     {
         m_Rectangle.setOutlineThickness(2.0f);
 
-        if (InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left))
+        if (m_inputHandler->IsMouseButtonPressed(sf::Mouse::Button::Left))
         {
             m_Focus = true;
             m_Cursor.SetVisible(true);
         }
     }
-    else if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Enter) || InputHandler::IsMouseButtonPressed(sf::Mouse::Button::Left))
+    else if (m_inputHandler->IsKeyPressed(sf::Keyboard::Key::Enter) || m_inputHandler->IsMouseButtonPressed(sf::Mouse::Button::Left))
     {
         m_Focus = false;
         m_Rectangle.setOutlineThickness(0.0f);
@@ -96,7 +98,7 @@ void InsertFieldComponent::Update(float dt)
 
     if (Window::IsFocused())
     {
-        if (GetTextSize() > 0 && InputHandler::IsKeyPressed(sf::Keyboard::Key::Backspace))
+        if (GetTextSize() > 0 && m_inputHandler->IsKeyPressed(sf::Keyboard::Key::Backspace))
         {
             m_TextContent.pop_back();
             m_Text.SetText(m_TextContent);
@@ -108,9 +110,9 @@ void InsertFieldComponent::Update(float dt)
             // Handle all the letters of the alphabet
             for (sf::Keyboard::Key key = sf::Keyboard::Key::A; key <= sf::Keyboard::Key::Z; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
             {
-                if (InputHandler::IsKeyPressed(key))
+                if (m_inputHandler->IsKeyPressed(key))
                 {
-                    const char baseChar = InputHandler::IsKeyHeld(sf::Keyboard::Key::LShift) || InputHandler::IsKeyHeld(sf::Keyboard::Key::RShift) ? 'A' : 'a';
+                    const char baseChar = m_inputHandler->IsKeyHeld(sf::Keyboard::Key::LShift) || m_inputHandler->IsKeyHeld(sf::Keyboard::Key::RShift) ? 'A' : 'a';
                     AppendCharacter(static_cast<const char>(baseChar + ((int)key - (int)sf::Keyboard::Key::A)));
                 }
             }
@@ -118,7 +120,7 @@ void InsertFieldComponent::Update(float dt)
             // Handle all the numbers
             for (sf::Keyboard::Key key = sf::Keyboard::Key::Num0; key <= sf::Keyboard::Key::Num9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
             {
-                if (InputHandler::IsKeyPressed(key))
+                if (m_inputHandler->IsKeyPressed(key))
                 {
                     AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Num0)));
                 }
@@ -127,18 +129,18 @@ void InsertFieldComponent::Update(float dt)
             // Handle all the numpad numbers
             for (sf::Keyboard::Key key = sf::Keyboard::Key::Numpad0; key <= sf::Keyboard::Key::Numpad9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
             {
-                if (InputHandler::IsKeyPressed(key))
+                if (m_inputHandler->IsKeyPressed(key))
                 {
                     AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Numpad0)));
                 }
             }
 
             // Handle the dot
-            if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Period))
+            if (m_inputHandler->IsKeyPressed(sf::Keyboard::Key::Period))
             {
                 AppendCharacter('.');
             }
-            else if (InputHandler::IsKeyPressed(sf::Keyboard::Key::Delete))
+            else if (m_inputHandler->IsKeyPressed(sf::Keyboard::Key::Delete))
             {
                 SetText("");
             }
@@ -175,7 +177,7 @@ void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates state
 
 bool InsertFieldComponent::IsMouseOver()
 {
-    const sf::Vector2f mousePos = (sf::Vector2f)InputHandler::GetMousePosition();
+    const sf::Vector2f mousePos = (sf::Vector2f)m_inputHandler->GetMousePosition();
     const sf::Vector2f buttonPos = m_Rectangle.getPosition();
     const sf::Vector2f buttonSize = m_Rectangle.getSize();
 

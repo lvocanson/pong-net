@@ -2,37 +2,38 @@
 
 #include <regex>
 #include "../../../FontRegistry.h"
+#include "../../../../common/CoreDefinitions.h"
+#include "MenuState.h"
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 #pragma region  Constructor
 
-ConnectionState::ConnectionState(StateMachine* stateMachine, Window* window)
-    : State(stateMachine)
-    , m_Window(window)
+ConnectionState::ConnectionState()
 {
-    m_StateMachine = stateMachine;
-    font = FontRegistry::GetFont();
+    m_font = FontRegistry::GetFont();
     _btns = std::vector<ButtonComponent*>();
     _fields = std::vector<InsertFieldComponent*>();
 }
 
 ConnectionState::~ConnectionState()
 {
-    NULLPTR(m_Window);
+
 }
 
 #pragma endregion
 
 #pragma region  Override
 
-void ConnectionState::OnEnter()
+void ConnectionState::OnEnter(ClientApp& app)
 {
+    m_clientApp = &app;
+
     sf::Vector2f sizeBtn = BUTTON_SIZE;
     sf::Vector2f sizeField = FIELD_SIZE;
 
-    float xBtn = m_Window->GetWidth() * 0.5f - (sizeBtn.x * 0.5f);
-    float xField = m_Window->GetWidth() * 0.5f - (sizeField.x * 0.5f);
+    float xBtn = app.GetWindow()->GetWidth() * 0.5f - (sizeBtn.x * 0.5f);
+    float xField = app.GetWindow()->GetWidth() * 0.5f - (sizeField.x * 0.5f);
     float yOffset = 100.f;
 
     // Init all graphics element
@@ -45,13 +46,13 @@ void ConnectionState::OnEnter()
     pos.y += 2.f * yOffset;
     pos.x = xBtn;
 
-    ShowBackButton(pos);
+    ShowConnectButton(pos);
     pos.y += 2.f * yOffset;
 
-    ShowConnectButton(pos);
+    ShowBackButton(pos);
 }
 
-void ConnectionState::OnUpdate(float dt)
+void ConnectionState::OnUpdate(ClientApp& app, float dt)
 {
     for (auto field : _fields)
     {
@@ -113,18 +114,18 @@ void ConnectionState::OnUpdate(float dt)
     }
 }
 
-void ConnectionState::OnExit()
+void ConnectionState::OnExit(ClientApp& app)
 {
     for (auto btn = _btns.begin(); btn != _btns.end();)
     {
-        m_Window->UnregisterDrawable(*btn);
+        app.GetWindow()->UnregisterDrawable(*btn);
         RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
         btn = _btns.erase(btn);  // erase() returns the next valid iterator
     }
 
     for (auto field = _fields.begin(); field != _fields.end();)
     {
-        m_Window->UnregisterDrawable(*field);
+        app.GetWindow()->UnregisterDrawable(*field);
         RELEASE(*field);  // Deletes the pointer and sets it to nullptr
         field = _fields.erase(field);  // erase() returns the next valid iterator
     }
@@ -137,21 +138,21 @@ void ConnectionState::OnExit()
 
 void ConnectionState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function)
 {
-    ButtonComponent* btn = new ButtonComponent(pos, color);
+    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler());
     btn->SetButtonText(text, *font);
     btn->SetOnClickCallback(function);
 
-    m_Window->RegisterDrawable(btn);
+    m_clientApp->GetWindow()->RegisterDrawable(btn);
     _btns.push_back(btn);
 }
 
 void ConnectionState::AddField(const sf::Vector2f& pos, const std::string& label, sf::Font* font)
 {
-    InsertFieldComponent* field = new InsertFieldComponent(*font);
+    InsertFieldComponent* field = new InsertFieldComponent(*font, m_clientApp->GetInputHandler());
     field->SetPosition(pos);
     field->SetLabel(label);
 
-    m_Window->RegisterDrawable(field);
+    m_clientApp->GetWindow()->RegisterDrawable(field);
     _fields.push_back(field);
 }
 
@@ -171,17 +172,17 @@ InsertFieldComponent* ConnectionState::FindFieldByText(const std::string& text)
 void ConnectionState::ShowIpField(const sf::Vector2f& pos)
 {
     std::string ipLabel = "Server Phrase";
-    AddField(pos, ipLabel, font);
+    AddField(pos, ipLabel, m_font);
 
     //#if defined(DEBUG) | defined(_DEBUG)
-    //    m_IpField->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
+    //_fields[_fields.size() - 1]->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
     //#endif
 }
 
 void ConnectionState::ShowNameField(const sf::Vector2f& pos)
 {
     std::string nameLabel = "Username";
-    AddField(pos, nameLabel, font);
+    AddField(pos, nameLabel, m_font);
 }
 
 void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
@@ -191,7 +192,7 @@ void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
 
     std::function<void()> function = [this]()
         {
-            m_StateMachine->SwitchState("MenuState");
+            //ChangeState<MenuState>("MenuState");
         };
 
     AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);

@@ -1,52 +1,46 @@
-#pragma once 
+#pragma once
 
-#include "State.h"
-#include <map>
-#include <iostream>
+#include <cassert>
+#include <memory>
+#include <utility>
 
+template <typename Derived>
+class State
+{
+public:
+    virtual ~State() = default;
+
+    virtual void OnEnter(Derived& derived) = 0;
+    virtual void OnUpdate(Derived& derived, float deltaTime) = 0;
+    virtual void OnExit(Derived& derived) = 0;
+};
+
+template <typename Derived>
 class StateMachine
 {
 public:
-#pragma region Constructor
 
-    StateMachine() = default;
-    ~StateMachine();
+    template <typename StateType, typename... Args>
+    void SetFirstState(Args&&... args)
+    {
+        assert(m_currentState == nullptr);
+        m_currentState = std::make_unique<StateType>(std::forward<Args>(args)...);
+        m_currentState->OnEnter(static_cast<Derived&>(*this));
+    }
 
-#pragma endregion
+    template <typename StateType, typename... Args>
+    void ChangeState(Args&&... args)
+    {
+        m_currentState->OnExit(static_cast<Derived&>(*this));
+        m_currentState = std::make_unique<StateType>(std::forward<Args>(args)...);
+        m_currentState->OnEnter(static_cast<Derived&>(*this));
+    }
 
-#pragma region StateMachine Methods
+    void Update(float deltaTime)
+    {
+        m_currentState->OnUpdate(static_cast<Derived&>(*this), deltaTime);
+    }
 
-    void Start() const;
-    void Update(float dt);
-    void Cleanup();
-
-#pragma endregion
-
-#pragma region State Methods
-
-    void InitState(const std::string& initState);
-    /// <summary>
-    /// Add the state ref to the dictionnary
-    /// </summary>
-    void AddState(const std::string& stateName, State* newState);
-    const State* GetState(const std::string& stateName);
-    /// <summary>
-    /// Switch the current state to the state with the name newState
-    /// </summary>
-    void SwitchState(const std::string& newState);
-
-    inline State* GetCurrentState() const { return m_CurrentState; }
-
-#pragma endregion
-
-private:
-#pragma region Variables
-
-    State* m_CurrentState = nullptr;
-    State* m_NextState = nullptr;
-
-    std::map <std::string, State*> m_States;
-
-#pragma endregion
-
+protected:
+    std::unique_ptr<State<Derived>> m_currentState;
 };

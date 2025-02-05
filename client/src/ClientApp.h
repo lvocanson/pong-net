@@ -5,16 +5,20 @@
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "StateMachine/StateMachine.h"
 
 class Window;
-class StateMachine;
+class InputHandler;
 
-class ClientApp
+class ClientApp : public StateMachine<ClientApp>
 {
 public:
 
 	ClientApp();
 	int Run();
+
+	Window* GetWindow();
+	InputHandler* GetInputHandler();
 
 private:
 
@@ -28,9 +32,8 @@ private:
 private:
 
 	Window* m_Window = nullptr;
-	StateMachine* m_StateMachine = nullptr;
 	sf::Music m_Music;
-
+	InputHandler* m_inputHandler;
 	Pong m_PongGame;
 	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;
