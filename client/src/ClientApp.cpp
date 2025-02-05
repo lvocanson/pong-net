@@ -78,6 +78,11 @@ int ClientApp::Run()
 	return EXIT_SUCCESS;
 }
 
+void ClientApp::Shutdown()
+{
+	m_Window->Close();
+}
+
 Window* ClientApp::GetWindow()
 {
 	return m_Window;

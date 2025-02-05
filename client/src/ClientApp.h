@@ -18,7 +18,7 @@ public:
 
 	ClientApp();
 	int Run();
-	void Shutdown() { m_Window->Close(); }
+	void Shutdown();
 	void ConnectToServer(std::string_view address);
 
 	Window* GetWindow();
