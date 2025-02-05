@@ -7,19 +7,26 @@
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "StateMachine/StateMachine.h"
 
-class ClientApp
+class Window;
+class InputHandler;
+
+class ClientApp : public StateMachine<ClientApp>
 {
 public:
 
 	ClientApp();
 	int Run();
 
+	Window* GetWindow();
+	sf::Music* GetMusic();
+	InputHandler* GetInputHandler();
+
 private:
 
 	void PollEvents();
 	void Update(float dt);
-	void Display();
 
 private:
 
@@ -27,12 +34,11 @@ private:
 
 private:
 
-	sf::RenderWindow m_Window;
-	sf::Font m_Font;
-	sf::Music m_Music;
-
+	Window* m_Window = nullptr;
+	sf::Music* m_Music;
+	InputHandler* m_inputHandler;
 	Pong m_PongGame;
-	PongDisplay m_PongDisplay;
+	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;
 
 	Timer m_Timer;

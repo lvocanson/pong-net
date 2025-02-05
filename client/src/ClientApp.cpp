@@ -1,38 +1,60 @@
 #include "ClientApp.h"
-#include <Network/NetHelper.h>
-#include <Network/PacketWrapper.h>
+#include "Network/NetHelper.h"
+#include "Network/PacketWrapper.h"
 #include <cstdlib>
 
-ClientApp::ClientApp()
-	: m_Window(sf::VideoMode{sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY})}, "Pong")
-	, m_Font("res/fonts/JuliaMono-Regular.ttf")
-	, m_Music("res/Su Turno.ogg")
-	, m_PongGame()
-	, m_PongDisplay(m_Font)
-	, m_LeftScore(0), m_RightScore(0)
-	, m_Timer()
+#include "Window/Window.h"
+#include "../FontRegistry.h"
 
+#include "StateMachine/StateMachine.h"
+#include "StateMachine/AppState/MenuState.h"
+#include "StateMachine/AppState/ConnectionState.h"
+#include "Window/InputHandler.h"
+
+ClientApp::ClientApp()
+	: m_PongGame()
+	, m_PongDisplay(nullptr)
+	, m_LeftScore(0)
+	, m_RightScore(0)
+	, m_Timer()
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr()
 	, m_Signature(0)
 {
+	m_Window = new Window();
+	m_Window->Create("Pong", GameSizeX, GameSizeY);
+
+	m_Music = new sf::Music("res/Su Turno.ogg");
+
+	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
+	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));	
+
+	m_inputHandler = new InputHandler();
+	
+	SetFirstState<MenuState>();
+	/*changedstat
+	{
+		m_StateMachine->AddState("MenuState", new MenuState());
+		m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
+		m_StateMachine->InitState("MenuState");
+		m_StateMachine->Start();
+	}*/
+
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
 		// TODO: error handling
-		m_Window.close();
+		//m_Window.close();
 		return;
 	}
 
-	//m_Music.play();
-	m_Music.setLooping(true);
-
-	m_Window.setFramerateLimit(30);
+	m_Music->play();
+	m_Music->setLooping(true);
 }
 
 int ClientApp::Run()
 {
-	if (!m_Window.isOpen())
+	if (!m_Window->IsOpen())
 	{
 		return EXIT_FAILURE;
 	}
@@ -44,16 +66,31 @@ int ClientApp::Run()
 	do
 	{
 		PollEvents();
+		m_inputHandler->Update();
 
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
 		Update(dt);
 
-		Display();
-
+		m_Window->Render();
 	} while (m_Window.isOpen());
 
 	return EXIT_SUCCESS;
+}
+
+Window* ClientApp::GetWindow()
+{
+	return m_Window;
+}
+
+sf::Music* ClientApp::GetMusic()
+{
+	return m_Music;
+}
+
+InputHandler* ClientApp::GetInputHandler()
+{
+	return m_inputHandler;
 }
 
 static PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
@@ -76,16 +113,12 @@ static PaddlesBehaviour operator~(PaddlesBehaviour rhs)
 
 void ClientApp::PollEvents()
 {
-	while (const std::optional event = m_Window.pollEvent())
-	{
-		if (event->is<sf::Event::Closed>())
-			m_Window.close();
-
-		if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>())
+	std::function<void(sf::Keyboard::Key)> onKeyPressed = [this](sf::Keyboard::Key code)
 		{
 			using enum sf::Keyboard::Key;
 			using enum PaddlesBehaviour;
-			switch (keyEvent->code)
+
+			switch (code)
 			{
 			case W:
 			case Z:
@@ -101,13 +134,13 @@ void ClientApp::PollEvents()
 				m_PongGame.Behaviours |= RightDown;
 				break;
 			}
-		}
+		};
 
-		if (auto* keyEvent = event->getIf<sf::Event::KeyReleased>())
+	std::function<void(sf::Keyboard::Key)> onKeyReleased = [this](sf::Keyboard::Key code)
 		{
 			using enum sf::Keyboard::Key;
 			using enum PaddlesBehaviour;
-			switch (keyEvent->code)
+			switch (code)
 			{
 			case W:
 			case Z:
@@ -123,14 +156,17 @@ void ClientApp::PollEvents()
 				m_PongGame.Behaviours &= ~RightDown;
 				break;
 			}
-		}
-	}
+		};
+
+	m_Window->PollEvents(onKeyPressed, onKeyReleased);
 }
 
 void ClientApp::Update(float dt)
 {
-	m_PongGame.Update(dt);
-	m_PongDisplay.Update(m_PongGame);
+	StateMachine::Update(dt);
+
+	/*m_PongGame.Update(dt);
+	m_PongDisplay->Update(m_PongGame);
 
 	switch (m_PongGame.GetGameState())
 	{
@@ -148,14 +184,7 @@ void ClientApp::Update(float dt)
 	}
 
 	m_PongGame.Reset();
-	m_PongDisplay.SetScore(m_LeftScore, m_RightScore);
-}
-
-void ClientApp::Display()
-{
-	m_Window.clear();
-	m_PongDisplay.Draw(m_Window);
-	m_Window.display();
+	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);*/
 }
 
 void ClientApp::ConnectToServer(std::string_view address)

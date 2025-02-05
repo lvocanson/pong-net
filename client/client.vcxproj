@@ -203,9 +203,18 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\SliderComponent.cpp" />
+    <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
+    <ClCompile Include="FontRegistry.cpp" />
+    <ClCompile Include="src\StateMachine\AppState\MenuState.cpp" />
+    <ClCompile Include="src\Window\InputHandler.cpp" />
+    <ClCompile Include="src\Components\InsertFieldComponent.cpp" />
+    <ClCompile Include="src\Components\ButtonComponent.cpp" />
     <ClCompile Include="src\ClientApp.cpp" />
     <ClCompile Include="src\client.cpp" />
     <ClCompile Include="src\PongDisplay.cpp" />
+    <ClCompile Include="src\Components\TextComponent.cpp" />
+    <ClCompile Include="src\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
@@ -213,8 +222,19 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\SliderComponent.h" />
+    <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
+    <ClInclude Include="FontRegistry.h" />
+    <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
+    <ClInclude Include="src\Window\InputHandler.h" />
+    <ClInclude Include="src\Components\InsertFieldComponent.h" />
+    <ClInclude Include="src\Components\ButtonComponent.h" />
     <ClInclude Include="src\ClientApp.h" />
+    <ClInclude Include="src\Components\BaseComponent.h" />
     <ClInclude Include="src\PongDisplay.h" />
+    <ClInclude Include="src\Components\TextComponent.h" />
+    <ClInclude Include="src\Window\Window.h" />
+    <ClInclude Include="src\StateMachine\StateMachine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
