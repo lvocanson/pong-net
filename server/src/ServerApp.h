@@ -20,8 +20,8 @@ private:
 	void UpdateStatus();
 
 	void HandlePendingPackets();
-	void OnPacketReceived(const Packet& packet);
-	void OnMessageReceived(const Message& message, const uint16_t sender);
+	void OnPacketReceived(const Packet& packet, const Client& sender);
+	void OnMessageReceived(const Message& message, const Client& sender);
 
 	void LogInfo(std::string_view info) const;
 	void LogWarning(std::string_view warning) const;

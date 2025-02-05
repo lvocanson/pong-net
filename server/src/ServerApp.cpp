@@ -122,8 +122,10 @@ void ServerApp::HandlePendingPackets()
 		IpAddress sender;
 		if (m_Socket.ReceivePacket(packet, sender))
 		{
-			m_Clients.AddOrUpdate({packet.header.signature, sender});
-			OnPacketReceived(packet);
+			auto& client = m_Clients.AddOrUpdate({
+				.signature = packet.header.signature,
+				.address = sender});
+			OnPacketReceived(packet, client);
 		}
 		else
 		{
@@ -132,7 +134,7 @@ void ServerApp::HandlePendingPackets()
 	}
 }
 
-void ServerApp::OnPacketReceived(const Packet& packet)
+void ServerApp::OnPacketReceived(const Packet& packet, const Client& sender)
 {
 	if (!packet.IsValid())
 	{
@@ -145,7 +147,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 		if (it->TryAddPacket(packet) && it->IsComplete())
 		{
 			auto& message = it->Unwrap<Message>();
-			OnMessageReceived(message, it->Signature());
+			OnMessageReceived(message, sender);
 			m_Unwrappers.erase_swap(it);
 			return;
 		}
@@ -155,7 +157,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 	if (unwrapper.IsComplete())
 	{
 		auto& message = unwrapper.Unwrap<Message>();
-		OnMessageReceived(message, unwrapper.Signature());
+		OnMessageReceived(message, sender);
 	}
 	else
 	{
@@ -163,7 +165,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 	}
 }
 
-void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
+void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 {
 	using namespace Console;
 	using enum MessageType;
@@ -180,10 +182,9 @@ void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
 
 		Message_ConnectResponse response(signature);
 		auto wrapper = PacketWrapper::Wrap(response);
-		wrapper.Sign(sender);
+		wrapper.Sign(sender.signature);
 
-		auto client = m_Clients.FindBySignature(sender);
-		if (wrapper.Send(m_Socket, client->address))
+		if (wrapper.Send(m_Socket, sender.address))
 		{
 			LogInfo(std::format("New client: {}", signature));
 		}

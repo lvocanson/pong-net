@@ -1,17 +1,17 @@
 #include "ClientDirectory.h"
 
-void ClientDirectory::AddOrUpdate(const Client& client)
+const Client& ClientDirectory::AddOrUpdate(const Client& client)
 {
 	for (auto& c : m_Directory)
 	{
 		if (c.signature == client.signature)
 		{
 			c = client;
-			return;
+			return c;
 		}
 	}
 
-	m_Directory.emplace_back(client);
+	return m_Directory.emplace_back(client);
 }
 
 const Client* ClientDirectory::FindBySignature(uint16_t sig) const
