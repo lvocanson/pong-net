@@ -34,12 +34,8 @@ void SliderComponent::Update(float dt)
         {
             isDragging = true;
         }
-        else if (m_inputHandler->IsMouseButtonReleased(sf::Mouse::Button::Left))
-        {
-            isDragging = false;
-        }
     }
-    else
+    if (m_inputHandler->IsMouseButtonReleased(sf::Mouse::Button::Left))
     {
         isDragging = false;
     }
