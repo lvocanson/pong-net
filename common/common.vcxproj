@@ -100,6 +100,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -119,6 +122,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -134,6 +140,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -153,23 +162,36 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\Message.h" />
     <ClInclude Include="src\Game\Pong.h" />
+    <ClInclude Include="src\Network\IpAddress.h" />
     <ClInclude Include="src\Network\NetHelper.h" />
-    <ClInclude Include="src\Network\NetMessage.h" />
+    <ClInclude Include="src\Network\Packet.h" />
+    <ClInclude Include="src\Network\PacketUnwrapper.h" />
+    <ClInclude Include="src\Network\PacketWrapper.h" />
+    <ClInclude Include="src\Network\WsaData.h" />
     <ClInclude Include="src\Utils\Console.h" />
     <ClInclude Include="src\Utils\Timer.h" />
+    <ClInclude Include="src\Utils\Misc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Pong.cpp" />
+    <ClCompile Include="src\Network\IpAddress.cpp" />
     <ClCompile Include="src\Network\NetHelper.cpp" />
-    <ClCompile Include="src\Network\NetMessage.cpp" />
+    <ClCompile Include="src\Network\Packet.cpp" />
+    <ClCompile Include="src\Network\PacketUnwrapper.cpp" />
+    <ClCompile Include="src\Network\PacketWrapper.cpp" />
+    <ClCompile Include="src\Network\UdpSocket.cpp" />
+    <ClCompile Include="src\Network\UdpSocket.h" />
+    <ClCompile Include="src\Network\WsaData.cpp" />
     <ClCompile Include="src\Utils\Console.cpp" />
     <ClCompile Include="src\Utils\Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Network\NetMessage.inl" />
+    <ClCompile Include="src\Utils\Misc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

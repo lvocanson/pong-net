@@ -1,4 +1,7 @@
 #include "ClientApp.h"
+#include <Network/NetHelper.h>
+#include <Network/PacketWrapper.h>
+#include "Utils/Misc.h"
 #include <cstdlib>
 
 ClientApp::ClientApp()
@@ -12,7 +15,8 @@ ClientApp::ClientApp()
 
 	, m_WsaData()
 	, m_Socket()
-	, m_ServerAddr(NetHelper::UdpAddress::None)
+	, m_ServerAddr()
+	, m_Signature(Misc::GenerateUUID())
 {
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
@@ -21,8 +25,10 @@ ClientApp::ClientApp()
 		return;
 	}
 
-	m_Music.play();
+	//m_Music.play();
 	m_Music.setLooping(true);
+
+	m_Window.setFramerateLimit(30);
 }
 
 int ClientApp::Run()
@@ -155,10 +161,12 @@ void ClientApp::Display()
 
 void ClientApp::ConnectToServer(std::string_view address)
 {
-	m_ServerAddr = NetHelper::UdpAddress(address.data());
+	m_ServerAddr = address.data();
 
-	NetMessage<NetMessageType::Ping> ping;
-	if (!m_Socket.Send(ping, m_ServerAddr))
+	Message_Ping ping;
+	auto wrapper = PacketWrapper::Wrap(ping);
+	wrapper.Sign(m_Signature);
+	if (!wrapper.Send(m_Socket, m_ServerAddr))
 	{
 		std::string_view error = NetHelper::GetWsaErrorExplanation();
 		// TODO: print error

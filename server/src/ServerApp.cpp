@@ -2,6 +2,7 @@
 #include "Utils/Console.h"
 #include <chrono>
 #include <thread>
+#include <Network/NetHelper.h>
 
 static auto LogPrefix(auto category)
 {
@@ -17,7 +18,7 @@ ServerApp::ServerApp()
 	, m_Status(Running)
 	, m_WsaData()
 	, m_Socket()
-	, m_Addr(NetHelper::UdpAddress::Any)
+	, m_Addr(IpAddress::Any)
 {
 	int error;
 
@@ -99,35 +100,8 @@ int ServerApp::Run()
 
 	do
 	{
-		if (IsQuitKeyPressed())
-		{
-			LogPrefix("RUN")
-				<< TextColors::FgCyan
-				<< "Server quit key pressed.\n";
-
-			m_Status = QuitRequest;
-		}
-
-		if (m_Socket.CheckPendingMessage())
-		{
-			NetHeader header;
-			NetMessage<NetMessageType::Unknown> message;
-			NetHelper::UdpAddress sender(NetHelper::UdpAddress::None);
-
-			if (m_Socket.ReceiveMessage(header, message, sender))
-			{
-				OnMessageReceived(header, message, sender);
-			}
-
-			else
-			{
-				LogPrefix("ERR")
-					<< TextColors::FgRed
-					<< "Error while receiving message: "
-					<< NetHelper::GetWsaErrorExplanation()
-					<< "\n";
-			}
-		}
+		CheckQuitKeyPressed();
+		CheckPendingPackets();
 
 		// Sleep for 1ms to avoid 100% CPU usage
 		using namespace std::chrono_literals;
@@ -168,34 +142,97 @@ ServerApp::~ServerApp()
 }
 
 #include <conio.h>
-bool ServerApp::IsQuitKeyPressed()
+void ServerApp::CheckQuitKeyPressed()
 {
 	constexpr auto EscapeKey = '\033';
-
 	while (_kbhit())
+	{
 		if (_getch() == EscapeKey)
-			return true;
+		{
+			using namespace Console;
+			LogPrefix("RUN")
+				<< TextColors::FgCyan
+				<< "Server quit key pressed.\n";
 
-	return false;
+			m_Status = QuitRequest;
+		}
+	}
 }
 
-void ServerApp::OnMessageReceived(NetHeader& header, NetMessage<NetMessageType::Unknown>& message, NetHelper::UdpAddress& sender)
+void ServerApp::CheckPendingPackets()
 {
-	using namespace Console;
-	using enum NetMessageType;
+	while (m_Socket.CheckPendingPacket(1))
+	{
+		Packet packet;
+		IpAddress sender;
+		if (m_Socket.ReceivePacket(packet, sender))
+		{
+			OnPacketReceived(packet);
+		}
+		else
+		{
 
-	char ip[INET_ADDRSTRLEN];
-	inet_ntop(AF_INET, &(sender.addr.sin_addr), ip, INET_ADDRSTRLEN);
 
-	switch (header.type)
+			using namespace Console;
+			LogPrefix("ERR")
+				<< TextColors::FgRed
+				<< "Error while receiving packet: "
+				<< NetHelper::GetWsaErrorExplanation()
+				<< "\n";
+		}
+	}
+}
+
+void ServerApp::OnPacketReceived(const Packet& packet)
+{
+	if (!packet.IsValid())
+	{
+		using namespace Console;
+		LogPrefix("ERR")
+			<< TextColors::FgRed
+			<< "Invalid packet received.\n";
+		return;
+	}
+
+	for (auto it = m_Unwrappers.begin(); it != m_Unwrappers.end(); ++it)
+	{
+		if (it->TryAddPacket(packet) && it->IsComplete())
+		{
+			auto& message = it->Unwrap<Message>();
+			OnMessageReceived(message, it->Signature());
+
+			// Remove it from the list
+			if (std::next(it) != m_Unwrappers.end())
+			{
+				*it = std::move(m_Unwrappers.back());
+			}
+			m_Unwrappers.pop_back();
+			return;
+		}
+	}
+
+	PacketUnwrapper unwrapper(packet);
+	if (unwrapper.IsComplete())
+	{
+		auto& message = unwrapper.Unwrap<Message>();
+		OnMessageReceived(message, unwrapper.Signature());
+	}
+	else
+	{
+		m_Unwrappers.emplace_back(std::move(unwrapper));
+	}
+}
+
+void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
+{
+	using enum MessageType;
+	switch (message.type)
 	{
 	case Ping:
 	{
-		LogPrefix("RUN")
-			<< TextColors::FgCyan
-			<< "Ping received from " << ip << "\n";
+		std::cout << "Ping!\n";
+		break;
 	}
-	break;
 	default:
 		break;
 	}

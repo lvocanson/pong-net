@@ -1,6 +1,8 @@
 #pragma once
 #include "Game/Pong.h"
-#include "Network/NetHelper.h"
+#include "Network/WsaData.h"
+#include "Network/UdpSocket.h"
+#include "Network/IpAddress.h"
 #include "PongDisplay.h"
 #include "Utils/Timer.h"
 #include <SFML/Graphics.hpp>
@@ -37,7 +39,8 @@ private:
 
 private: // server communication
 
-	NetHelper::WsaData m_WsaData;
-	NetHelper::UdpSocket m_Socket;
-	NetHelper::UdpAddress m_ServerAddr;
+	WsaData m_WsaData;
+	UdpSocket m_Socket;
+	IpAddress m_ServerAddr;
+	uint16_t m_Signature;
 };

@@ -1,5 +1,8 @@
 #pragma once
-#include "Network/NetHelper.h"
+#include "Network/WsaData.h"
+#include "Network/UdpSocket.h"
+#include "Network/PacketUnwrapper.h"
+#include "Network/IpAddress.h"
 #include "Utils/Timer.h"
 
 class ServerApp
@@ -12,8 +15,10 @@ public:
 
 private:
 
-	bool IsQuitKeyPressed();
-	void OnMessageReceived(NetHeader& header, NetMessage<NetMessageType::Unknown>& message, NetHelper::UdpAddress& sender);
+	void CheckQuitKeyPressed();
+	void CheckPendingPackets();
+	void OnPacketReceived(const Packet& packet);
+	void OnMessageReceived(const Message& message, const uint16_t sender);
 
 private:
 
@@ -27,7 +32,9 @@ private:
 		QuitRequest
 	} m_Status;
 
-	NetHelper::WsaData m_WsaData;
-	NetHelper::UdpSocket m_Socket;
-	NetHelper::UdpAddress m_Addr;
+	WsaData m_WsaData;
+	UdpSocket m_Socket;
+	IpAddress m_Addr;
+
+	std::vector<PacketUnwrapper> m_Unwrappers;
 };
