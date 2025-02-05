@@ -12,6 +12,7 @@
 
 class Window;
 class InputHandler;
+class FontRegistry;
 
 class ClientApp : public StateMachine<ClientApp>
 {
@@ -24,6 +25,7 @@ public:
 	Window* GetWindow();
 	sf::Music* GetMusic();
 	InputHandler* GetInputHandler();
+	sf::Font* GetFontByName(const std::string& fontName);
 
 	void ConnectToServer(std::string_view address);
 
@@ -41,6 +43,7 @@ private: // variables
 	Window* m_Window = nullptr;
 	sf::Music* m_Music;
 	InputHandler* m_inputHandler;
+	FontRegistry* m_font;
 	Pong m_PongGame;
 	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;

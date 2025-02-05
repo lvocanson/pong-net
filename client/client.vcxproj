@@ -204,8 +204,8 @@ exit /b 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Components\SliderComponent.cpp" />
+    <ClCompile Include="src\FontRegistry.cpp" />
     <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
-    <ClCompile Include="FontRegistry.cpp" />
     <ClCompile Include="src\StateMachine\AppState\MenuState.cpp" />
     <ClCompile Include="src\Window\InputHandler.cpp" />
     <ClCompile Include="src\Components\InsertFieldComponent.cpp" />
@@ -223,8 +223,8 @@ exit /b 0</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Components\SliderComponent.h" />
+    <ClInclude Include="src\FontRegistry.h" />
     <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
-    <ClInclude Include="FontRegistry.h" />
     <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
     <ClInclude Include="src\Window\InputHandler.h" />
     <ClInclude Include="src\Components\InsertFieldComponent.h" />

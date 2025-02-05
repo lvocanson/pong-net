@@ -1,7 +1,7 @@
 #include "ConnectionState.h"
 
 #include <regex>
-#include "../../../FontRegistry.h"
+#include "../../FontRegistry.h"
 #include "../../../../common/CoreDefinitions.h"
 #include "MenuState.h"
 
@@ -10,8 +10,8 @@ constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 #pragma region  Constructor
 
 ConnectionState::ConnectionState()
+    : m_clientApp(nullptr)
 {
-    m_font = FontRegistry::GetFont();
     _btns = std::vector<ButtonComponent*>();
     _fields = std::vector<InsertFieldComponent*>();
     _currentFunction = ButtonFunction::None;
@@ -29,6 +29,7 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter(ClientApp& app)
 {
     m_clientApp = &app;
+    m_font = m_clientApp->GetFontByName(FONT_DEFAULT);
     Window *m_window = m_clientApp->GetWindow();
 
     sf::Vector2f sizeField = FIELD_SIZE;
@@ -201,7 +202,7 @@ void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::MenuScreen;
         };
 
-    AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function, size);
+    AddButton(pos, OrangeRed, btnText, m_font, function, size);
 }
 
 void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
@@ -215,7 +216,7 @@ void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::Connect;            
         };
 
-    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function, size);
+    AddButton(pos, Emerald, btnText, m_font, function, size);
 }
 
 void ConnectionState::ActiveButtonFunction()

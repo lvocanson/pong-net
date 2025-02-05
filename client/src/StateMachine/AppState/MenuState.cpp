@@ -1,7 +1,7 @@
 #include "MenuState.h"
 
 #include "ClientApp.h"
-#include "../../../FontRegistry.h"
+#include "../../FontRegistry.h"
 #include "../../../../common/CoreDefinitions.h"
 #include "ConnectionState.h"
 
@@ -81,7 +81,7 @@ void MenuState::OnExit(ClientApp& app)
 
 void MenuState::AddText(float x, float y, std::string message )
 {
-    TextComponent* text = new TextComponent(*FontRegistry::GetFont());
+    TextComponent* text = new TextComponent(*m_clientApp->GetFontByName(FONT_DEFAULT));
     text->SetPosition(sf::Vector2f(x, y));
     text->SetText(message);
     m_clientApp->GetWindow()->RegisterDrawable(text);
@@ -91,7 +91,7 @@ void MenuState::AddText(float x, float y, std::string message )
 void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size)
 {
     ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler(),size);
-    btn->SetButtonText(text, *FontRegistry::GetFont());
+    btn->SetButtonText(text, *m_clientApp->GetFontByName(FONT_DEFAULT));
     btn->SetOnClickCallback(function);
     m_clientApp->GetWindow()->RegisterDrawable(btn);
     _btns.push_back(btn);
@@ -127,7 +127,7 @@ void MenuState::ShowPlayButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::Play;
         };
 
-    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, Emerald, btnText, m_clientApp->GetFontByName(FONT_DEFAULT), function);
 }
 
 void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
@@ -140,7 +140,7 @@ void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::ConnectionScreen;
         };
 
-    AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function, size);
+    AddButton(pos, Lime, btnText, m_clientApp->GetFontByName(FONT_DEFAULT), function, size);
 }
 
 void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
@@ -151,7 +151,7 @@ void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::Disconnect;
         };
 
-    AddButton(pos, sf::Color::Red, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, sf::Color::Red, btnText, m_clientApp->GetFontByName(FONT_DEFAULT), function);
 }
 
 void MenuState::ShowQuitButton(const sf::Vector2f& pos)
@@ -163,7 +163,7 @@ void MenuState::ShowQuitButton(const sf::Vector2f& pos)
             _currentFunction = ButtonFunction::Quit;
         };
 
-    AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, OrangeRed, btnText, m_clientApp->GetFontByName(FONT_DEFAULT), function);
 }
 
 void MenuState::ActiveButtonFunction()
