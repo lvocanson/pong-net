@@ -21,7 +21,14 @@ enum class PaddlesBehaviour
 	LeftDown = 1 << 1,
 	RightUp = 1 << 2,
 	RightDown = 1 << 3,
+
+	Left = LeftUp | LeftDown,
+	Right = RightUp | RightDown,
 };
+
+PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs);
+PaddlesBehaviour operator&=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs);
+PaddlesBehaviour operator~(PaddlesBehaviour rhs);
 
 struct Pong
 {

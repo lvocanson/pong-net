@@ -97,45 +97,25 @@ sf::Font* ClientApp::GetFontByName(const std::string& fontName)
 	return m_font->GetFont(fontName);
 }
 
-static PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
-{
-	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) | static_cast<UType>(rhs));
-}
-
-static PaddlesBehaviour operator&=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
-{
-	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) & static_cast<UType>(rhs));
-}
-
-static PaddlesBehaviour operator~(PaddlesBehaviour rhs)
-{
-	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return static_cast<PaddlesBehaviour>(~static_cast<UType>(rhs));
-}
-
 void ClientApp::PollEvents()
 {
 	std::function<void(sf::Keyboard::Key)> onKeyPressed = [this](sf::Keyboard::Key code)
 	{
 		using enum sf::Keyboard::Key;
-		using enum PaddlesBehaviour;
-
 		switch (code)
 		{
 		case W:
 		case Z:
-			m_PongGame.Behaviours |= LeftUp;
+			m_PongGame.Behaviours |= PaddlesBehaviour::LeftUp;
 			break;
 		case S:
-			m_PongGame.Behaviours |= LeftDown;
+			m_PongGame.Behaviours |= PaddlesBehaviour::LeftDown;
 			break;
 		case Up:
-			m_PongGame.Behaviours |= RightUp;
+			m_PongGame.Behaviours |= PaddlesBehaviour::RightUp;
 			break;
 		case Down:
-			m_PongGame.Behaviours |= RightDown;
+			m_PongGame.Behaviours |= PaddlesBehaviour::RightDown;
 			break;
 		}
 	};
@@ -143,21 +123,20 @@ void ClientApp::PollEvents()
 	std::function<void(sf::Keyboard::Key)> onKeyReleased = [this](sf::Keyboard::Key code)
 	{
 		using enum sf::Keyboard::Key;
-		using enum PaddlesBehaviour;
 		switch (code)
 		{
 		case W:
 		case Z:
-			m_PongGame.Behaviours &= ~LeftUp;
+			m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftUp;
 			break;
 		case S:
-			m_PongGame.Behaviours &= ~LeftDown;
+			m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftDown;
 			break;
 		case Up:
-			m_PongGame.Behaviours &= ~RightUp;
+			m_PongGame.Behaviours &= ~PaddlesBehaviour::RightUp;
 			break;
 		case Down:
-			m_PongGame.Behaviours &= ~RightDown;
+			m_PongGame.Behaviours &= ~PaddlesBehaviour::RightDown;
 			break;
 		}
 	};

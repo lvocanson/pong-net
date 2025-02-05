@@ -7,6 +7,24 @@ inline constexpr float BallBounceMaxAngle = std::numbers::pi_v<float> / 4.f;
 inline constexpr float BallStartSpeed = 400.f;
 inline constexpr float PaddleSpeed = 200.f;
 
+PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
+{
+	using UType = std::underlying_type_t<PaddlesBehaviour>;
+	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) | static_cast<UType>(rhs));
+}
+
+PaddlesBehaviour operator&=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
+{
+	using UType = std::underlying_type_t<PaddlesBehaviour>;
+	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) & static_cast<UType>(rhs));
+}
+
+PaddlesBehaviour operator~(PaddlesBehaviour rhs)
+{
+	using UType = std::underlying_type_t<PaddlesBehaviour>;
+	return static_cast<PaddlesBehaviour>(~static_cast<UType>(rhs));
+}
+
 void Pong::Reset()
 {
 	BallX = GameSizeX / 2.f;
