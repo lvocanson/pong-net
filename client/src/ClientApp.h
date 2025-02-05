@@ -18,7 +18,8 @@ public:
 
 	ClientApp();
 	int Run();
-	void Shutdown() { m_IsRunning = false; }
+	void Shutdown() { m_Window->Close(); }
+	void ConnectToServer(std::string_view address);
 
 	Window* GetWindow();
 	sf::Music* GetMusic();
@@ -29,11 +30,7 @@ private:
 	void PollEvents();
 	void Update(float dt);
 
-private:
-
-	void ConnectToServer(std::string_view address);
-
-private:
+private: // variables
 
 	Window* m_Window = nullptr;
 	sf::Music* m_Music;
@@ -41,7 +38,6 @@ private:
 	Pong m_PongGame;
 	PongDisplay* m_PongDisplay;
 	unsigned m_LeftScore, m_RightScore;
-	bool m_IsRunning = false;
 
 	Timer m_Timer;
 

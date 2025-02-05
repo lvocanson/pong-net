@@ -261,7 +261,7 @@ void ConnectionState::ActiveButtonFunction()
 
             if (isNameValid)
             {
-                //ClientConnectionHandler::GetInstance().TryToConnectToServer(&ip);
+                //m_clientApp->ConnectToServer(ip);
                 m_IsTryingToConnect = true;
             }
             else

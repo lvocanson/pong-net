@@ -21,7 +21,6 @@ ClientApp::ClientApp()
 	, m_Socket()
 	, m_ServerAddr()
 	, m_Signature(0)
-	, m_IsRunning(true)
 {
 	m_Window = new Window();
 	m_Window->Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
@@ -74,7 +73,7 @@ int ClientApp::Run()
 		Update(dt);
 
 		m_Window->Render();
-	} while (m_Window->IsOpen() && m_IsRunning);
+	} while (m_Window->IsOpen());
 
 	return EXIT_SUCCESS;
 }

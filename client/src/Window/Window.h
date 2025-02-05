@@ -24,6 +24,10 @@ public:
     /// </summary>
     bool IsOpen() const { return m_Window->isOpen(); }
     /// <summary>
+    /// Close the window.
+    /// </summary>
+    void Close() const { return m_Window->close(); }
+    /// <summary>
     /// Returns if the window is focused.
     /// </summary>
     static bool const IsFocused() { return m_IsFocused; }
