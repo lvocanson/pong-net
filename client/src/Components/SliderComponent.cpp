@@ -16,9 +16,8 @@ SliderComponent::SliderComponent(float x, float y, float width, float minValue, 
     knob.setFillColor(sf::Color::Red);
     knob.setOrigin(sf::Vector2(knob.getRadius(), knob.getRadius()));
     knob.setPosition(sf::Vector2(x, y + bar.getSize().y / 2));
-    value = 50;
-    music->setVolume(value);
-    knob.setPosition(sf::Vector2f(bar.getPosition().x + bar.getSize().x/2, knob.getPosition().y));
+    float volume = music->getVolume();
+    knob.setPosition(sf::Vector2f(bar.getPosition().x + (bar.getSize().x * (volume/100)), knob.getPosition().y));
 }
 
 void SliderComponent::Update(float dt)
