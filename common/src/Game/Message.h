@@ -8,7 +8,6 @@ enum class MessageType
 	// Client -> Server
 
 	Connect,
-	Reconnect,
 	LobbyListRequest,
 	LobbyJoinRequest,
 	InputUpdate,
@@ -39,16 +38,6 @@ struct Message
 struct Message_Connect : public Message
 {
 	Message_Connect() : Message(MessageType::Connect) {}
-};
-
-struct Message_Reconnect : public Message
-{
-	Message_Reconnect(uint16_t signature)
-		: Message(MessageType::Reconnect)
-		, signature(signature)
-	{
-	}
-	uint16_t signature;
 };
 
 struct Message_ConnectResponse : public Message

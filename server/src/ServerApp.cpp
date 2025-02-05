@@ -169,14 +169,6 @@ void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
 	using enum MessageType;
 	switch (message.type)
 	{
-	case Reconnect:
-	{
-		// Delete previous signature and send back new one
-		auto& reconnect = message.As<Message_Reconnect>();
-		m_Clients.RemoveBySignature(reconnect.signature);
-		OnMessageReceived(message.As<Message_Connect>(), sender);
-	}
-	break;
 	case Connect:
 	{
 		uint16_t signature = Misc::GenerateUUID();
