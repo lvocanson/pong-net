@@ -23,7 +23,7 @@ ClientApp::ClientApp()
 	, m_Signature(0)
 {
 	m_Window = new Window();
-	m_Window->Create("Pong", GameSizeX, GameSizeY);
+	m_Window->Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
 
 	m_Music = new sf::Music("res/Su Turno.ogg");
 
@@ -73,7 +73,7 @@ int ClientApp::Run()
 		Update(dt);
 
 		m_Window->Render();
-	} while (m_Window.isOpen());
+	} while (m_Window->IsOpen());
 
 	return EXIT_SUCCESS;
 }
@@ -198,6 +198,5 @@ void ClientApp::ConnectToServer(std::string_view address)
 	{
 		std::string_view error = NetHelper::GetWsaErrorExplanation();
 		// TODO: print error
-		m_Window.close();
 	}
 }

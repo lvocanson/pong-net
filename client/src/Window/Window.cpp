@@ -18,12 +18,12 @@ Window::~Window()
     RELEASE(m_Window);
 }
 
-void Window::Create(const char* title, unsigned int width, unsigned int height)
+void Window::Create(const char* title, sf::Vector2u size)
 {
     //sf::ContextSettings settings;
     //settings.antialiasingLevel = 4;
 
-    m_Window->create(sf::VideoMode(sf::Vector2(width, height)), title/*, sf::Style::Close, settings*/);
+    m_Window->create(sf::VideoMode(size), title);
 
     //auto image = sf::Image{};
     //if (!image.loadFromFile("res/icon.png"))

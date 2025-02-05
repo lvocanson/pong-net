@@ -14,7 +14,7 @@ public:
     /// <summary>
     /// Creates (or recreates) a window with the given title and dimensions.
     /// </summary>
-    void Create(const char* title, unsigned int width, unsigned int height);
+    void Create(const char* title, sf::Vector2u);
     /// <summary>
     /// Polls events and calls callbacks.
     /// </summary>
