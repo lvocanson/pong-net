@@ -69,54 +69,54 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 
     ActiveButtonFunction();
 
-    if (m_IsTryingToConnect)
-    {
-        static float timeOutTimer;
+    //if (m_IsTryingToConnect)
+    //{
+    //    static float timeOutTimer;
 
-        /* Shared<ConnectionStateInfo>& connectionInfo = ClientConnectionHandler::GetInstance().GetConnectionInfo();
+    //    Shared<ConnectionStateInfo>& connectionInfo = ClientConnectionHandler::GetInstance().GetConnectionInfo();
 
-         switch (connectionInfo.WaitGet().Get())
-         {
-         case Connecting:
-         {
-             if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
-             {
-                 m_IpField->ShowErrorMessage("Connection timed out!");
-                 m_IsTryingToConnect = false;
-                 timeOutTimer = 0.0f;
-             }
-             else
-             {
-                 timeOutTimer += dt;
-             }
-             break;
-         }
-         case Failed:
-         {
-             m_IpField->ShowErrorMessage("Connection failed!");
-             m_IsTryingToConnect = false;
-             timeOutTimer = 0.0f;
-             break;
-         }
-         case Connected:
-         {
-             ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
+    //     switch (connectionInfo.WaitGet().Get())
+    //     {
+    //     case Connecting:
+    //     {
+    //         if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
+    //         {
+    //             m_IpField->ShowErrorMessage("Connection timed out!");
+    //             m_IsTryingToConnect = false;
+    //             timeOutTimer = 0.0f;
+    //         }
+    //         else
+    //         {
+    //             timeOutTimer += dt;
+    //         }
+    //         break;
+    //     }
+    //     case Failed:
+    //     {
+    //         m_IpField->ShowErrorMessage("Connection failed!");
+    //         m_IsTryingToConnect = false;
+    //         timeOutTimer = 0.0f;
+    //         break;
+    //     }
+    //     case Connected:
+    //     {
+    //         ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
 
-             m_StateMachine->SwitchState("LobbyState");
-             m_IpField->ClearErrorMessage();
-             m_IsTryingToConnect = false;
+    //         m_StateMachine->SwitchState("LobbyState");
+    //         m_IpField->ClearErrorMessage();
+    //         m_IsTryingToConnect = false;
 
-             Message<MsgType::Login> message;
-             message.Username = m_Name;
-             ClientConnectionHandler::GetInstance().SendDataToServer(message);
+    //         Message<MsgType::Login> message;
+    //         message.Username = m_Name;
+    //         ClientConnectionHandler::GetInstance().SendDataToServer(message);
 
-             timeOutTimer = 0.0f;
-             break;
-         }
-         default:
-             break;
-         }*/
-    }
+    //         timeOutTimer = 0.0f;
+    //         break;
+    //     }
+    //     default:
+    //         break;
+    //     }
+    //}
 }
 
 void ConnectionState::OnExit(ClientApp& app)
@@ -256,18 +256,17 @@ void ConnectionState::ActiveButtonFunction()
 
             m_Name = nameField->GetText();
 
-            //const std::string ip = std::string(TcpIp::IpAddress::FromPhrase(m_IpField->GetText()).ToString());
-            //DebugLog(ip);
+            InsertFieldComponent* ipField = FindFieldByText("Server Phrase");
+            const std::string ip = ipField->GetText();
 
             if (isNameValid)
             {
                 //m_clientApp->ConnectToServer(ip);
+                m_clientApp->ConnectToServer("127.0.0.1");
                 m_IsTryingToConnect = true;
             }
             else
             {
-                InsertFieldComponent* ipField = FindFieldByText("Server Phrase");
-                //DebugLog("Invalid phrase!\n");
                 ipField->ShowErrorMessage("Invalid phrase!");
             }
             break;

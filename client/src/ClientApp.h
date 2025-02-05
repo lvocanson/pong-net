@@ -25,14 +25,13 @@ public:
 	sf::Music* GetMusic();
 	InputHandler* GetInputHandler();
 
+	void ConnectToServer(std::string_view address);
+
 private:
 
 	void PollEvents();
 	void Update(float dt);
 
-private:
-
-	void ConnectToServer(std::string_view address);
 	void CheckPendingPackets();
 	void OnPacketReceived(const Packet& packet);
 	void OnMessageReceived(const Message& message);

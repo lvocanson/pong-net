@@ -59,9 +59,6 @@ int ClientApp::Run()
 		return EXIT_FAILURE;
 	}
 
-	// TODO: call from UI
-	ConnectToServer("127.0.0.1");
-
 	Timer dtTimer;
 	do
 	{
