@@ -5,6 +5,18 @@
 namespace Misc
 {
 
+Generator<unsigned> FibonacciGen()
+{
+    unsigned a = 0, b = 1;
+    while (true)
+    {
+        co_yield a;
+        unsigned next = a + b;
+        a = b;
+        b = next;
+    }
+}
+
 uint16_t GenerateUUID()
 {
 	std::random_device rd;
