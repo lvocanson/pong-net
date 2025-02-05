@@ -3,16 +3,21 @@
 #include "Network/PacketWrapper.h"
 #include "Utils/Console.h"
 #include "Utils/Misc.h"
-#include <chrono>
+#include "Utils/Timer.h"
 #include <thread>
 
+using namespace std::chrono_literals;
+inline constexpr auto ClientDirectoryCleanupInterval = 5min;
+inline constexpr auto ClientDirectoryMaxLastContact = 10min;
+inline constexpr auto InactivityUpdateMissingTime = 1s;
+inline constexpr auto TimeForLostPacket = 300ms;
 
 ServerApp::ServerApp()
-	: m_UpTime()
-	, m_Status(Running)
+	: m_Status(Running)
 	, m_WsaData()
 	, m_Socket()
 	, m_Addr(IpAddress::Any)
+	, m_LastClientsCleanup(std::chrono::high_resolution_clock::now())
 {
 	int error;
 
@@ -64,10 +69,21 @@ int ServerApp::Run()
 		<< ".\nPress ESC to shutdown.\n"
 		<< TextColors::Reset;
 
+	Timer dtTimer;
 	do
 	{
+		auto now = std::chrono::high_resolution_clock::now();
+		float dt = dtTimer.GetElapsedSeconds();
+		dtTimer.Restart();
+
 		UpdateStatus();
+
 		HandlePendingPackets();
+		FlushLostPackets(now);
+
+		CleanupDirectory(now);
+
+		MaintainRooms(now, dt);
 
 		// Sleep for 1ms to avoid 100% CPU usage
 		using namespace std::chrono_literals;
@@ -194,6 +210,197 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		}
 	}
 	break;
+	case RoomGroupRequest:
+	{
+		auto& request = message.As<Message_RoomGroupRequest>();
+		Message_RoomGroupResponse response(request.index,
+			m_PausedRooms.size() / sizeof(Message_RoomGroupResponse::GroupSize));
+
+		size_t roomIdx = response.grpIdx * response.GroupSize;
+		for (auto& entry : response.group)
+		{
+			if (roomIdx >= m_PausedRooms.size())
+				break;
+
+			auto& room = m_PausedRooms[roomIdx];
+			if (!room.IsFull())
+			{
+				entry = room.uuid;
+			}
+			++roomIdx;
+		}
+
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending room group response failed");
+		}
+	}
+	break;
+	case RoomJoinRequest:
+	{
+		auto& request = message.As<Message_RoomJoinRequest>();
+
+		Message_RoomJoinResponse::JoinStatus status = Message_RoomJoinResponse::Rejected;
+		for (auto& room : m_PausedRooms)
+		{
+			if (!room.IsFull() && room.uuid == request.uuid)
+			{
+				if (room.leftSignature == 0)
+				{
+					room.leftSignature = sender.signature;
+				}
+				else
+				{
+					room.rightSignature = sender.signature;
+				}
+
+				status = Message_RoomJoinResponse::Accepted;
+				break;
+			}
+		}
+
+		Message_RoomJoinResponse response(status);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending room join response failed");
+		}
+	}
+	break;
+	case InputUpdate:
+	{
+		auto& update = message.As<Message_InputUpdate>();
+		PaddlesBehaviour updateBehaviour = update.behaviour;
+
+		for (auto& room : m_PlayingRooms)
+		{
+			if (room.leftSignature == sender.signature)
+			{
+				room.game.Behaviours &= ~PaddlesBehaviour::Left; // Erase left bits
+				updateBehaviour &= PaddlesBehaviour::Left; // only keep left bits
+				room.game.Behaviours |= updateBehaviour; // merge both
+			}
+			else if (room.rightSignature == sender.signature)
+			{
+				room.game.Behaviours &= ~PaddlesBehaviour::Right; // Erase right bits
+				updateBehaviour &= PaddlesBehaviour::Right; // only keep right bits
+				room.game.Behaviours |= updateBehaviour; // merge both
+			}
+		}
+	}
+	break;
+	}
+}
+
+void ServerApp::FlushLostPackets(TimePoint now)
+{
+	size_t count = 0;
+	for (auto it = m_Unwrappers.begin(); it != m_Unwrappers.end();)
+	{
+		if (now - it->Timestamp() > TimeForLostPacket)
+		{
+			m_Unwrappers.erase_swap(it);
+			++count;
+		}
+		++it;
+	}
+
+	if (count > 0)
+		LogWarning(std::format("Flushed lost packets: {} partial message(s) removed", count));
+}
+
+void ServerApp::CleanupDirectory(TimePoint now)
+{
+	if (m_LastClientsCleanup + ClientDirectoryCleanupInterval > now)
+	{
+		size_t count = m_Clients.RemoveIfLastContactBefore(now - ClientDirectoryMaxLastContact);
+		m_LastClientsCleanup = now;
+		LogInfo(std::format("Directory cleaned: {} client(s) removed", count));
+	}
+}
+
+void ServerApp::MaintainRooms(TimePoint now, float dt)
+{
+	for (auto it = m_PausedRooms.begin(); it != m_PausedRooms.end();)
+	{
+		PongRoom& room = *it;
+		bool leftActive = now - room.leftLastUpdate < InactivityUpdateMissingTime;
+		bool rightActive = now - room.rightLastUpdate < InactivityUpdateMissingTime;
+
+		if (leftActive && rightActive)
+		{
+			// Missing client reconnected / joined
+			m_PlayingRooms.emplace_back(std::move(room));
+		}
+		else if (leftActive || rightActive)
+		{
+			// Still one client connected
+			auto* leftClient = m_Clients.FindBySignature(room.leftSignature);
+			auto* rightClient = m_Clients.FindBySignature(room.rightSignature);
+
+			Message_GameUpdate update(room.game, Message_GameUpdate::Paused, room.leftScore, room.rightScore);
+			auto wrapper = PacketWrapper::Wrap(update);
+
+			wrapper.Sign(room.leftSignature);
+			wrapper.Send(m_Socket, leftClient->address);
+
+			wrapper.Sign(room.rightSignature);
+			wrapper.Send(m_Socket, rightClient->address);
+
+			++it;
+			continue;
+		}
+
+		// Both clients are connected or disconnected
+		m_PausedRooms.erase_swap(it);
+	}
+
+	for (auto it = m_PausedRooms.begin(); it != m_PausedRooms.end();)
+	{
+		PongRoom& room = *it;
+		bool leftActive = now - room.leftLastUpdate < InactivityUpdateMissingTime;
+		bool rightActive = now - room.rightLastUpdate < InactivityUpdateMissingTime;
+
+		if (!(leftActive && rightActive))
+		{
+			// Client disconnected
+			m_PausedRooms.emplace_back(std::move(room));
+			continue;
+		}
+
+		room.game.Update(dt);
+		switch (room.game.GetGameState())
+		{
+		case GameState::LeftWins:
+		{
+			++room.leftScore;
+			room.game.Reset();
+			break;
+		}
+		case GameState::RightWins:
+		{
+			++room.rightScore;
+			room.game.Reset();
+			break;
+		}
+		}
+
+		auto* leftClient = m_Clients.FindBySignature(room.leftSignature);
+		auto* rightClient = m_Clients.FindBySignature(room.rightSignature);
+
+		Message_GameUpdate update(room.game, Message_GameUpdate::Playing, room.leftScore, room.rightScore);
+		auto wrapper = PacketWrapper::Wrap(update);
+
+		wrapper.Sign(room.leftSignature);
+		wrapper.Send(m_Socket, leftClient->address);
+
+		wrapper.Sign(room.rightSignature);
+		wrapper.Send(m_Socket, rightClient->address);
+
+		++it;
 	}
 }
 

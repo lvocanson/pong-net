@@ -10,6 +10,8 @@ public:
 
 	bool TryAddPacket(const Packet& packet);
 	bool IsComplete() const { return m_Remaining == 0; }
+
+	Packet::timestamp_t Timestamp() const { return m_Timestamp; }
 	uint16_t Signature() const { return m_Signature; }
 
 	template <typename T>

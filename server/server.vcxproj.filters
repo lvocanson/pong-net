@@ -24,12 +24,18 @@
     <ClCompile Include="src\ClientDirectory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PongRoom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ServerApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ClientDirectory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PongRoom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
