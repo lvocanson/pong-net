@@ -1,8 +1,10 @@
 #include "ServerApp.h"
+#include "Network/NetHelper.h"
+#include "Network/PacketWrapper.h"
 #include "Utils/Console.h"
+#include "Utils/Misc.h"
 #include <chrono>
 #include <thread>
-#include <Network/NetHelper.h>
 
 static auto LogPrefix(auto category)
 {
@@ -12,6 +14,9 @@ static auto LogPrefix(auto category)
 		<< TextColors::FgWhite << category
 		<< TextColors::BrightFgBlack << "] ";
 }
+
+static auto ErrPrefix() { return LogPrefix("ERR") << Console::TextColors::FgRed; }
+static auto InfoPrefix() { return LogPrefix("INFO") << Console::TextColors::BrightFgBlue; }
 
 ServerApp::ServerApp()
 	: m_UpTime()
@@ -27,8 +32,7 @@ ServerApp::ServerApp()
 
 	if (m_WsaData.error)
 	{
-		LogPrefix("ERR")
-			<< TextColors::FgRed
+		ErrPrefix()
 			<< "WSA initialisation failed.\nReason: "
 			<< NetHelper::GetWsaErrorExplanation(m_WsaData.error)
 			<< "\n";
@@ -42,8 +46,7 @@ ServerApp::ServerApp()
 
 	if (!m_Socket.IsValid())
 	{
-		LogPrefix("ERR")
-			<< TextColors::FgRed
+		ErrPrefix()
 			<< "Socket creation failed.\nReason: "
 			<< NetHelper::GetWsaErrorExplanation()
 			<< "\n";
@@ -58,8 +61,7 @@ ServerApp::ServerApp()
 	if (error)
 	{
 
-		LogPrefix("ERR")
-			<< TextColors::FgRed
+		ErrPrefix()
 			<< "Socket bind failed.\nReason: "
 			<< NetHelper::GetWsaErrorExplanation(error)
 			<< "\n";
@@ -79,7 +81,7 @@ ServerApp::ServerApp()
 init_failed:
 
 	m_Status = InitFailed;
-	LogPrefix("ERR")
+	ErrPrefix()
 		<< TextColors::FgRed
 		<< "Initialization failed!\n";
 }
@@ -149,11 +151,7 @@ void ServerApp::CheckQuitKeyPressed()
 	{
 		if (_getch() == EscapeKey)
 		{
-			using namespace Console;
-			LogPrefix("RUN")
-				<< TextColors::FgCyan
-				<< "Server quit key pressed.\n";
-
+			InfoPrefix() << "Server quit key pressed.\n";
 			m_Status = QuitRequest;
 		}
 	}
@@ -167,15 +165,12 @@ void ServerApp::CheckPendingPackets()
 		IpAddress sender;
 		if (m_Socket.ReceivePacket(packet, sender))
 		{
+			m_Clients.AddOrUpdate({packet.header.signature, sender});
 			OnPacketReceived(packet);
 		}
 		else
 		{
-
-
-			using namespace Console;
-			LogPrefix("ERR")
-				<< TextColors::FgRed
+			ErrPrefix()
 				<< "Error while receiving packet: "
 				<< NetHelper::GetWsaErrorExplanation()
 				<< "\n";
@@ -187,10 +182,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 {
 	if (!packet.IsValid())
 	{
-		using namespace Console;
-		LogPrefix("ERR")
-			<< TextColors::FgRed
-			<< "Invalid packet received.\n";
+		ErrPrefix() << "Invalid packet received.\n";
 		return;
 	}
 
@@ -225,15 +217,44 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 
 void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
 {
+	using namespace Console;
 	using enum MessageType;
 	switch (message.type)
 	{
-	case Ping:
+	case Reconnect:
 	{
-		std::cout << "Ping!\n";
-		break;
+		// Delete previous signature and send back new one
+		auto& reconnect = message.As<Message_Reconnect>();
+		m_Clients.RemoveBySignature(reconnect.signature);
+		OnMessageReceived(message.As<Message_Connect>(), sender);
 	}
-	default:
-		break;
+	break;
+	case Connect:
+	{
+		uint16_t signature = Misc::GenerateUUID();
+		while (m_Clients.FindBySignature(signature))
+		{
+			// Generata again until no collision
+			signature = Misc::GenerateUUID();
+		}
+
+		Message_ConnectResponse response(signature);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender);
+
+		auto client = m_Clients.FindBySignature(sender);
+		if (wrapper.Send(m_Socket, client->address))
+		{
+			InfoPrefix() << "New client: " << signature << "\n";
+		}
+		else
+		{
+			ErrPrefix()
+				<< "Sending packet response failed:"
+				<< NetHelper::GetWsaErrorExplanation()
+				<< "\n";
+		}
+	}
+	break;
 	}
 }

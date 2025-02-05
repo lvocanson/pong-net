@@ -1,7 +1,6 @@
 #include "ClientApp.h"
 #include <Network/NetHelper.h>
 #include <Network/PacketWrapper.h>
-#include "Utils/Misc.h"
 #include <cstdlib>
 
 ClientApp::ClientApp()
@@ -16,7 +15,7 @@ ClientApp::ClientApp()
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr()
-	, m_Signature(Misc::GenerateUUID())
+	, m_Signature(0)
 {
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
@@ -163,8 +162,8 @@ void ClientApp::ConnectToServer(std::string_view address)
 {
 	m_ServerAddr = address.data();
 
-	Message_Ping ping;
-	auto wrapper = PacketWrapper::Wrap(ping);
+	Message_Connect connect;
+	auto wrapper = PacketWrapper::Wrap(connect);
 	wrapper.Sign(m_Signature);
 	if (!wrapper.Send(m_Socket, m_ServerAddr))
 	{

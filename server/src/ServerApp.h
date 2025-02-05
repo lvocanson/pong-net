@@ -1,4 +1,5 @@
 #pragma once
+#include "ClientDirectory.h"
 #include "Network/WsaData.h"
 #include "Network/UdpSocket.h"
 #include "Network/PacketUnwrapper.h"
@@ -36,5 +37,6 @@ private:
 	UdpSocket m_Socket;
 	IpAddress m_Addr;
 
+	ClientDirectory m_Clients;
 	std::vector<PacketUnwrapper> m_Unwrappers;
 };

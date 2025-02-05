@@ -1,20 +1,21 @@
 #pragma once
+#include <concepts>
 
 enum class MessageType
 {
 	Unknown = 0,
 
-	Ping,
-	PingResponse,
-
 	// Client -> Server
 
+	Connect,
+	Reconnect,
 	LobbyListRequest,
 	LobbyJoinRequest,
 	InputUpdate,
 
 	// Server -> Client
 
+	ConnectResponse,
 	LobbyListContent,
 	LobbyJoinContent,
 	GameUpdate,
@@ -27,16 +28,37 @@ struct Message
 {
 	Message(MessageType type = MessageType::Unknown) : type(type) {};
 	MessageType type;
+
+	template <std::derived_from<Message> T>
+	const T& As() const
+	{
+		return static_cast<const T&>(*this);
+	}
 };
 
-struct Message_Ping : public Message
+struct Message_Connect : public Message
 {
-	Message_Ping() : Message(MessageType::Ping) {}
+	Message_Connect() : Message(MessageType::Connect) {}
 };
 
-struct Message_PingResponse : public Message
+struct Message_Reconnect : public Message
 {
-	Message_PingResponse() : Message(MessageType::PingResponse) {}
+	Message_Reconnect(uint16_t signature)
+		: Message(MessageType::Reconnect)
+		, signature(signature)
+	{
+	}
+	uint16_t signature;
+};
+
+struct Message_ConnectResponse : public Message
+{
+	Message_ConnectResponse(uint16_t signature)
+		: Message(MessageType::ConnectResponse)
+		, signature(signature)
+	{
+	}
+	uint16_t signature;
 };
 
 struct Message_LobbyListRequest : public Message
