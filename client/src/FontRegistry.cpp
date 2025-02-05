@@ -2,7 +2,10 @@
 #include "../CoreDefinitions.h"
 #include <SFML/Graphics/Font.hpp>
 
-std::unordered_map<std::string, sf::Font*> FontRegistry::m_Fonts;
+FontRegistry::FontRegistry()
+{
+    m_Fonts = std::unordered_map<std::string, sf::Font*>();
+}
 
 sf::Font* FontRegistry::GetFont(const std::string& fontName)
 {

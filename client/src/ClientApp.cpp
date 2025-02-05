@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #include "Window/Window.h"
-#include "../FontRegistry.h"
+#include "FontRegistry.h"
 
 #include "StateMachine/StateMachine.h"
 #include "StateMachine/AppState/MenuState.h"
@@ -25,21 +25,16 @@ ClientApp::ClientApp()
 	m_Window = new Window();
 	m_Window->Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
 
-	m_Music = new sf::Music("res/Su Turno.ogg");
-
-	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
-	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));
-
 	m_inputHandler = new InputHandler();
 
+	m_Music = new sf::Music("res/Su Turno.ogg");
+
+	m_font = new FontRegistry();
+	m_font->LoadFont("JuliaMono-Regular.ttf");
+
+	m_PongDisplay = new PongDisplay(*GetFontByName("JuliaMono-Regular.ttf"));
+
 	SetFirstState<MenuState>();
-	/*changedstat
-	{
-		m_StateMachine->AddState("MenuState", new MenuState());
-		m_StateMachine->AddState("ConnectionState", new ConnectionState(m_StateMachine, m_Window));
-		m_StateMachine->InitState("MenuState");
-		m_StateMachine->Start();
-	}*/
 
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{
@@ -95,6 +90,11 @@ sf::Music* ClientApp::GetMusic()
 InputHandler* ClientApp::GetInputHandler()
 {
 	return m_inputHandler;
+}
+
+sf::Font* ClientApp::GetFontByName(const std::string& fontName)
+{
+	return m_font->GetFont(fontName);
 }
 
 static PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
