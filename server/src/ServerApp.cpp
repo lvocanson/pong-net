@@ -6,17 +6,6 @@
 #include <chrono>
 #include <thread>
 
-static auto LogPrefix(auto category)
-{
-	using namespace Console;
-	return Out
-		<< TextColors::BrightFgBlack << '['
-		<< TextColors::FgWhite << category
-		<< TextColors::BrightFgBlack << "] ";
-}
-
-static auto ErrPrefix() { return LogPrefix("ERR") << Console::TextColors::FgRed; }
-static auto InfoPrefix() { return LogPrefix("INFO") << Console::TextColors::BrightFgBlue; }
 
 ServerApp::ServerApp()
 	: m_UpTime()
@@ -32,58 +21,33 @@ ServerApp::ServerApp()
 
 	if (m_WsaData.error)
 	{
-		ErrPrefix()
-			<< "WSA initialisation failed.\nReason: "
-			<< NetHelper::GetWsaErrorExplanation(m_WsaData.error)
-			<< "\n";
-
+		LogWsaError("WSA initialisation failed", m_WsaData.error);
 		goto init_failed;
 	}
-
-	LogPrefix("INIT")
-		<< TextColors::FgCyan
-		<< "WSA initialisation OK.\n";
+	LogInfo("WSA initialisation OK");
 
 	if (!m_Socket.IsValid())
 	{
-		ErrPrefix()
-			<< "Socket creation failed.\nReason: "
-			<< NetHelper::GetWsaErrorExplanation()
-			<< "\n";
-
+		LogWsaError("Socket creation failed");
 		goto init_failed;
 	}
-	LogPrefix("INIT")
-		<< TextColors::FgCyan
-		<< "Socket creation OK.\n";
+	LogInfo("Socket creation OK");
 
 	error = m_Socket.BindTo(m_Addr);
 	if (error)
 	{
-
-		ErrPrefix()
-			<< "Socket bind failed.\nReason: "
-			<< NetHelper::GetWsaErrorExplanation(error)
-			<< "\n";
-
+		LogWsaError("Socket bind failed", error);
 		goto init_failed;
 	}
-	LogPrefix("INIT")
-		<< TextColors::FgCyan
-		<< "Socket bind OK.\n";
+	LogInfo("Socket bind OK");
 
-	LogPrefix("INIT")
-		<< TextColors::FgCyan
-		<< "Initialization successful.\n";
-
+	LogInfo("Initialization successful");
 	return;
 
 init_failed:
 
 	m_Status = InitFailed;
-	ErrPrefix()
-		<< TextColors::FgRed
-		<< "Initialization failed!\n";
+	LogError("Initialization failed");
 }
 
 int ServerApp::Run()
@@ -116,31 +80,24 @@ int ServerApp::Run()
 ServerApp::~ServerApp()
 {
 	using namespace Console;
-	LogPrefix("QUIT")
-		<< TextColors::FgCyan
-		<< "The server is shuting down.\n"
-		<< TextColors::BrightFgBlack
-		<< "Reason: ";
+	LogInfo("The server is shuting down");
 
+	std::string_view reason = "Reason: Unknown";
 	switch (m_Status)
 	{
 	case InitFailed:
-		Out << "Initialization failed.\n";
+		reason = "Reason: Initialization failed";
 		break;
 	case ErrorWhileRunning:
-		Out << "Error while running.\n";
+		reason = "Reason: Error while running";
 		break;
 	case QuitRequest:
-		Out << "Quit requested.\n";
-		break;
-	default:
-		Out << "Unknown.\n";
+		reason = "Reason: Quit requested";
 		break;
 	}
+	LogInfo(reason);
 
-	LogPrefix("QUIT")
-		<< TextColors::FgGreen
-		<< "Shutdown successful.\n";
+	LogInfo("Shutdown successful");
 }
 
 #include <conio.h>
@@ -151,7 +108,7 @@ void ServerApp::UpdateStatus()
 	{
 		if (_getch() == EscapeKey)
 		{
-			InfoPrefix() << "Server quit key pressed.\n";
+			LogInfo("Server quit key pressed");
 			m_Status = QuitRequest;
 		}
 	}
@@ -170,10 +127,7 @@ void ServerApp::HandlePendingPackets()
 		}
 		else
 		{
-			ErrPrefix()
-				<< "Error while receiving packet: "
-				<< NetHelper::GetWsaErrorExplanation()
-				<< "\n";
+			LogWsaError("Error while receiving packet");
 		}
 	}
 }
@@ -182,7 +136,7 @@ void ServerApp::OnPacketReceived(const Packet& packet)
 {
 	if (!packet.IsValid())
 	{
-		ErrPrefix() << "Invalid packet received.\n";
+		LogWarning("Invalid packet received.");
 		return;
 	}
 
@@ -239,16 +193,52 @@ void ServerApp::OnMessageReceived(const Message& message, uint16_t sender)
 		auto client = m_Clients.FindBySignature(sender);
 		if (wrapper.Send(m_Socket, client->address))
 		{
-			InfoPrefix() << "New client: " << signature << "\n";
+			LogInfo(std::format("New client: {}", signature));
 		}
 		else
 		{
-			ErrPrefix()
-				<< "Sending packet response failed:"
-				<< NetHelper::GetWsaErrorExplanation()
-				<< "\n";
+			LogWsaError("Sending connect response failed");
 		}
 	}
 	break;
 	}
+}
+
+void ServerApp::LogInfo(std::string_view info) const
+{
+	using namespace Console;
+	Out << TextColors::BrightFgBlack << '['
+		<< TextColors::FgCyan << "Info"
+		<< TextColors::BrightFgBlack << "] "
+		<< TextColors::Reset << info << '\n';
+}
+
+void ServerApp::LogWarning(std::string_view warning) const
+{
+	using namespace Console;
+	Out << TextColors::BrightFgBlack << '['
+		<< TextColors::FgYellow << "Warning"
+		<< TextColors::BrightFgBlack << "] "
+		<< TextColors::Reset << warning << '\n';
+}
+
+void ServerApp::LogError(std::string_view error) const
+{
+	using namespace Console;
+	Out << TextColors::BrightFgBlack << '['
+		<< TextColors::FgRed << "Error"
+		<< TextColors::BrightFgBlack << "] "
+		<< TextColors::Reset << error << '\n';
+}
+
+void ServerApp::LogWsaError(std::string_view what, int error) const
+{
+	using namespace Console;
+	Out << TextColors::BrightFgBlack << '['
+		<< TextColors::FgRed << "WsaError"
+		<< TextColors::BrightFgBlack << "] "
+		<< TextColors::Reset << what << '\n'
+		<< TextColors::BrightFgBlack << "Explanation: "
+		<< NetHelper::GetWsaErrorExplanation(error)
+		<< '\n';
 }

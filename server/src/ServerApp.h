@@ -23,6 +23,11 @@ private:
 	void OnPacketReceived(const Packet& packet);
 	void OnMessageReceived(const Message& message, const uint16_t sender);
 
+	void LogInfo(std::string_view info) const;
+	void LogWarning(std::string_view warning) const;
+	void LogError(std::string_view error) const;
+	void LogWsaError(std::string_view what, int error = 0) const;
+
 private:
 
 	Timer m_UpTime;
