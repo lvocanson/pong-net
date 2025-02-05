@@ -8,8 +8,10 @@
 #pragma region  Constructor
 
 MenuState::MenuState()
+    : m_clientApp(nullptr)
 {
     _btns = std::vector<ButtonComponent*>();
+    _currentFunction = ButtonFunction::None;
 }
 
 MenuState::~MenuState()
@@ -54,20 +56,23 @@ void MenuState::OnUpdate(ClientApp& app, float dt)
     {
         btn->Update(dt);
     }
+    
     if(_slider)
         _slider->Update(dt);
+
+    ActiveButtonFunction();
 }
 
 void MenuState::OnExit(ClientApp& app)
 {
-    for (auto btn = _btns.begin(); btn != _btns.end();)
+    for (auto btn : _btns)
     {
-        app.GetWindow()->UnregisterDrawable(*btn);
-        RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
-        btn = _btns.erase(btn);  // erase() returns the next valid iterator
+        app.GetWindow()->UnregisterDrawable(btn);
     }
     app.GetWindow()->UnregisterDrawable(_slider);
     app.GetWindow()->UnregisterDrawable(_sliderText);
+
+    _btns.clear();
 }
 
 #pragma endregion
@@ -119,7 +124,7 @@ void MenuState::ShowPlayButton(const sf::Vector2f& pos)
     std::string btnText = "Play";
     std::function<void()> function = [this]()
         {
-            //ChangedState<LobbyState>("LobbyState");
+            _currentFunction = ButtonFunction::Play;
         };
 
     AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function);
@@ -132,7 +137,7 @@ void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
     std::string btnText = "Connection";
     std::function<void()> function = [this]()
         {
-            //ChangeState<ConnectionState>();
+            _currentFunction = ButtonFunction::ConnectionScreen;
         };
 
     AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function, size);
@@ -143,14 +148,7 @@ void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
     std::string btnText = "Disconnect";
     std::function<void()> function = [this, pos]()
         {
-            //ClientConnectionHandler::GetInstance().Disconnect();
-            ButtonComponent* btnConnect = FindButtonByText("Connection");
-            m_clientApp->GetWindow()->UnregisterDrawable(btnConnect);
-            RELEASE(btnConnect);
-
-            ShowConnectionButton(pos);
-            ButtonComponent* btnDisconnect = FindButtonByText("Disconnect");
-            m_clientApp->GetWindow()->UnregisterDrawable(btnDisconnect);
+            _currentFunction = ButtonFunction::Disconnect;
         };
 
     AddButton(pos, sf::Color::Red, btnText, FontRegistry::GetFont(), function);
@@ -162,10 +160,49 @@ void MenuState::ShowQuitButton(const sf::Vector2f& pos)
     std::string btnText = "Quit";
     std::function<void()> function = [this]()
         {
-            /* ClientApp::GetInstance().Shutdown();*/
+            _currentFunction = ButtonFunction::Quit;
         };
 
     AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);
+}
+
+void MenuState::ActiveButtonFunction()
+{
+    switch (_currentFunction)
+    {
+        case ButtonFunction::Play: 
+        {
+            //ChangedState<LobbyState>("LobbyState");
+            break;
+        }
+        case ButtonFunction::ConnectionScreen: 
+        {
+            m_clientApp->ChangeState<ConnectionState>();
+            break;
+        }
+        case ButtonFunction::Disconnect: 
+        {
+            //ClientConnectionHandler::GetInstance().Disconnect();
+            ButtonComponent* btnConnect = FindButtonByText("Connection");
+            m_clientApp->GetWindow()->UnregisterDrawable(btnConnect);
+            sf::Vector2f pos = btnConnect->GetPosition();
+            RELEASE(btnConnect);
+
+            ShowConnectionButton(pos);
+            ButtonComponent* btnDisconnect = FindButtonByText("Disconnect");
+            m_clientApp->GetWindow()->UnregisterDrawable(btnDisconnect);
+            break;
+        }
+        case ButtonFunction::Quit: 
+        {
+            /* ClientApp::GetInstance().Shutdown();*/
+            break;
+        }     
+        default: 
+        {
+            break;
+        }   
+    }
 }
 
 #pragma endregion

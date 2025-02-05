@@ -14,6 +14,7 @@ ConnectionState::ConnectionState()
     m_font = FontRegistry::GetFont();
     _btns = std::vector<ButtonComponent*>();
     _fields = std::vector<InsertFieldComponent*>();
+    _currentFunction = ButtonFunction::None;
 }
 
 ConnectionState::~ConnectionState()
@@ -65,6 +66,8 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
     {
         btn->Update(dt);
     }
+
+    ActiveButtonFunction();
 
     if (m_IsTryingToConnect)
     {
@@ -195,7 +198,7 @@ void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
 
     std::function<void()> function = [this]()
         {
-            m_clientApp->ChangeState<MenuState>();
+            _currentFunction = ButtonFunction::MenuScreen;
         };
 
     AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function, size);
@@ -208,6 +211,23 @@ void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
     sf::Vector2f size = BUTTON_SIZE_EXTENDED;
 
     std::function<void()> function = [this]()
+        {
+            _currentFunction = ButtonFunction::Connect;            
+        };
+
+    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function, size);
+}
+
+void ConnectionState::ActiveButtonFunction()
+{
+    switch (_currentFunction)
+    {
+        case ButtonFunction::MenuScreen:
+        {
+            m_clientApp->ChangeState<MenuState>();
+            break;
+        }
+        case ButtonFunction::Connect:
         {
             if (m_IsTryingToConnect) return;
 
@@ -229,7 +249,7 @@ void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
                 //DebugLog("Username should be more than 2 characters!\n");
                 nameField->ShowErrorMessage("Username should be more than 2 characters!");
             }
-            else 
+            else
             {
                 isNameValid = true;
             }
@@ -250,9 +270,13 @@ void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
                 //DebugLog("Invalid phrase!\n");
                 ipField->ShowErrorMessage("Invalid phrase!");
             }
-        };
-
-    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function, size);
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 }
 
 bool ConnectionState::IsValidIpAddress(const char* ip)

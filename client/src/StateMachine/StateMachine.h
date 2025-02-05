@@ -4,6 +4,17 @@
 #include <memory>
 #include <utility>
 
+enum class ButtonFunction 
+{
+    None,
+    Play,
+    Connect,
+    Disconnect,
+    Quit,
+    MenuScreen,
+    ConnectionScreen,
+};
+
 template <typename Derived>
 class State
 {

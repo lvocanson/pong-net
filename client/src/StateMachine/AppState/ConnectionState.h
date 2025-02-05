@@ -37,6 +37,8 @@ public:
     void ShowBackButton(const sf::Vector2f& pos);
     void ShowConnectButton(const sf::Vector2f& pos);
 
+    void ActiveButtonFunction();
+
     bool IsValidIpAddress(const char* ip);
 
 #pragma endregion
@@ -54,6 +56,8 @@ private:
 
     std::vector< ButtonComponent*> _btns;
     std::vector< InsertFieldComponent*> _fields;
+
+    ButtonFunction _currentFunction;
 
 #pragma endregion
 };

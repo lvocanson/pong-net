@@ -15,11 +15,8 @@ ButtonComponent::ButtonComponent(const sf::Vector2f pos, const sf::Color& idleCo
 
 ButtonComponent::~ButtonComponent()
 {
-    if (m_Text)
-    { 
-        delete m_Text;
-        m_Text = nullptr;
-    }
+    delete m_Text;
+    m_Text = nullptr;
 }
 
 void ButtonComponent::Update(float dt)

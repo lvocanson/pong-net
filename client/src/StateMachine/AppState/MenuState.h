@@ -6,6 +6,7 @@
 #include "../../Components/SliderComponent.h"
 #include "../../Window/Window.h"
 
+
 class MenuState : public State<ClientApp>
 {
 public:
@@ -37,6 +38,8 @@ public:
     void ShowDisconnectButton(const sf::Vector2f& pos);
     void ShowQuitButton(const sf::Vector2f& pos);
 
+    void ActiveButtonFunction();
+
 #pragma endregion
 
 private:
@@ -44,8 +47,12 @@ private:
 
     ClientApp* m_clientApp;
     std::vector<ButtonComponent*> _btns;
+
     SliderComponent* _slider = nullptr;
     TextComponent* _sliderText = nullptr;
+
+    ButtonFunction _currentFunction;
+    
 #pragma endregion
 
 };
