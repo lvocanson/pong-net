@@ -3,6 +3,7 @@
 #include "ClientApp.h"
 #include "../StateMachine.h"
 #include "../../Components/ButtonComponent.h"
+#include "../../Components/SliderComponent.h"
 #include "../../Window/Window.h"
 
 class MenuState : public State<ClientApp>
@@ -27,9 +28,10 @@ public:
 
 #pragma region  Class Methods
 
-    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function);
+    void AddText(float x, float y, std::string);
+    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size = BUTTON_SIZE_STANDARD);
+    void AddSlider(float x, float y, float width, float minValue, float maxValue);
     ButtonComponent* FindButtonByText(const std::string& text);
-
     void ShowPlayButton(const sf::Vector2f& pos);
     void ShowConnectionButton(const sf::Vector2f& pos);
     void ShowDisconnectButton(const sf::Vector2f& pos);
@@ -40,9 +42,10 @@ public:
 private:
 #pragma region  Variables
 
-    std::vector< ButtonComponent*> _btns;
     ClientApp* m_clientApp;
-
+    std::vector<ButtonComponent*> _btns;
+    SliderComponent* _slider = nullptr;
+    TextComponent* _sliderText = nullptr;
 #pragma endregion
 
 };

@@ -18,6 +18,7 @@ public:
 	int Run();
 
 	Window* GetWindow();
+	sf::Music* GetMusic();
 	InputHandler* GetInputHandler();
 
 private:
@@ -32,7 +33,7 @@ private:
 private:
 
 	Window* m_Window = nullptr;
-	sf::Music m_Music;
+	sf::Music* m_Music;
 	InputHandler* m_inputHandler;
 	Pong m_PongGame;
 	PongDisplay* m_PongDisplay;

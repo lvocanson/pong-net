@@ -3,14 +3,16 @@
 #include "TextComponent.h"
 #include <functional>
 
-#define BUTTON_SIZE sf::Vector2f(200, 100)
+#define BUTTON_SIZE_STANDARD sf::Vector2f(200, 100)
+#define BUTTON_SIZE_EXTENDED sf::Vector2f(300, 100)
+#define BUTTON_SIZE_EXTRA_EXTENDED sf::Vector2f(500, 100)
 
 class InputHandler;
 
 class ButtonComponent : public BaseComponent
 {
 public:
-    ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size = BUTTON_SIZE);
+    ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size = BUTTON_SIZE_STANDARD);
     ~ButtonComponent() override;
 
     void Update(float dt) override;

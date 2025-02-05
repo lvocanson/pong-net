@@ -28,28 +28,30 @@ ConnectionState::~ConnectionState()
 void ConnectionState::OnEnter(ClientApp& app)
 {
     m_clientApp = &app;
+    Window *m_window = m_clientApp->GetWindow();
 
-    sf::Vector2f sizeBtn = BUTTON_SIZE;
     sf::Vector2f sizeField = FIELD_SIZE;
 
-    float xBtn = app.GetWindow()->GetWidth() * 0.5f - (sizeBtn.x * 0.5f);
-    float xField = app.GetWindow()->GetWidth() * 0.5f - (sizeField.x * 0.5f);
+    float xBtnExtended = m_window->GetWidth() * 0.5f - (BUTTON_SIZE_EXTENDED.x * 0.5f);
+    float xBtnExtraExtended = m_window->GetWidth() * 0.5f - (BUTTON_SIZE_EXTRA_EXTENDED.x * 0.5f);
+
+    float xField = m_window->GetWidth() * 0.5f - (sizeField.x * 0.5f);
     float yOffset = 100.f;
 
+    sf::Vector2f fieldPos = sf::Vector2f(xField, 2.f * yOffset);
+
     // Init all graphics element
-    sf::Vector2f pos = sf::Vector2f(xField, 2.f * yOffset);
+    sf::Vector2f backButtonPos = sf::Vector2f(xBtnExtraExtended, 4.f * yOffset);
+    sf::Vector2f connectButtonPos = sf::Vector2f(xBtnExtended, 6.f * yOffset);
 
-    ShowIpField(pos);
-    pos.y += yOffset;
+    ShowIpField(fieldPos);
+    fieldPos.y += yOffset;
 
-    ShowNameField(pos);
-    pos.y += 2.f * yOffset;
-    pos.x = xBtn;
+    ShowNameField(fieldPos);
 
-    ShowConnectButton(pos);
-    pos.y += 2.f * yOffset;
+    ShowBackButton(backButtonPos);
 
-    ShowBackButton(pos);
+    ShowConnectButton(connectButtonPos);
 }
 
 void ConnectionState::OnUpdate(ClientApp& app, float dt)
@@ -136,9 +138,9 @@ void ConnectionState::OnExit(ClientApp& app)
 
 #pragma region  Class Methods
 
-void ConnectionState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function)
+void ConnectionState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size)
 {
-    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler());
+    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler(),size);
     btn->SetButtonText(text, *font);
     btn->SetOnClickCallback(function);
 
@@ -189,19 +191,21 @@ void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
 {
     sf::Color OrangeRed(231, 62, 1);
     std::string btnText = "Return to menu";
+    sf::Vector2f size = BUTTON_SIZE_EXTRA_EXTENDED;
 
     std::function<void()> function = [this]()
         {
             m_clientApp->ChangeState<MenuState>();
         };
 
-    AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function, size);
 }
 
 void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
 {
     sf::Color Emerald(1, 215, 88);
     std::string btnText = "Connect";
+    sf::Vector2f size = BUTTON_SIZE_EXTENDED;
 
     std::function<void()> function = [this]()
         {
@@ -248,7 +252,7 @@ void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
             }
         };
 
-    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, Emerald, btnText, FontRegistry::GetFont(), function, size);
 }
 
 bool ConnectionState::IsValidIpAddress(const char* ip)

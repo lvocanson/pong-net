@@ -28,7 +28,7 @@ public:
 
 #pragma region  Class Methods
 
-    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function);
+    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size = BUTTON_SIZE_STANDARD);
     void AddField(const sf::Vector2f& pos, const std::string& label, sf::Font* font);
     InsertFieldComponent* FindFieldByText(const std::string& text);
 

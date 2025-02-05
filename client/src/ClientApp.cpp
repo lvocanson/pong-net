@@ -11,8 +11,7 @@
 #include <Window/InputHandler.h>
 
 ClientApp::ClientApp()
-	: m_Music("res/Su Turno.ogg")
-	, m_PongGame()
+	: m_PongGame()
 	, m_PongDisplay(nullptr)
 	, m_LeftScore(0)
 	, m_RightScore(0)
@@ -23,6 +22,8 @@ ClientApp::ClientApp()
 {
 	m_Window = new Window();
 	m_Window->Create("Pong", GameSizeX, GameSizeY);
+
+	m_Music = new sf::Music("res/Su Turno.ogg");
 
 	FontRegistry::LoadFont("JuliaMono-Regular.ttf");
 	m_PongDisplay = new PongDisplay(*FontRegistry::GetFont("JuliaMono-Regular.ttf"));	
@@ -45,8 +46,8 @@ ClientApp::ClientApp()
 		return;
 	}
 
-	m_Music.play();
-	m_Music.setLooping(true);
+	m_Music->play();
+	m_Music->setLooping(true);
 }
 
 int ClientApp::Run()
@@ -78,6 +79,11 @@ int ClientApp::Run()
 Window* ClientApp::GetWindow()
 {
 	return m_Window;
+}
+
+sf::Music* ClientApp::GetMusic()
+{
+	return m_Music;
 }
 
 InputHandler* ClientApp::GetInputHandler()

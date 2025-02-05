@@ -26,21 +26,26 @@ void MenuState::OnEnter(ClientApp& app)
     m_clientApp = &app;
 
     float yOffset = 100.f;
-    sf::Vector2f size = BUTTON_SIZE;
-    sf::Vector2f pos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.5f - (size.x * 0.5f), 2.f * yOffset);
+    sf::Vector2f standarSize = BUTTON_SIZE_STANDARD;
+    sf::Vector2f ExtendedSize = BUTTON_SIZE_EXTENDED;
+
+    sf::Vector2f midleScreenPos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.5f - (standarSize.x * 0.5f), 2.f * yOffset);
+    sf::Vector2f connectionButtonPos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.5f - (ExtendedSize.x * 0.5f), 2.f * yOffset);
+    sf::Vector2f sliderpos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.9f - (standarSize.x * 0.5f), yOffset);
 
     if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
     {
-        ShowPlayButton(pos);
-        pos.y += yOffset;
-        ShowDisconnectButton(pos);
+        ShowPlayButton(midleScreenPos);
+        midleScreenPos.y += yOffset;
+        ShowDisconnectButton(midleScreenPos);
     }
     else
     {
-        ShowConnectionButton(pos);
+        AddSlider(sliderpos.x, sliderpos.y, standarSize.x, 0, 100);
+        ShowConnectionButton(connectionButtonPos);
     }
-    pos.y += 2.f * yOffset;
-    ShowQuitButton(pos);
+    midleScreenPos.y += 2.f * yOffset;
+    ShowQuitButton(midleScreenPos);
 }
 
 void MenuState::OnUpdate(ClientApp& app, float dt)
@@ -49,6 +54,8 @@ void MenuState::OnUpdate(ClientApp& app, float dt)
     {
         btn->Update(dt);
     }
+    if(_slider)
+        _slider->Update(dt);
 }
 
 void MenuState::OnExit(ClientApp& app)
@@ -59,19 +66,38 @@ void MenuState::OnExit(ClientApp& app)
         RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
         btn = _btns.erase(btn);  // erase() returns the next valid iterator
     }
+    app.GetWindow()->UnregisterDrawable(_slider);
+    app.GetWindow()->UnregisterDrawable(_sliderText);
 }
 
 #pragma endregion
 
 #pragma region  Class Methods
 
-void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function)
+void MenuState::AddText(float x, float y, std::string message )
 {
-    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler());
+    TextComponent* text = new TextComponent(*FontRegistry::GetFont());
+    text->SetPosition(sf::Vector2f(x, y));
+    text->SetText(message);
+    m_clientApp->GetWindow()->RegisterDrawable(text);
+    _sliderText = text;
+}
+
+void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size)
+{
+    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler(),size);
     btn->SetButtonText(text, *FontRegistry::GetFont());
     btn->SetOnClickCallback(function);
     m_clientApp->GetWindow()->RegisterDrawable(btn);
     _btns.push_back(btn);
+}
+
+void MenuState::AddSlider(float x, float y, float width, float minValue, float maxValue)
+{
+    SliderComponent* slider = new SliderComponent(x, y, width, minValue, maxValue, m_clientApp->GetInputHandler(), m_clientApp->GetMusic());
+    m_clientApp->GetWindow()->RegisterDrawable(slider);
+    _slider = slider;
+    AddText(x + 40, y - 40, "Music Volume");
 }
 
 ButtonComponent* MenuState::FindButtonByText(const std::string& text)
@@ -102,13 +128,14 @@ void MenuState::ShowPlayButton(const sf::Vector2f& pos)
 void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
 {
     sf::Color Lime(24, 165, 88);
+    sf::Vector2f size(300,100);
     std::string btnText = "Connection";
     std::function<void()> function = [this]()
         {
-            ChangeState<ConnectionState>();
+            //ChangeState<ConnectionState>();
         };
 
-    AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function);
+    AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function, size);
 }
 
 void MenuState::ShowDisconnectButton(const sf::Vector2f& pos)
