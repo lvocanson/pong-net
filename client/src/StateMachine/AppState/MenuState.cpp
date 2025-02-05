@@ -105,7 +105,7 @@ void MenuState::ShowConnectionButton(const sf::Vector2f& pos)
     std::string btnText = "Connection";
     std::function<void()> function = [this]()
         {
-            //ChangeState<ConnectionState>();
+            ChangeState<ConnectionState>();
         };
 
     AddButton(pos, Lime, btnText, FontRegistry::GetFont(), function);

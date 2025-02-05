@@ -192,7 +192,7 @@ void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
 
     std::function<void()> function = [this]()
         {
-            //ChangeState<MenuState>("MenuState");
+            m_clientApp->ChangeState<MenuState>();
         };
 
     AddButton(pos, OrangeRed, btnText, FontRegistry::GetFont(), function);
