@@ -29,9 +29,9 @@ public:
 
 #pragma region  Class Methods
 
-    void AddText(float x, float y, std::string);
+    void AddText(sf::Vector2f& pos, std::string msg);
     void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size = BUTTON_SIZE_STANDARD);
-    void AddSlider(float x, float y, float width, float minValue, float maxValue);
+    void AddSlider(sf::Vector2f& pos, float width, float minValue, float maxValue);
     ButtonComponent* FindButtonByText(const std::string& text);
     void ShowPlayButton(const sf::Vector2f& pos);
     void ShowConnectionButton(const sf::Vector2f& pos);

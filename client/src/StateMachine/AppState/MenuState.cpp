@@ -42,7 +42,7 @@ void MenuState::OnEnter(ClientApp& app)
     }
     else
     {
-        AddSlider(sliderpos.x, sliderpos.y, standarSize.x, 0, 100);
+        AddSlider(sliderpos, standarSize.x, 0, 100);
         ShowConnectionButton(connectionButtonPos);
     }
     midleScreenPos.y += 2.f * yOffset;
@@ -72,16 +72,18 @@ void MenuState::OnExit(ClientApp& app)
     app.GetWindow()->UnregisterDrawable(_sliderText);
 
     _btns.clear();
+
+    _slider->SaveVolumeValue();
 }
 
 #pragma endregion
 
 #pragma region  Class Methods
 
-void MenuState::AddText(float x, float y, std::string message )
+void MenuState::AddText(sf::Vector2f& pos, std::string message )
 {
     TextComponent* text = new TextComponent(*m_clientApp->GetFontByName(FONT_DEFAULT));
-    text->SetPosition(sf::Vector2f(x, y));
+    text->SetPosition(pos);
     text->SetText(message);
     m_clientApp->GetWindow()->RegisterDrawable(text);
     _sliderText = text;
@@ -96,12 +98,13 @@ void MenuState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const
     _btns.push_back(btn);
 }
 
-void MenuState::AddSlider(float x, float y, float width, float minValue, float maxValue)
+void MenuState::AddSlider(sf::Vector2f& pos, float width, float minValue, float maxValue)
 {
-    SliderComponent* slider = new SliderComponent(x, y, width, minValue, maxValue, m_clientApp->GetInputHandler(), m_clientApp->GetMusic());
+    SliderComponent* slider = new SliderComponent(pos, width, minValue, maxValue, m_clientApp->GetInputHandler(), m_clientApp->GetMusic());
     m_clientApp->GetWindow()->RegisterDrawable(slider);
     _slider = slider;
-    AddText(x + 40, y - 40, "Music Volume");
+    sf::Vector2f newPos = sf::Vector2f(pos.x + 30, pos.y - 40);
+    AddText(newPos, "Music Volume");
 }
 
 ButtonComponent* MenuState::FindButtonByText(const std::string& text)
@@ -194,6 +197,7 @@ void MenuState::ActiveButtonFunction()
         }
         case ButtonFunction::Quit: 
         {
+            _slider->SaveVolumeValue();
             m_clientApp->Shutdown();
             break;
         }     
