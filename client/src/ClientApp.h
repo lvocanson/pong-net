@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Pong.h"
+//#include "Game/Pong.h"
 #include "Network/WsaData.h"
 #include "Network/UdpSocket.h"
 #include "Network/IpAddress.h"
@@ -45,9 +45,6 @@ private: // variables
 	sf::Music* m_Music;
 	InputHandler* m_inputHandler;
 	FontRegistry* m_font;
-	Pong m_PongGame;
-	PongDisplay* m_PongDisplay;
-	unsigned m_LeftScore, m_RightScore;
 
 	Timer m_Timer;
 

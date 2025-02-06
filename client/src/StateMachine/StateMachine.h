@@ -13,6 +13,7 @@ enum class ButtonFunction
     Quit,
     MenuScreen,
     ConnectionScreen,
+    GameScreen,
 };
 
 template <typename Derived>

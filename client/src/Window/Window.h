@@ -18,7 +18,7 @@ public:
     /// <summary>
     /// Polls events and calls callbacks.
     /// </summary>
-    void PollEvents(std::function<void(sf::Keyboard::Key)> onKeyPressed, std::function<void(sf::Keyboard::Key)> onKeyReleased);
+    void PollEvents();
     /// <summary>
     /// Returns whether the window is open.
     /// </summary>

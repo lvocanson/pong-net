@@ -19,24 +19,13 @@ Window::~Window()
 
 void Window::Create(const char* title, sf::Vector2u size)
 {
-    //sf::ContextSettings settings;
-    //settings.antialiasingLevel = 4;
-
     m_Window->create(sf::VideoMode(size), title);
-
-    //auto image = sf::Image{};
-    //if (!image.loadFromFile("res/icon.png"))
-    //{
-    //    throw std::runtime_error("Failed to load icon");
-    //}
-    //m_Window->setIcon(image);
-
     m_Window->setVerticalSyncEnabled(true);
     m_Window->setFramerateLimit(60);
     m_Window->setMouseCursorVisible(true);
 }
 
-void Window::PollEvents(std::function<void(sf::Keyboard::Key)> onKeyPressed, std::function<void(sf::Keyboard::Key)> onKeyReleased)
+void Window::PollEvents()
 {
     while (const std::optional event = m_Window->pollEvent())
     {
@@ -45,12 +34,12 @@ void Window::PollEvents(std::function<void(sf::Keyboard::Key)> onKeyPressed, std
 
 		if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>())
 		{
-			onKeyPressed(keyEvent->code);
+			//onKeyPressed(keyEvent->code);
 		}
 
 		if (auto* keyEvent = event->getIf<sf::Event::KeyReleased>())
 		{
-            onKeyReleased(keyEvent->code);
+            //onKeyReleased(keyEvent->code);
 		}
     }
 }
