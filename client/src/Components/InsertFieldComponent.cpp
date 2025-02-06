@@ -212,7 +212,13 @@ void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
 	ReplaceCursor();
 }
 
+void InsertFieldComponent::SetSize(const sf::Vector2f& size)
+{
+	m_Rectangle.setSize(size);
+}
+
 void InsertFieldComponent::ReplaceCursor()
 {
-	m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetSize().x + 3, m_Text.GetSize().y * 0.3f));
+	
+	m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetBounds().x *0.5f , 0.f));
 }

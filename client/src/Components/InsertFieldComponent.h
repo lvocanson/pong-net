@@ -6,8 +6,7 @@
 
 constexpr unsigned int DEFAULT_CHARACTER_LIMIT = 20;
 constexpr float CURSOR_BLINK_TIME = 0.5f;
-
-#define FIELD_SIZE sf::Vector2f(300, 30)
+inline constexpr auto FIELD_SIZE = sf::Vector2f(500, 30);
 
 class InputHandler;
 
@@ -26,7 +25,7 @@ public:
 	void SetText(const std::string& text);
 	void SetLabel(const std::string& label);
 	void SetPosition(const sf::Vector2f& position) override;
-	void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
+	void SetSize(const sf::Vector2f& size = FIELD_SIZE);
 	void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }
 	void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); }
 	void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); }

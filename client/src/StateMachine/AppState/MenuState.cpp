@@ -104,7 +104,7 @@ void MenuState::InitConnectionButton(const sf::Vector2f& pos, const sf::Font& fo
 		m_CurrentFunction = ButtonFunction::ConnectionScreen;
 	};
 
-	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
+	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_ConnectBtn.SetPosition(pos);
 	m_ConnectBtn.SetColor(Lime);
 	m_ConnectBtn.SetButtonText(btnText, font);
@@ -119,7 +119,7 @@ void MenuState::InitDisconnectButton(const sf::Vector2f& pos, const sf::Font& fo
 		m_CurrentFunction = ButtonFunction::Disconnect;
 	};
 
-	m_DisconnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
+	m_DisconnectBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_DisconnectBtn.SetPosition(pos);
 	m_DisconnectBtn.SetColor(sf::Color::Red);
 	m_DisconnectBtn.SetButtonText(btnText, font);

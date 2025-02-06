@@ -85,6 +85,7 @@ void ConnectionState::OnExit(ClientApp& app)
 void ConnectionState::InitIpField(const sf::Vector2f& pos)
 {
 	std::string ipLabel = "Server Phrase";
+	m_IpField.SetSize(FIELD_SIZE);
 	m_IpField.SetLabel(ipLabel);
 	m_IpField.SetPosition(pos);
 }
@@ -92,6 +93,7 @@ void ConnectionState::InitIpField(const sf::Vector2f& pos)
 void ConnectionState::InitUsernameField(const sf::Vector2f& pos)
 {
 	std::string nameLabel = "Username";
+	m_IpField.SetSize(FIELD_SIZE);
 	m_UsernameField.SetLabel(nameLabel);
 	m_UsernameField.SetPosition(pos);
 }
@@ -105,7 +107,7 @@ void ConnectionState::InitBackButton(const sf::Vector2f& pos)
 		m_CurrentFunction = ButtonFunction::MenuScreen;
 	};
 
-	m_BackBtn.SetSize(BUTTON_SIZE_EXTENDED);
+	m_BackBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_BackBtn.SetPosition(pos);
 	m_BackBtn.SetColor(OrangeRed);
 	m_BackBtn.SetButtonText(btnText, m_ClientApp.GetFont());
