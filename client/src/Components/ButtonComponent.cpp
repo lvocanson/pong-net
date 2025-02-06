@@ -9,9 +9,9 @@ ButtonComponent::ButtonComponent(const sf::Font& font, const InputHandler& input
 {
 }
 
-void ButtonComponent::Update(float dt)
+void ButtonComponent::Update(float dt, Window& window)
 {
-	if (IsMouseOver())
+	if (IsMouseOver(window))
 	{
 		m_Shape.setFillColor(m_IdleColor - sf::Color{50, 50, 50, 0});
 
@@ -26,7 +26,7 @@ void ButtonComponent::Update(float dt)
 		m_Shape.setFillColor(m_IdleColor);
 	}
 
-	m_Text.Update(dt);
+	m_Text.Update(dt, window);
 }
 
 void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -35,9 +35,9 @@ void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
 	target.draw(m_Text, states);
 }
 
-bool ButtonComponent::IsMouseOver()
+bool ButtonComponent::IsMouseOver(Window& window)
 {
-	return m_Shape.getGlobalBounds().contains(sf::Vector2f(m_Input.GetMousePosition()));
+	return m_Shape.getGlobalBounds().contains(sf::Vector2f(m_Input.GetMousePosition(window)));
 }
 
 void ButtonComponent::SetPosition(const sf::Vector2f& position)

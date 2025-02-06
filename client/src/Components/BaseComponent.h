@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class Window;
+
 class BaseComponent : public sf::Drawable
 {
 public:
@@ -11,7 +13,7 @@ public:
 	void SetVisible(bool visible) { m_IsVisible = visible; }
 	bool IsVisible() const { return m_IsVisible; }
 
-	virtual void Update(float) = 0;
+	virtual void Update(float dt, Window& window) = 0;
 
 protected:
 

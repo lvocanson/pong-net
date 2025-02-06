@@ -9,6 +9,7 @@ constexpr float CURSOR_BLINK_TIME = 0.5f;
 inline constexpr auto FIELD_SIZE = sf::Vector2f(500, 30);
 
 class InputHandler;
+class Window;
 
 class InsertFieldComponent : public BaseComponent
 {
@@ -19,7 +20,7 @@ public:
 		const sf::Color& idleColor, const sf::Color& hoverColor,
 		float outlineThickness, unsigned int characterLimit);
 
-	void Update(float dt) override;
+	void Update(float dt, Window& window) override;
 	void ClearErrorMessage() { m_ErrorText.SetText(""); }
 
 	void SetText(const std::string& text);
@@ -44,9 +45,9 @@ private:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	bool IsMouseOver();
+	bool IsMouseOver(Window& window);
 	void ReplaceCursor();
-	void AppendCharacter(const char& c);
+	void AppendCharacter(const sf::Event::TextEntered& text);
 	void BlinkCursor(float dt);
 
 private:

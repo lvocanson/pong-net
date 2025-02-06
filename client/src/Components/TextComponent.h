@@ -11,7 +11,7 @@ public:
 	TextComponent(const sf::Font& font);
 	TextComponent(const std::string& text, sf::Font& font, BaseComponent& parentComponent, const sf::Color& color, unsigned int size);
 
-	void Update(float dt) override;
+	void Update(float dt, Window& window) override;
 
 	void SetPosition(const sf::Vector2f& position) override;
 	void SetText(const std::string& text);

@@ -19,7 +19,7 @@ TextComponent::TextComponent(const std::string& text, sf::Font& font, BaseCompon
 	SetPosition(parentComponent.GetPosition());
 }
 
-void TextComponent::Update(float dt)
+void TextComponent::Update(float dt, Window& window)
 {
 
 }

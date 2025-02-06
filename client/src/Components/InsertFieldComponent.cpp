@@ -1,5 +1,6 @@
 #include "InsertFieldComponent.h"
 #include <Window/InputHandler.h>
+#include <Window/Window.h>
 #include <SFML/Window/Keyboard.hpp>
 
 InsertFieldComponent::InsertFieldComponent(const sf::Font& font, const InputHandler& inputHandler)
@@ -71,9 +72,9 @@ void InsertFieldComponent::BlinkCursor(float dt)
 	}
 }
 
-void InsertFieldComponent::Update(float dt)
+void InsertFieldComponent::Update(float dt, Window& window)
 {
-	if (IsMouseOver())
+	if (IsMouseOver(window))
 	{
 		m_Rectangle.setOutlineThickness(2.0f);
 
@@ -96,55 +97,9 @@ void InsertFieldComponent::Update(float dt)
 
 	BlinkCursor(dt);
 
-	if (Window::IsFocused())
+	if (window.IsFocused())
 	{
-		if (GetTextSize() > 0 && m_Input.IsKeyPressed(sf::Keyboard::Key::Backspace))
-		{
-			m_TextContent.pop_back();
-			m_Text.SetText(m_TextContent);
-			ReplaceCursor();
-		}
-
-		if (GetTextSize() < m_CharacterLimit)
-		{
-			// Handle all the letters of the alphabet
-			for (sf::Keyboard::Key key = sf::Keyboard::Key::A; key <= sf::Keyboard::Key::Z; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-			{
-				if (m_Input.IsKeyPressed(key))
-				{
-					const char baseChar = m_Input.IsKeyHeld(sf::Keyboard::Key::LShift) || m_Input.IsKeyHeld(sf::Keyboard::Key::RShift) ? 'A' : 'a';
-					AppendCharacter(static_cast<const char>(baseChar + ((int)key - (int)sf::Keyboard::Key::A)));
-				}
-			}
-
-			// Handle all the numbers
-			for (sf::Keyboard::Key key = sf::Keyboard::Key::Num0; key <= sf::Keyboard::Key::Num9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-			{
-				if (m_Input.IsKeyPressed(key))
-				{
-					AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Num0)));
-				}
-			}
-
-			// Handle all the numpad numbers
-			for (sf::Keyboard::Key key = sf::Keyboard::Key::Numpad0; key <= sf::Keyboard::Key::Numpad9; key = static_cast<sf::Keyboard::Key>(static_cast<int>(key) + 1))
-			{
-				if (m_Input.IsKeyPressed(key))
-				{
-					AppendCharacter(static_cast<const char>('0' + ((int)key - (int)sf::Keyboard::Key::Numpad0)));
-				}
-			}
-
-			// Handle the dot
-			if (m_Input.IsKeyPressed(sf::Keyboard::Key::Period))
-			{
-				AppendCharacter('.');
-			}
-			else if (m_Input.IsKeyPressed(sf::Keyboard::Key::Delete))
-			{
-				SetText("");
-			}
-		}
+		AppendCharacter(window.GetMessageEntered());
 	}
 }
 
@@ -180,9 +135,9 @@ void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates state
 		target.draw(m_Cursor, states);
 }
 
-bool InsertFieldComponent::IsMouseOver()
+bool InsertFieldComponent::IsMouseOver(Window& window)
 {
-	const sf::Vector2f mousePos = sf::Vector2f(m_Input.GetMousePosition());
+	const sf::Vector2f mousePos = sf::Vector2f(m_Input.GetMousePosition(window));
 	const sf::Vector2f buttonPos = m_Rectangle.getPosition();
 	const sf::Vector2f buttonSize = m_Rectangle.getSize();
 
@@ -190,9 +145,18 @@ bool InsertFieldComponent::IsMouseOver()
 		mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
 }
 
-void InsertFieldComponent::AppendCharacter(const char& c)
+void InsertFieldComponent::AppendCharacter(const sf::Event::TextEntered& text)
 {
-	m_TextContent.push_back(c);
+	m_TextContent = m_Text.GetText().getString();
+
+	if (text.unicode == U'\b' && m_TextContent.length() > 0) 
+	{
+		m_TextContent = m_TextContent.substr(0, m_TextContent.length() - 1);
+	}
+	else if (text.unicode != U'\b') 
+	{
+		m_TextContent += text.unicode;
+	}
 	m_Text.SetText(m_TextContent);
 	ReplaceCursor();
 }

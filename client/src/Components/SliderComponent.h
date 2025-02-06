@@ -22,7 +22,7 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	void Update(float dt) override;
+	void Update(float dt, Window& window) override;
 
 	void SetPosition(const sf::Vector2f& position) override;
 	sf::Vector2f GetPosition() const override;
@@ -31,6 +31,6 @@ public:
 
 	void SaveVolumeValue() const;
 	float LoadVolumeValue() const;
-	bool IsMouseOver();
+	bool IsMouseOver(Window& window);
 	float getValue() const { return m_Value; }
 };

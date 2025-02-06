@@ -46,11 +46,11 @@ void MenuState::OnEnter(ClientApp& app)
 
 void MenuState::OnUpdate(ClientApp& app, float dt)
 {
-	m_PlayBtn.Update(dt);
-	m_ConnectBtn.Update(dt);
-	m_DisconnectBtn.Update(dt);
-	m_QuitBtn.Update(dt);
-	m_Slider.Update(dt);
+	m_PlayBtn.Update(dt, app.GetWindow());
+	m_ConnectBtn.Update(dt, app.GetWindow());
+	m_DisconnectBtn.Update(dt, app.GetWindow());
+	m_QuitBtn.Update(dt, app.GetWindow());
+	m_Slider.Update(dt, app.GetWindow());
 
 	ActiveButtonFunction(app);
 }

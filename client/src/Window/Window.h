@@ -22,15 +22,23 @@ public:
 	/// <summary>
 	/// Returns whether the window is open.
 	/// </summary>
-	bool IsOpen() const { return m_Window->isOpen(); }
+	bool IsOpen() const { return m_windowRenderer->isOpen(); }
 	/// <summary>
 	/// Close the window.
 	/// </summary>
-	void Close() const { return m_Window->close(); }
+	void Close() const { return m_windowRenderer->close(); }
 	/// <summary>
 	/// Returns if the window is focused.
 	/// </summary>
-	static bool const IsFocused() { return m_IsFocused; }
+	bool const IsFocused() const { return m_IsFocused; }
+	/// <summary>
+	/// Returns message in window
+	/// </summary>
+	const sf::Event::TextEntered& GetMessageEntered() const { return m_message; }
+	/// <summary>
+	/// Returns window renderer
+	/// </summary>
+	sf::RenderWindow& GetWindowRenderer() { return *m_windowRenderer; }
 
 #pragma endregion
 
@@ -63,9 +71,9 @@ public:
 
 #pragma region Other
 
-	sf::Vector2f GetCenter() const { return sf::Vector2f(m_Window->getSize().x * 0.5f, m_Window->getSize().y * 0.5f); }
-	float GetWidth() const { return static_cast<float>(m_Window->getSize().x); }
-	float GetHeight() const { return static_cast<float>(m_Window->getSize().y); }
+	sf::Vector2f GetCenter() const { return sf::Vector2f(m_windowRenderer->getSize().x * 0.5f, m_windowRenderer->getSize().y * 0.5f); }
+	float GetWidth() const { return m_windowRenderer->getSize().x; }
+	float GetHeight() const { return m_windowRenderer->getSize().y; }
 
 #pragma endregion
 
@@ -73,8 +81,9 @@ private:
 
 	friend class InputHandler;
 
-	static bool m_IsFocused;
-	static sf::RenderWindow* m_Window;
+	bool m_IsFocused;
+	sf::RenderWindow* m_windowRenderer;
+	sf::Event::TextEntered m_message;
 	sf::Color m_ClearColor;
 	std::vector<const sf::Drawable*> m_Drawables;
 

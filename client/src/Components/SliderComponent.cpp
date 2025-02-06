@@ -23,14 +23,14 @@ SliderComponent::SliderComponent(const InputHandler& inputHandler, sf::Music& mu
 	}
 }
 
-void SliderComponent::Update(float dt)
+void SliderComponent::Update(float dt, Window& window)
 {
-	sf::Vector2i mousePos = m_Input.GetMousePosition();
+	sf::Vector2i mousePos = m_Input.GetMousePosition(window);
 
 	float sliderLeft = m_Bar.getPosition().x;
 	float sliderRight = m_Bar.getPosition().x + m_Bar.getSize().x;
 
-	if (IsMouseOver())
+	if (IsMouseOver(window))
 	{
 		if (m_Input.IsMouseButtonPressed(sf::Mouse::Button::Left))
 		{
@@ -96,9 +96,9 @@ sf::Vector2f SliderComponent::GetSize() const
 	return m_Bar.getSize();
 }
 
-bool SliderComponent::IsMouseOver()
+bool SliderComponent::IsMouseOver(Window& window)
 {
-	sf::Vector2f mousePos = (sf::Vector2f)m_Input.GetMousePosition();
+	sf::Vector2f mousePos = (sf::Vector2f)m_Input.GetMousePosition(window);
 	sf::Vector2f knobPos = m_Knob.getPosition();
 	float knobSize = m_Knob.getRadius();
 

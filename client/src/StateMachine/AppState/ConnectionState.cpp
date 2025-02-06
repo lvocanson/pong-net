@@ -9,8 +9,8 @@ ConnectionState::ConnectionState(ClientApp& app)
 	, m_CurrentFunction(ButtonFunction::None)
 	, m_BackBtn(app.GetFont(), app.GetInputHandler())
 	, m_ConnectBtn(app.GetFont(), app.GetInputHandler())
-	, m_IpField(m_ClientApp.GetFont(), m_ClientApp.GetInputHandler())
-	, m_UsernameField(m_ClientApp.GetFont(), m_ClientApp.GetInputHandler())
+	, m_IpField(app.GetFont(), app.GetInputHandler())
+	, m_UsernameField(app.GetFont(), app.GetInputHandler())
 {
 	sf::Vector2f sizeField = FIELD_SIZE;
 	float yOffset = app.GetWindow().GetHeight() * 0.1f;
@@ -33,19 +33,19 @@ ConnectionState::ConnectionState(ClientApp& app)
 
 void ConnectionState::OnEnter(ClientApp& app)
 {
-	m_ClientApp.GetWindow().RegisterDrawable(m_IpField);
-	m_ClientApp.GetWindow().RegisterDrawable(m_UsernameField);
+	app.GetWindow().RegisterDrawable(m_IpField);
+	app.GetWindow().RegisterDrawable(m_UsernameField);
 
-	m_ClientApp.GetWindow().RegisterDrawable(m_BackBtn);
-	m_ClientApp.GetWindow().RegisterDrawable(m_ConnectBtn);
+	app.GetWindow().RegisterDrawable(m_BackBtn);
+	app.GetWindow().RegisterDrawable(m_ConnectBtn);
 }
 
 void ConnectionState::OnUpdate(ClientApp& app, float dt)
 {
-	m_IpField.Update(dt);
-	m_UsernameField.Update(dt);
-	m_BackBtn.Update(dt);
-	m_ConnectBtn.Update(dt);
+	m_IpField.Update(dt, app.GetWindow());
+	m_UsernameField.Update(dt, app.GetWindow());
+	m_BackBtn.Update(dt, app.GetWindow());
+	m_ConnectBtn.Update(dt, app.GetWindow());
 
 	if (m_IsTryingToConnect)
 	{

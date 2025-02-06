@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <bitset>
 
+class Window;
+
 class InputHandler
 {
 public:
@@ -24,7 +26,7 @@ public:
 	/// <summary>
 	/// Returns the mouse position relative to the window.
 	/// </summary>
-	sf::Vector2i GetMousePosition() const { return sf::Mouse::getPosition(*Window::m_Window); }
+	sf::Vector2i GetMousePosition(Window& window) const { return sf::Mouse::getPosition(window.GetWindowRenderer()); }
 
 private:
 

@@ -1,36 +1,33 @@
 #include "Window.h"
-#include <functional>
-
-sf::RenderWindow* Window::m_Window = nullptr;
-bool Window::m_IsFocused = true;
 
 Window::Window()
 	: m_ClearColor(sf::Color::Color(51, 56, 63)), m_Drawables()
 {
-	m_Window = new sf::RenderWindow();
+	m_windowRenderer = new sf::RenderWindow();
 }
 
 Window::~Window()
 {
-	if (m_Window->isOpen())
-		m_Window->close();
-	delete m_Window;
+	if (m_windowRenderer->isOpen())
+		m_windowRenderer->close();
+	delete m_windowRenderer;
 }
 
 void Window::Create(const char* title, sf::Vector2u size)
 {
-	m_Window->create(sf::VideoMode(size), title);
-	m_Window->setVerticalSyncEnabled(true);
-	m_Window->setFramerateLimit(60);
-	m_Window->setMouseCursorVisible(true);
+	m_windowRenderer->create(sf::VideoMode(size), title);
+	m_windowRenderer->setVerticalSyncEnabled(true);
+	m_windowRenderer->setFramerateLimit(60);
+	m_windowRenderer->setMouseCursorVisible(true);
 }
 
 void Window::PollEvents()
 {
-	while (const std::optional event = m_Window->pollEvent())
+	m_IsFocused = false;
+	while (const std::optional event = m_windowRenderer->pollEvent())
 	{
 		if (event->is<sf::Event::Closed>())
-			m_Window->close();
+			m_windowRenderer->close();
 
 		if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>())
 		{
@@ -41,21 +38,28 @@ void Window::PollEvents()
 		{
 			//onKeyReleased(keyEvent->code);
 		}
+
+		if (auto* message = event->getIf<sf::Event::TextEntered>())
+		{
+			//onKeyReleased(keyEvent->code);
+			m_message = *message;
+			m_IsFocused = true;
+		}
 	}
 }
 
 void Window::Render()
 {
-	m_Window->clear(m_ClearColor);
+	m_windowRenderer->clear(m_ClearColor);
 	for (int i = 0; i < m_Drawables.size(); i++)
 	{
 		// Render next frame
 		if (i > m_Drawables.size()) break;
 
-		m_Window->draw(*m_Drawables[i]);
+		m_windowRenderer->draw(*m_Drawables[i]);
 	}
 
-	m_Window->display();
+	m_windowRenderer->display();
 }
 
 void Window::ClearAllDrawables()

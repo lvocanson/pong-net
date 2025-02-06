@@ -8,13 +8,14 @@ inline constexpr auto BUTTON_SIZE_EXTENDED = sf::Vector2f(300, 100);
 inline constexpr auto BUTTON_SIZE_EXTRA_EXTENDED = sf::Vector2f(500, 100);
 
 class InputHandler;
+class Window;
 
 class ButtonComponent : public BaseComponent
 {
 public:
 	ButtonComponent(const sf::Font& font, const InputHandler& inputHandler);
 
-	void Update(float dt) override;
+	void Update(float dt, Window& window) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	void SetPosition(const sf::Vector2f& position) override;
@@ -36,5 +37,5 @@ private:
 	const InputHandler& m_Input;
 	TextComponent m_Text;
 
-	bool IsMouseOver();
+	bool IsMouseOver(Window& window);
 };
