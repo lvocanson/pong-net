@@ -1,5 +1,7 @@
 #include "PongDisplay.h"
+
 #include "game/Pong.h"
+#include <Window/Window.h>
 
 PongDisplay::PongDisplay(sf::Font& font)
 	: m_Ball(BallRadius)
@@ -25,10 +27,10 @@ void PongDisplay::Update(const Pong& pong)
 	m_RightPaddle.setPosition({GameSizeX - PaddleDistFromBorders, pong.RightPaddle});
 }
 
-void PongDisplay::Draw(sf::RenderTarget& target) const
+void PongDisplay::RegisterDrawables(Window* window)
 {
-	target.draw(m_ScoreText);
-	target.draw(m_Ball);
-	target.draw(m_LeftPaddle);
-	target.draw(m_RightPaddle);
+	window->RegisterDrawable(&m_ScoreText);
+	window->RegisterDrawable(&m_Ball);
+	window->RegisterDrawable(&m_LeftPaddle);
+	window->RegisterDrawable(&m_RightPaddle);
 }

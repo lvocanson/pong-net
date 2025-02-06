@@ -143,13 +143,13 @@ void Pong::Update(float dt)
 	}
 }
 
-GameState Pong::GetGameState() const
+GameStateInfo Pong::GameStateInfos() const
 {
 	if (BallRadius > BallX)
-		return GameState::RightWins;
+		return GameStateInfo::RightWins;
 
 	if (BallX + BallRadius > GameSizeX)
-		return GameState::LeftWins;
+		return GameStateInfo::LeftWins;
 
-	return GameState::Ongoing;
+	return GameStateInfo::Ongoing;
 }

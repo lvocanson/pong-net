@@ -3,6 +3,7 @@
 #include <regex>
 #include "../../FontRegistry.h"
 #include "MenuState.h"
+#include "GameState.h"
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
@@ -10,6 +11,7 @@ constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 ConnectionState::ConnectionState()
     : m_clientApp(nullptr)
+    , m_font(nullptr)
 {
     _btns = std::vector<ButtonComponent*>();
     _fields = std::vector<InsertFieldComponent*>();
@@ -67,56 +69,30 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
         btn->Update(dt);
     }
 
+    if (m_IsTryingToConnect)
+    {
+        ConnectionStateInfos connectionState = app.GetConnectionStateInfo();
+
+        switch (connectionState)
+        {
+            case ConnectionStateInfos::FailedConnection: 
+            {
+                m_IsTryingToConnect = false;
+                break;
+            }
+
+            case ConnectionStateInfos::IsConnected:
+            {
+                _currentFunction = ButtonFunction::GameScreen;
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
     ActiveButtonFunction();
-
-    //if (m_IsTryingToConnect)
-    //{
-    //    static float timeOutTimer;
-
-    //    Shared<ConnectionStateInfo>& connectionInfo = ClientConnectionHandler::GetInstance().GetConnectionInfo();
-
-    //     switch (connectionInfo.WaitGet().Get())
-    //     {
-    //     case Connecting:
-    //     {
-    //         if (timeOutTimer > CONNECTION_TIMEOUT_TIME)
-    //         {
-    //             m_IpField->ShowErrorMessage("Connection timed out!");
-    //             m_IsTryingToConnect = false;
-    //             timeOutTimer = 0.0f;
-    //         }
-    //         else
-    //         {
-    //             timeOutTimer += dt;
-    //         }
-    //         break;
-    //     }
-    //     case Failed:
-    //     {
-    //         m_IpField->ShowErrorMessage("Connection failed!");
-    //         m_IsTryingToConnect = false;
-    //         timeOutTimer = 0.0f;
-    //         break;
-    //     }
-    //     case Connected:
-    //     {
-    //         ClientApp::GetInstance().GetCurrentPlayer()->SetName(m_NameField->GetText());
-
-    //         m_StateMachine->SwitchState("LobbyState");
-    //         m_IpField->ClearErrorMessage();
-    //         m_IsTryingToConnect = false;
-
-    //         Message<MsgType::Login> message;
-    //         message.Username = m_Name;
-    //         ClientConnectionHandler::GetInstance().SendDataToServer(message);
-
-    //         timeOutTimer = 0.0f;
-    //         break;
-    //     }
-    //     default:
-    //         break;
-    //     }
-    //}
 }
 
 void ConnectionState::OnExit(ClientApp& app)
@@ -178,10 +154,6 @@ void ConnectionState::ShowIpField(const sf::Vector2f& pos)
 {
     std::string ipLabel = "Server Phrase";
     AddField(pos, ipLabel, m_font);
-
-    //#if defined(DEBUG) | defined(_DEBUG)
-    //_fields[_fields.size() - 1]->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
-    //#endif
 }
 
 void ConnectionState::ShowNameField(const sf::Vector2f& pos)
@@ -269,6 +241,11 @@ void ConnectionState::ActiveButtonFunction()
             {
                 ipField->ShowErrorMessage("Invalid phrase!");
             }
+            break;
+        }
+        case ButtonFunction::GameScreen:
+        {
+            m_clientApp->ChangeState<GameState>();
             break;
         }
         default:

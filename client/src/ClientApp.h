@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Pong.h"
+//#include "Game/Pong.h"
 #include "Network/WsaData.h"
 #include "Network/UdpSocket.h"
 #include "Network/IpAddress.h"
@@ -15,6 +15,14 @@ class Window;
 class InputHandler;
 class FontRegistry;
 
+enum class ConnectionStateInfos
+{
+	None = 0,
+	FailedConnection,
+	IsConnected,
+	IsDisconnected
+};
+
 class ClientApp : public StateMachine<ClientApp>
 {
 	using TimePoint = std::chrono::high_resolution_clock::time_point;
@@ -28,6 +36,7 @@ public:
 	sf::Music* GetMusic();
 	InputHandler* GetInputHandler();
 	sf::Font* GetFontByName(const std::string& fontName);
+	ConnectionStateInfos GetConnectionStateInfo() { return connectionStateInfo; };
 
 	void ConnectToServer(std::string_view address);
 
@@ -47,11 +56,9 @@ private: // variables
 	sf::Music* m_Music;
 	InputHandler* m_inputHandler;
 	FontRegistry* m_font;
-	Pong m_PongGame;
-	PongDisplay* m_PongDisplay;
-	unsigned m_LeftScore, m_RightScore;
 
 	Timer m_Timer;
+	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication
 

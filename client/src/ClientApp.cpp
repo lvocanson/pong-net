@@ -15,11 +15,7 @@ using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
 
 ClientApp::ClientApp()
-	: m_PongGame()
-	, m_PongDisplay(nullptr)
-	, m_LeftScore(0)
-	, m_RightScore(0)
-	, m_Timer()
+	: m_Timer()
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr()
@@ -35,8 +31,6 @@ ClientApp::ClientApp()
 	m_font = new FontRegistry();
 	m_font->LoadFont("JuliaMono-Regular.ttf");
 
-	m_PongDisplay = new PongDisplay(*GetFontByName("JuliaMono-Regular.ttf"));
-
 	SetFirstState<MenuState>();
 
 	if (m_WsaData.error || !m_Socket.IsValid())
@@ -48,6 +42,8 @@ ClientApp::ClientApp()
 
 	m_Music->play();
 	m_Music->setLooping(true);
+
+	connectionStateInfo = ConnectionStateInfos::None;
 }
 
 int ClientApp::Run()
@@ -105,75 +101,12 @@ sf::Font* ClientApp::GetFontByName(const std::string& fontName)
 
 void ClientApp::PollEvents()
 {
-	std::function<void(sf::Keyboard::Key)> onKeyPressed = [this](sf::Keyboard::Key code)
-	{
-		using enum sf::Keyboard::Key;
-		switch (code)
-		{
-		case W:
-		case Z:
-			m_PongGame.Behaviours |= PaddlesBehaviour::LeftUp;
-			break;
-		case S:
-			m_PongGame.Behaviours |= PaddlesBehaviour::LeftDown;
-			break;
-		case Up:
-			m_PongGame.Behaviours |= PaddlesBehaviour::RightUp;
-			break;
-		case Down:
-			m_PongGame.Behaviours |= PaddlesBehaviour::RightDown;
-			break;
-		}
-	};
-
-	std::function<void(sf::Keyboard::Key)> onKeyReleased = [this](sf::Keyboard::Key code)
-	{
-		using enum sf::Keyboard::Key;
-		switch (code)
-		{
-		case W:
-		case Z:
-			m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftUp;
-			break;
-		case S:
-			m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftDown;
-			break;
-		case Up:
-			m_PongGame.Behaviours &= ~PaddlesBehaviour::RightUp;
-			break;
-		case Down:
-			m_PongGame.Behaviours &= ~PaddlesBehaviour::RightDown;
-			break;
-		}
-	};
-
-	m_Window->PollEvents(onKeyPressed, onKeyReleased);
+	m_Window->PollEvents();
 }
 
 void ClientApp::Update(float dt)
 {
 	StateMachine::Update(dt);
-
-	/*m_PongGame.Update(dt);
-	m_PongDisplay->Update(m_PongGame);
-
-	switch (m_PongGame.GetGameState())
-	{
-	case GameState::LeftWins:
-	{
-		++m_LeftScore;
-		break;
-	}
-	case GameState::RightWins:
-	{
-		++m_RightScore;
-		break;
-	}
-	default: return;
-	}
-
-	m_PongGame.Reset();
-	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);*/
 }
 
 void ClientApp::ConnectToServer(std::string_view address)
@@ -187,6 +120,7 @@ void ClientApp::ConnectToServer(std::string_view address)
 	{
 		std::string_view error = NetHelper::GetWsaErrorExplanation();
 		// TODO: print error
+		connectionStateInfo = ConnectionStateInfos::FailedConnection;
 	}
 }
 
@@ -255,7 +189,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
-		// TODO: signal connect success
+		connectionStateInfo = ConnectionStateInfos::IsConnected;
 	}
 	break;
 	case RoomGroupResponse:

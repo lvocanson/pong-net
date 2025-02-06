@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 struct Pong;
+class Window;
 
 class PongDisplay
 {
@@ -11,7 +12,7 @@ public:
 
 	void SetScore(unsigned left, unsigned right);
 	void Update(const Pong& pong);
-	void Draw(sf::RenderTarget& target) const;
+	void RegisterDrawables(Window* window);
 
 private:
 

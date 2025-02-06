@@ -6,7 +6,7 @@ inline constexpr float BallRadius = 5.f;
 inline constexpr float PaddleDistFromBorders = 10.f;
 inline constexpr float PaddleHeight = 100.f;
 
-enum class GameState
+enum class GameStateInfo
 {
 	Ongoing = 0,
 	LeftWins,
@@ -34,7 +34,7 @@ struct Pong
 {
 	void Reset();
 	void Update(float dt);
-	GameState GetGameState() const;
+	GameStateInfo GameStateInfos() const;
 
 	float BallX, BallY;
 	float BallDx, BallDy;
