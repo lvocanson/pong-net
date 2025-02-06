@@ -1,22 +1,27 @@
 #include "SliderComponent.h"
 #include <Window/InputHandler.h>
+#include <fstream>
 #include <iostream>
+#include <filesystem>
 
-SliderComponent::SliderComponent(float x, float y, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* mainMusic)
-    : minValue(minValue), maxValue(maxValue), value(minValue), m_inputHandler(inputHandler)
+SliderComponent::SliderComponent(sf::Vector2f& pos, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* mainMusic)
+    : minValue(minValue), maxValue(maxValue), value(minValue), m_inputHandler(inputHandler),filename("Save.txt")
 {
     music = mainMusic;
     // Création de la barre du slider
     bar.setSize(sf::Vector2f(width, 5));
-    bar.setPosition(sf::Vector2(x, y));
+    bar.setPosition(pos);
     bar.setFillColor(sf::Color::White);
 
     // Création du curseur (knob)
     knob.setRadius(10);
     knob.setFillColor(sf::Color::Red);
     knob.setOrigin(sf::Vector2(knob.getRadius(), knob.getRadius()));
-    knob.setPosition(sf::Vector2(x, y + bar.getSize().y / 2));
-    float volume = music->getVolume();
+    knob.setPosition(sf::Vector2(pos.x, pos.y + bar.getSize().y / 2));
+    float volume = LoadVolumeValue();
+    music->setVolume(volume);
+    if(volume == -1)
+        float volume = music->getVolume();
     knob.setPosition(sf::Vector2f(bar.getPosition().x + (bar.getSize().x * (volume/100)), knob.getPosition().y));
 }
 
@@ -46,6 +51,31 @@ void SliderComponent::Update(float dt)
         value = minValue + ((newX - sliderLeft) / bar.getSize().x) * (maxValue - minValue);
         music->setVolume(value);
     }
+}
+
+void SliderComponent::SaveVolumeValue() {
+
+    std::ofstream fichier(filename);
+    std::filesystem::path f = std::filesystem::absolute(filename);
+
+    if (fichier) {
+        std::cout << "Chemin absolu : " << f << std::endl;
+        fichier << music->getVolume();
+        fichier.close();
+    }
+}
+
+float SliderComponent::LoadVolumeValue() {
+    std::ifstream fichier(filename);
+    int valeur = 0;  // Valeur par défaut
+    if (fichier) {
+        fichier >> valeur;
+        fichier.close();
+    }
+    else {
+        return -1;
+    }
+    return valeur;
 }
 
 void SliderComponent::SetPosition(const sf::Vector2f& position)

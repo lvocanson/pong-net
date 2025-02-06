@@ -13,9 +13,11 @@ private:
     bool isDragging = false;
     InputHandler* m_inputHandler;
     sf::Music* music;
+    std::string filename;
+
 
 public:
-    SliderComponent(float x, float y, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* music);
+    SliderComponent(sf::Vector2f& pos, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* music);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -25,6 +27,8 @@ public:
     sf::Vector2f GetPosition() const override;
     sf::Vector2f GetSize() const override;
 
+    void SaveVolumeValue();
+    float LoadVolumeValue();
     bool IsMouseOver();
     float getValue() const { return value; }
 };
