@@ -11,6 +11,9 @@
 #include "StateMachine/AppState/ConnectionState.h"
 #include "Window/InputHandler.h"
 
+using namespace std::chrono_literals;
+inline constexpr auto TimeForLostPacket = 300ms;
+
 ClientApp::ClientApp()
 	: m_PongGame()
 	, m_PongDisplay(nullptr)
@@ -57,13 +60,16 @@ int ClientApp::Run()
 	Timer dtTimer;
 	do
 	{
+		auto now = std::chrono::high_resolution_clock::now();
+		float dt = dtTimer.GetElapsedSeconds();
+		dtTimer.Restart();
+		
 		PollEvents();
 		m_inputHandler->Update();
 
 		CheckPendingPackets();
+		FlushLostPackets(now);
 
-		float dt = dtTimer.GetElapsedSeconds();
-		dtTimer.Restart();
 		Update(dt);
 
 		m_Window->Render();
@@ -315,5 +321,17 @@ void ClientApp::OnMessageReceived(const Message& message)
 		}
 	}
 	break;
+	}
+}
+
+void ClientApp::FlushLostPackets(TimePoint now)
+{
+	for (auto it = m_Unwrappers.begin(); it != m_Unwrappers.end();)
+	{
+		if (now - it->Timestamp() > TimeForLostPacket)
+		{
+			m_Unwrappers.erase_swap(it);
+		}
+		++it;
 	}
 }

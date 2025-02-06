@@ -17,6 +17,7 @@ class FontRegistry;
 
 class ClientApp : public StateMachine<ClientApp>
 {
+	using TimePoint = std::chrono::high_resolution_clock::time_point;
 public:
 
 	ClientApp();
@@ -38,6 +39,7 @@ private:
 	void CheckPendingPackets();
 	void OnPacketReceived(const Packet& packet);
 	void OnMessageReceived(const Message& message);
+	void FlushLostPackets(TimePoint now);
 
 private: // variables
 
