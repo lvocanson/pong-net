@@ -51,6 +51,9 @@
     <ClCompile Include="src\StateMachine\AppState\GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\StateMachine\AppState\LobbyState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PongDisplay.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\StateMachine\AppState\GameState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StateMachine\AppState\LobbyState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

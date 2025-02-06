@@ -203,6 +203,7 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\StateMachine\AppState\LobbyState.cpp" />
     <ClCompile Include="src\StateMachine\AppState\GameState.cpp" />
     <ClCompile Include="src\Components\SliderComponent.cpp" />
     <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
@@ -222,6 +223,7 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\StateMachine\AppState\LobbyState.h" />
     <ClInclude Include="src\StateMachine\AppState\GameState.h" />
     <ClInclude Include="src\Components\SliderComponent.h" />
     <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />

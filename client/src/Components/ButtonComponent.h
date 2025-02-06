@@ -25,15 +25,14 @@ public:
 	void SetColor(sf::Color color);
 	const TextComponent& GetTextComponent() const;
 
-	void SetOnClickCallback(std::function<void()>& callback);
+	bool IsPressed() const { return m_IsPressed; }
 	void SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE);
 
 private:
 	sf::RectangleShape m_Shape;
 	sf::Color m_IdleColor;
 
-	std::function<void()> m_OnClickCallback;
-
+	bool m_IsPressed;
 	const InputHandler& m_Input;
 	TextComponent m_Text;
 

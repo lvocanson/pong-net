@@ -6,11 +6,12 @@ constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 ConnectionState::ConnectionState(ClientApp& app)
 	: m_ClientApp(app)
-	, m_CurrentFunction(ButtonFunction::None)
 	, m_BackBtn(app.GetFont(), app.GetInputHandler())
 	, m_ConnectBtn(app.GetFont(), app.GetInputHandler())
 	, m_IpField(app.GetFont(), app.GetInputHandler())
 	, m_UsernameField(app.GetFont(), app.GetInputHandler())
+	, m_executeFunction()
+	, m_callFunction(false)
 {
 	sf::Vector2f sizeField = FIELD_SIZE;
 	float yOffset = app.GetWindow().GetHeight() * 0.1f;
@@ -47,100 +48,16 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 	m_BackBtn.Update(dt, app.GetWindow());
 	m_ConnectBtn.Update(dt, app.GetWindow());
 
-	if (m_IsTryingToConnect)
+/*	if (m_IsTryingToConnect && app.GetConnectionStateInfo() == ConnectionStateInfos::IsConnected)
 	{
-		ConnectionStateInfos connectionState = app.GetConnectionStateInfo();
-
-		switch (connectionState)
-		{
-		case ConnectionStateInfos::FailedConnection:
-		{
-			m_IsTryingToConnect = false;
-			break;
-		}
-
-		case ConnectionStateInfos::IsConnected:
-		{
-			m_CurrentFunction = ButtonFunction::GameScreen;
-			break;
-		}
-
-		default:
-			break;
-		}
+		m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
+	}
+	else*/ if(app.GetConnectionStateInfo() == ConnectionStateInfos::FailedConnection)
+	{
+		m_IsTryingToConnect = false;
 	}
 
-	ActiveButtonFunction(app);
-}
-
-void ConnectionState::OnExit(ClientApp& app)
-{
-	app.GetWindow().UnregisterDrawable(m_IpField);
-	app.GetWindow().UnregisterDrawable(m_UsernameField);
-	app.GetWindow().UnregisterDrawable(m_BackBtn);
-	app.GetWindow().UnregisterDrawable(m_ConnectBtn);
-}
-
-
-void ConnectionState::InitIpField(const sf::Vector2f& pos)
-{
-	std::string ipLabel = "Server Phrase";
-	m_IpField.SetSize(FIELD_SIZE);
-	m_IpField.SetLabel(ipLabel);
-	m_IpField.SetText(std::string(IpAddress::LocalAddress().ToPhrase().View()));
-	m_IpField.SetPosition(pos);
-}
-
-void ConnectionState::InitUsernameField(const sf::Vector2f& pos)
-{
-	std::string nameLabel = "Username";
-	m_IpField.SetSize(FIELD_SIZE);
-	m_UsernameField.SetLabel(nameLabel);
-	m_UsernameField.SetPosition(pos);
-}
-
-void ConnectionState::InitBackButton(const sf::Vector2f& pos)
-{
-	sf::Color OrangeRed(231, 62, 1);
-	std::string btnText = "Return to menu";
-	std::function<void()> function = [this]()
-	{
-		m_CurrentFunction = ButtonFunction::MenuScreen;
-	};
-
-	m_BackBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
-	m_BackBtn.SetPosition(pos);
-	m_BackBtn.SetColor(OrangeRed);
-	m_BackBtn.SetButtonText(btnText, m_ClientApp.GetFont());
-	m_BackBtn.SetOnClickCallback(function);
-}
-
-void ConnectionState::InitConnectButton(const sf::Vector2f& pos)
-{
-	sf::Color Emerald(1, 215, 88);
-	std::string btnText = "Connect";
-	std::function<void()> function = [this]()
-	{
-		m_CurrentFunction = ButtonFunction::Connect;
-	};
-
-	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
-	m_ConnectBtn.SetPosition(pos);
-	m_ConnectBtn.SetColor(Emerald);
-	m_ConnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
-	m_ConnectBtn.SetOnClickCallback(function);
-}
-
-void ConnectionState::ActiveButtonFunction(ClientApp& app)
-{
-	switch (m_CurrentFunction)
-	{
-	case ButtonFunction::MenuScreen:
-	{
-		m_ClientApp.ChangeState<MenuState>(app);
-		break;
-	}
-	case ButtonFunction::Connect:
+	if (m_ConnectBtn.IsPressed())
 	{
 		if (m_IsTryingToConnect) return;
 
@@ -175,12 +92,59 @@ void ConnectionState::ActiveButtonFunction(ClientApp& app)
 		{
 			m_IpField.ShowErrorMessage("Invalid phrase!");
 		}
-		break;
+		return;
 	}
-	case ButtonFunction::GameScreen:
+	else if (m_BackBtn.IsPressed()) 
 	{
-		m_ClientApp.ChangeState<GameState>(app.GetFont());
-		break;
+		m_ClientApp.ChangeState<MenuState>(m_ClientApp);
+		return;
 	}
-	}
+}
+
+void ConnectionState::OnExit(ClientApp& app)
+{
+	app.GetWindow().UnregisterDrawable(m_IpField);
+	app.GetWindow().UnregisterDrawable(m_UsernameField);
+	app.GetWindow().UnregisterDrawable(m_BackBtn);
+	app.GetWindow().UnregisterDrawable(m_ConnectBtn);
+}
+
+
+void ConnectionState::InitIpField(const sf::Vector2f& pos)
+{
+	std::string ipLabel = "Server Phrase";
+	m_IpField.SetSize(FIELD_SIZE);
+	m_IpField.SetLabel(ipLabel);
+	m_IpField.SetText(std::string(IpAddress::LocalAddress().ToPhrase().View()));
+	m_IpField.SetPosition(pos);
+}
+
+void ConnectionState::InitUsernameField(const sf::Vector2f& pos)
+{
+	std::string nameLabel = "Username";
+	m_IpField.SetSize(FIELD_SIZE);
+	m_UsernameField.SetLabel(nameLabel);
+	m_UsernameField.SetPosition(pos);
+}
+
+void ConnectionState::InitBackButton(const sf::Vector2f& pos)
+{
+	sf::Color OrangeRed(231, 62, 1);
+	std::string btnText = "Return to menu";
+
+	m_BackBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
+	m_BackBtn.SetPosition(pos);
+	m_BackBtn.SetColor(OrangeRed);
+	m_BackBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+}
+
+void ConnectionState::InitConnectButton(const sf::Vector2f& pos)
+{
+	sf::Color Emerald(1, 215, 88);
+	std::string btnText = "Connect";
+
+	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
+	m_ConnectBtn.SetPosition(pos);
+	m_ConnectBtn.SetColor(Emerald);
+	m_ConnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
 }

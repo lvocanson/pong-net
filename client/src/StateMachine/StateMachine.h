@@ -3,18 +3,6 @@
 #include <cassert>
 #include <memory>
 
-enum class ButtonFunction
-{
-	None,
-	Play,
-	Connect,
-	Disconnect,
-	Quit,
-	MenuScreen,
-	ConnectionScreen,
-	GameScreen,
-};
-
 template <typename Derived>
 class State
 {

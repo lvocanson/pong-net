@@ -22,9 +22,9 @@ public:
 	void InitDisconnectButton(const sf::Vector2f& pos, const sf::Font& font);
 	void InitQuitButton(const sf::Vector2f& pos, const sf::Font& font);
 
-	void ActiveButtonFunction(ClientApp& app);
-
 private:
+
+	ClientApp& m_ClientApp;
 
 	ButtonComponent m_PlayBtn;
 	ButtonComponent m_ConnectBtn;
@@ -34,5 +34,6 @@ private:
 	SliderComponent m_Slider;
 	TextComponent m_SliderText;
 
-	ButtonFunction m_CurrentFunction;
+	std::function<void()> m_executeFunction;
+	bool m_callFunction;
 };

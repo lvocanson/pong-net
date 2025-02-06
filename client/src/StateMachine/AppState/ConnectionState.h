@@ -20,8 +20,6 @@ public:
 	void InitBackButton(const sf::Vector2f& pos);
 	void InitConnectButton(const sf::Vector2f& pos);
 
-	void ActiveButtonFunction(ClientApp& app);
-
 private:
 
 	bool m_IsTryingToConnect = false;
@@ -34,7 +32,8 @@ private:
 	InsertFieldComponent m_IpField;
 	InsertFieldComponent m_UsernameField;
 
-	ButtonFunction m_CurrentFunction;
-
 	std::string m_Name = "";
+
+	std::function<void()> m_executeFunction;
+	bool m_callFunction;
 };

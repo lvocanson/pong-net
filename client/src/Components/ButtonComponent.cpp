@@ -3,7 +3,7 @@
 
 ButtonComponent::ButtonComponent(const sf::Font& font, const InputHandler& inputHandler)
 	: m_IdleColor(sf::Color::White)
-	, m_OnClickCallback(nullptr)
+	, m_IsPressed(false)
 	, m_Input(inputHandler)
 	, m_Text(font)
 {
@@ -11,21 +11,21 @@ ButtonComponent::ButtonComponent(const sf::Font& font, const InputHandler& input
 
 void ButtonComponent::Update(float dt, Window& window)
 {
+	m_IsPressed = false;
 	if (IsMouseOver(window))
 	{
 		m_Shape.setFillColor(m_IdleColor - sf::Color{50, 50, 50, 0});
 
-		if (m_Input.IsMouseButtonPressed(sf::Mouse::Button::Left) && m_OnClickCallback)
+		if (m_Input.IsMouseButtonPressed(sf::Mouse::Button::Left))
 		{
-			m_OnClickCallback();
-			m_Shape.setFillColor(m_IdleColor + sf::Color{50, 50, 50, 0});
+			m_Shape.setFillColor(m_IdleColor + sf::Color{ 50, 50, 50, 0 });
+			m_IsPressed = true;
 		}
 	}
 	else
 	{
 		m_Shape.setFillColor(m_IdleColor);
 	}
-
 	m_Text.Update(dt, window);
 }
 
@@ -71,11 +71,6 @@ void ButtonComponent::SetColor(sf::Color color)
 const TextComponent& ButtonComponent::GetTextComponent() const
 {
 	return m_Text;
-}
-
-void ButtonComponent::SetOnClickCallback(std::function<void()>& callback)
-{
-	m_OnClickCallback = callback;
 }
 
 void ButtonComponent::SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor, unsigned int textSize)

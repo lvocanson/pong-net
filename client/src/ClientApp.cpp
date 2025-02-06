@@ -6,6 +6,7 @@
 #include "StateMachine/AppState/GameState.h"
 #include "Window/InputHandler.h"
 #include <cstdlib>
+#include <StateMachine/AppState/LobbyState.h>
 
 using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
@@ -169,6 +170,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
+		//ChangeState<LobbyState>(*this);
 
 		// TODO: call this from UI
 		{
