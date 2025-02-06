@@ -163,6 +163,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
+		connectionStateInfo = ConnectionStateInfos::IsConnected;
 	}
 	break;
 	case RoomGroupResponse:
@@ -201,7 +202,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		case Message_RoomJoinResponse::Accepted:
 		{
 			// TODO: ChangeState<GameState>();
-			connectionStateInfo = ConnectionStateInfos::IsConnected;
+			//connectionStateInfo = ConnectionStateInfos::IsConnected;
 		}
 		break;
 		}
