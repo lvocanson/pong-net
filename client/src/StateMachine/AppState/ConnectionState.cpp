@@ -48,11 +48,12 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 	m_BackBtn.Update(dt, app.GetWindow());
 	m_ConnectBtn.Update(dt, app.GetWindow());
 
-/*	if (m_IsTryingToConnect && app.GetConnectionStateInfo() == ConnectionStateInfos::IsConnected)
-	{
-		m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
-	}
-	else*/ if(app.GetConnectionStateInfo() == ConnectionStateInfos::FailedConnection)
+	//if (m_IsTryingToConnect && app.GetConnectionStateInfo() == ConnectionStateInfos::IsConnected)
+	//{
+	//	//m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
+	//}
+	//else 
+	if(app.GetConnectionStateInfo() == ConnectionStateInfos::FailedConnection)
 	{
 		m_IsTryingToConnect = false;
 	}

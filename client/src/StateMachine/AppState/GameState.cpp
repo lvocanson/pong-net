@@ -11,6 +11,7 @@ GameState::GameState(const sf::Font& font)
 void GameState::OnEnter(ClientApp& app)
 {
 	m_PongDisplay.RegisterDrawables(app.GetWindow());
+	//app.SetPlayerSide(app.GetPongGame().GamePlayerSide());
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
@@ -30,8 +31,6 @@ void GameState::PollEvents(ClientApp& app)
 {
 	auto& input = app.GetInputHandler();
 	Pong& pong = app.GetPongGame();
-
-	// PRESSED
 
 	if (input.IsKeyPressed(sf::Keyboard::Key::W) || input.IsKeyPressed(sf::Keyboard::Key::Z))
 	{
@@ -74,4 +73,65 @@ void GameState::PollEvents(ClientApp& app)
 	{
 		pong.Behaviours &= ~PaddlesBehaviour::RightDown;
 	}
+
+	//PlayerSide& playerSide = app.GetPlayerSide();
+	//
+	//switch (playerSide) 
+	//{
+	//	case PlayerSide::Left :
+	//	{
+	//		// PRESSED
+
+	//		if (input.IsKeyPressed(sf::Keyboard::Key::W) || input.IsKeyPressed(sf::Keyboard::Key::Z))
+	//		{
+	//			pong.Behaviours |= PaddlesBehaviour::LeftUp;
+	//		}
+
+	//		if (input.IsKeyPressed(sf::Keyboard::Key::S))
+	//		{
+	//			pong.Behaviours |= PaddlesBehaviour::LeftDown;
+	//		}
+
+	//		// RELEASED
+
+	//		if (input.IsKeyReleased(sf::Keyboard::Key::W) || input.IsKeyReleased(sf::Keyboard::Key::Z))
+	//		{
+	//			pong.Behaviours &= ~PaddlesBehaviour::LeftUp;
+	//		}
+
+	//		if (input.IsKeyReleased(sf::Keyboard::Key::S))
+	//		{
+	//			pong.Behaviours &= ~PaddlesBehaviour::LeftDown;
+	//		}
+
+	//		break;
+	//	}
+	//	case PlayerSide::Right :
+	//	{
+	//		// PRESSED
+	//		if (input.IsKeyPressed(sf::Keyboard::Key::Up))
+	//		{
+	//			pong.Behaviours |= PaddlesBehaviour::RightUp;
+	//		}
+
+	//		if (input.IsKeyPressed(sf::Keyboard::Key::Down))
+	//		{
+	//			pong.Behaviours |= PaddlesBehaviour::RightDown;
+	//		}
+
+	//		// RELEASED
+
+	//		if (input.IsKeyReleased(sf::Keyboard::Key::Up))
+	//		{
+	//			pong.Behaviours &= ~PaddlesBehaviour::RightUp;
+	//		}
+
+	//		if (input.IsKeyReleased(sf::Keyboard::Key::Down))
+	//		{
+	//			pong.Behaviours &= ~PaddlesBehaviour::RightDown;
+	//		}
+
+	//		break;
+	//	}
+	//}
 }

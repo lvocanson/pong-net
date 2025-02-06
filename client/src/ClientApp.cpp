@@ -22,6 +22,7 @@ ClientApp::ClientApp()
 	, connectionStateInfo(ConnectionStateInfos::None)
 	, m_LeftScore(0)
 	, m_RightScore(0)
+	, m_PlayerSide(PlayerSide::No)
 
 	, m_WsaData()
 	, m_Socket()
@@ -227,7 +228,8 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			ChangeState<GameState>(GetFont());
+			//ChangeState<GameState>(GetFont());
+			ChangeState<LobbyState>(*this);
 		}
 		break;
 		}
@@ -241,34 +243,37 @@ void ClientApp::OnMessageReceived(const Message& message)
 		float diff = std::chrono::duration<float>(now - m_LastPacketReceivedTp).count();
 
 		// Make up for lost time
+
 		auto tempGame = update.game;
 		tempGame.Behaviours = m_PongGame.Behaviours;
-		tempGame.Update(diff);
-
-		using enum PaddlesBehaviour;
-		if ((m_PongGame.Behaviours & LeftUp) != None)
-			tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
-		else if ((m_PongGame.Behaviours & LeftDown) != None)
-			tempGame.LeftPaddle = std::max(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
-		if ((m_PongGame.Behaviours & RightUp) != None)
-			tempGame.RightPaddle = std::min(tempGame.RightPaddle, m_PongGame.RightPaddle);
-		else if ((m_PongGame.Behaviours & RightDown) != None)
-			tempGame.RightPaddle = std::max(tempGame.RightPaddle, m_PongGame.RightPaddle);
-
-		m_PongGame = tempGame;
-		m_LeftScore = update.leftScore;
-		m_RightScore = update.rightScore;
 
 		switch (update.status)
 		{
 		case Message_GameUpdate::Paused:
 		{
+			tempGame.Reset();
+			m_PongGame = tempGame;
 			m_Playing = PlayingState::Paused;
 		}
 		break;
 		case Message_GameUpdate::Playing:
 		{
 			m_Playing = PlayingState::Playing;
+
+			tempGame.Update(diff);
+			using enum PaddlesBehaviour;
+			if ((m_PongGame.Behaviours & LeftUp) != None)
+				tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
+			else if ((m_PongGame.Behaviours & LeftDown) != None)
+				tempGame.LeftPaddle = std::max(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
+			if ((m_PongGame.Behaviours & RightUp) != None)
+				tempGame.RightPaddle = std::min(tempGame.RightPaddle, m_PongGame.RightPaddle);
+			else if ((m_PongGame.Behaviours & RightDown) != None)
+				tempGame.RightPaddle = std::max(tempGame.RightPaddle, m_PongGame.RightPaddle);
+
+			m_PongGame = tempGame;
+			m_LeftScore = update.leftScore;
+			m_RightScore = update.rightScore;
 		}
 		break;
 		}

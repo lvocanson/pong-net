@@ -32,6 +32,8 @@ public:
 public: // Getters
 
 	Window& GetWindow() { return m_Window; }
+	PlayerSide& GetPlayerSide() { return m_PlayerSide; }
+	void SetPlayerSide(const PlayerSide& PlayerSide) { m_PlayerSide = PlayerSide; }
 	sf::Music& GetMusic() { return m_Music; }
 	const sf::Font& GetFont() const { return m_Font; }
 	const InputHandler& GetInputHandler() { return m_Input; }
@@ -70,6 +72,7 @@ private: // variables
 
 	} m_Playing = PlayingState::No;
 
+	PlayerSide m_PlayerSide;
 	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication
