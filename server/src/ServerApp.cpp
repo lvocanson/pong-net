@@ -210,6 +210,61 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		}
 	}
 	break;
+	case QuickMatchRequest:
+	{
+		// Find not full room or create one, then send the confirmation
+		PongRoom* matchRoom = nullptr;
+		for (auto& room : m_PausedRooms)
+		{
+			if (room.ContainsSignature(sender.signature))
+			{
+				matchRoom = &room;
+				break;
+			}
+
+			if (room.leftSignature == 0)
+			{
+				room.leftSignature = sender.signature;
+				matchRoom = &room;
+				break;
+			}
+			if (room.rightSignature == 0)
+			{
+				room.rightSignature = sender.signature;
+				matchRoom = &room;
+				break;
+			}
+		}
+
+		if (!matchRoom)
+		{
+			matchRoom = &CreateRoom();
+			matchRoom->leftSignature = sender.signature;
+		}
+
+		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, matchRoom->uuid);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending quick match response failed");
+		}
+	}
+	break;
+	case RoomCreationRequest:
+	{
+		auto& room = CreateRoom();
+		room.leftSignature = sender.signature;
+
+		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending room creation response failed");
+		}
+	}
+	break;
 	case RoomGroupRequest:
 	{
 		auto& request = message.As<Message_RoomGroupRequest>();
@@ -261,7 +316,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 			}
 		}
 
-		Message_RoomJoinResponse response(status);
+		Message_RoomJoinResponse response(status, request.uuid);
 		auto wrapper = PacketWrapper::Wrap(response);
 		wrapper.Sign(sender.signature);
 		if (!wrapper.Send(m_Socket, sender.address))
@@ -302,7 +357,7 @@ void ServerApp::FlushLostPackets(TimePoint now)
 	{
 		if (now - it->Timestamp() > TimeForLostPacket)
 		{
-			m_Unwrappers.erase_swap(it);
+			it = m_Unwrappers.erase_swap(it);
 			++count;
 		}
 		++it;
@@ -316,10 +371,59 @@ void ServerApp::CleanupDirectory(TimePoint now)
 {
 	if (m_LastClientsCleanup + ClientDirectoryCleanupInterval < now)
 	{
-		size_t count = m_Clients.RemoveIfLastContactBefore(now - ClientDirectoryMaxLastContact);
+		TimePoint maxLastContact = now - ClientDirectoryMaxLastContact;
+		size_t count = 0;
+
+		for (auto it = m_Clients.m_Directory.begin(); it != m_Clients.m_Directory.end();)
+		{
+			if (it->lastContact > maxLastContact)
+			{
+				++it;
+				continue;
+			}
+
+			LogCleanup(std::format("Client {} has been inactive for too long and was forgotten", it->signature));
+			it = m_Clients.m_Directory.erase_swap(it);
+			++count;
+		}
+
 		m_LastClientsCleanup = now;
-		LogInfo(std::format("Directory cleaned: {} client(s) removed", count));
 	}
+}
+
+PongRoom& ServerApp::CreateRoom()
+{
+	uint16_t uuid = 0;
+	while (uuid == 0)
+	{
+		uuid = Misc::GenerateUUID();
+		if (uuid == 0)
+			continue;
+
+		for (auto& room : m_PlayingRooms)
+		{
+			if (room.uuid == uuid)
+			{
+				uuid = 0;
+				break;
+			}
+		}
+
+		if (uuid == 0)
+			continue;
+
+		for (auto& room : m_PausedRooms)
+		{
+			if (room.uuid == uuid)
+			{
+				uuid = 0;
+				break;
+			}
+		}
+	}
+
+	LogInfo(std::format("Room {} created", uuid));
+	return m_PausedRooms.emplace_back(uuid);
 }
 
 void ServerApp::MaintainRooms(TimePoint now, float dt)
@@ -334,8 +438,11 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 		{
 			// Missing client reconnected / joined
 			m_PlayingRooms.emplace_back(std::move(room));
+			it = m_PausedRooms.erase_swap(it);
+			continue;
 		}
-		else if (leftActive || rightActive)
+
+		if (leftActive || rightActive)
 		{
 			// Still one client connected
 			auto* leftClient = m_Clients.FindBySignature(room.leftSignature);
@@ -354,11 +461,12 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 			continue;
 		}
 
-		// Both clients are connected or disconnected
-		m_PausedRooms.erase_swap(it);
+		// Both clients are disconnected
+		LogInfo(std::format("Room {} was closed due to disconnections", it->uuid));
+		it = m_PausedRooms.erase_swap(it);
 	}
 
-	for (auto it = m_PausedRooms.begin(); it != m_PausedRooms.end();)
+	for (auto it = m_PlayingRooms.begin(); it != m_PlayingRooms.end();)
 	{
 		PongRoom& room = *it;
 		bool leftActive = now - room.leftLastUpdate < InactivityUpdateMissingTime;
@@ -411,6 +519,15 @@ void ServerApp::LogInfo(std::string_view info) const
 		<< TextColors::FgCyan << "Info"
 		<< TextColors::BrightFgBlack << "] "
 		<< TextColors::Reset << info << '\n';
+}
+
+void ServerApp::LogCleanup(std::string_view message) const
+{
+	using namespace Console;
+	Out << TextColors::BrightFgBlack << '['
+		<< TextColors::FgGreen << "Cleanup"
+		<< TextColors::BrightFgBlack << "] "
+		<< TextColors::Reset << message << '\n';
 }
 
 void ServerApp::LogWarning(std::string_view warning) const

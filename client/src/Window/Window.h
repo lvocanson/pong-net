@@ -72,8 +72,8 @@ public:
 #pragma region Other
 
 	sf::Vector2f GetCenter() const { return sf::Vector2f(m_windowRenderer->getSize().x * 0.5f, m_windowRenderer->getSize().y * 0.5f); }
-	float GetWidth() const { return m_windowRenderer->getSize().x; }
-	float GetHeight() const { return m_windowRenderer->getSize().y; }
+	float GetWidth() const { return static_cast<float>(m_windowRenderer->getSize().x); }
+	float GetHeight() const { return static_cast<float>(m_windowRenderer->getSize().y); }
 
 #pragma endregion
 

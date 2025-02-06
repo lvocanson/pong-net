@@ -29,9 +29,11 @@ private:
 
 	void CleanupDirectory(TimePoint now);
 
+	PongRoom& CreateRoom();
 	void MaintainRooms(TimePoint now, float dt);
 
 	void LogInfo(std::string_view info) const;
+	void LogCleanup(std::string_view message) const;
 	void LogWarning(std::string_view warning) const;
 	void LogError(std::string_view error) const;
 	void LogWsaError(std::string_view what, int error = 0) const;

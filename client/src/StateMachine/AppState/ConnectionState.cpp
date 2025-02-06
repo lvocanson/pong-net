@@ -87,6 +87,7 @@ void ConnectionState::InitIpField(const sf::Vector2f& pos)
 	std::string ipLabel = "Server Phrase";
 	m_IpField.SetSize(FIELD_SIZE);
 	m_IpField.SetLabel(ipLabel);
+	m_IpField.SetText(std::string(IpAddress::LocalAddress().ToPhrase().View()));
 	m_IpField.SetPosition(pos);
 }
 

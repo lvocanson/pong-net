@@ -3,6 +3,7 @@
 #include "Network/PacketWrapper.h"
 #include "StateMachine/AppState/MenuState.h"
 #include "StateMachine/AppState/ConnectionState.h"
+#include "StateMachine/AppState/GameState.h"
 #include "Window/InputHandler.h"
 #include <cstdlib>
 
@@ -14,7 +15,7 @@ ClientApp::ClientApp()
 	, m_Font("res/fonts/JuliaMono-Regular.ttf")
 	, m_Music("res/Su Turno.ogg")
 	, m_Input()
-	
+
 	, m_PongGame()
 	, connectionStateInfo(ConnectionStateInfos::None)
 	, m_LeftScore(0)
@@ -53,7 +54,7 @@ int ClientApp::Run()
 		auto now = std::chrono::high_resolution_clock::now();
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
-		
+
 		PollEvents();
 		m_Input.Update();
 
@@ -81,13 +82,18 @@ void ClientApp::PollEvents()
 void ClientApp::Update(float dt)
 {
 	StateMachine::Update(dt);
+
+	if (m_Playing)
+	{
+		m_PongGame.Update(dt);
+	}
 }
 
 void ClientApp::ConnectToServer(IpPhrase phrase)
 {
 	m_ServerAddr = phrase;
 
-	Message_Connect connect;
+	Message connect(MessageType::Connect);
 	auto wrapper = PacketWrapper::Wrap(connect);
 	wrapper.Sign(m_Signature);
 	if (!wrapper.Send(m_Socket, m_ServerAddr))
@@ -137,7 +143,7 @@ void ClientApp::OnPacketReceived(const Packet& packet)
 		{
 			auto& message = it->Unwrap<Message>();
 			OnMessageReceived(message);
-			m_Unwrappers.erase_swap(it);
+			it = m_Unwrappers.erase_swap(it);
 			return;
 		}
 	}
@@ -163,7 +169,14 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
-		connectionStateInfo = ConnectionStateInfos::IsConnected;
+
+		// TODO: call this from UI
+		{
+			Message request(QuickMatchRequest);
+			auto wrapper = PacketWrapper::Wrap(request);
+			wrapper.Sign(m_Signature);
+			wrapper.Send(m_Socket, m_ServerAddr);
+		}
 	}
 	break;
 	case RoomGroupResponse:
@@ -201,8 +214,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			// TODO: ChangeState<GameState>();
-			//connectionStateInfo = ConnectionStateInfos::IsConnected;
+			ChangeState<GameState>(GetFont());
 		}
 		break;
 		}
@@ -219,12 +231,12 @@ void ClientApp::OnMessageReceived(const Message& message)
 		{
 		case Message_GameUpdate::Paused:
 		{
-			// TODO
+			m_Playing = false;
 		}
 		break;
 		case Message_GameUpdate::Playing:
 		{
-			// TODO
+			m_Playing = true;
 		}
 		break;
 		}
@@ -239,7 +251,8 @@ void ClientApp::FlushLostPackets(TimePoint now)
 	{
 		if (now - it->Timestamp() > TimeForLostPacket)
 		{
-			m_Unwrappers.erase_swap(it);
+			it = m_Unwrappers.erase_swap(it);
+			continue;
 		}
 		++it;
 	}

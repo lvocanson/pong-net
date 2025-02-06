@@ -35,12 +35,12 @@ public: // Getters
 	sf::Music& GetMusic() { return m_Music; }
 	const sf::Font& GetFont() const { return m_Font; }
 	const InputHandler& GetInputHandler() { return m_Input; }
-	ConnectionStateInfos GetConnectionStateInfo() const { return connectionStateInfo; };
+
 	Pong& GetPongGame() { return m_PongGame; };
+	std::tuple<uint16_t, uint16_t> GetScores() { return {m_LeftScore, m_RightScore}; }
 
 	void ConnectToServer(IpPhrase phrase);
-
-	unsigned m_LeftScore, m_RightScore;
+	ConnectionStateInfos GetConnectionStateInfo() const { return connectionStateInfo; };
 
 private:
 
@@ -54,13 +54,15 @@ private:
 
 private: // variables
 
-
 	Window m_Window;
 	sf::Font m_Font;
 	sf::Music m_Music;
 	InputHandler m_Input;
 
 	Pong m_PongGame;
+	uint16_t m_LeftScore, m_RightScore;
+	bool m_Playing = false;
+
 	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication

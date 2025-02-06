@@ -5,7 +5,7 @@
 
 struct PongRoom
 {
-	PongRoom();
+	PongRoom(uint16_t uuid);
 
 	bool IsFull() const { return ContainsSignature(0); }
 	bool ContainsSignature(uint16_t sig) const { return leftSignature == sig || rightSignature == sig; }

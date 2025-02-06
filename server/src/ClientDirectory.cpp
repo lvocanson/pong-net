@@ -39,20 +39,3 @@ bool ClientDirectory::RemoveBySignature(uint16_t sig)
 
 	return false;
 }
-
-size_t ClientDirectory::RemoveIfLastContactBefore(Client::lastContact_t timestamp)
-{
-	size_t count = 0;
-	for (auto it = m_Directory.begin(); it != m_Directory.end();)
-	{
-		if (it->lastContact > timestamp)
-		{
-			++it;
-			continue;
-		}
-
-		m_Directory.erase_swap(it);
-		++count;
-	}
-	return count;
-}

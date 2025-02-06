@@ -11,36 +11,15 @@ GameState::GameState(const sf::Font& font)
 void GameState::OnEnter(ClientApp& app)
 {
 	m_PongDisplay.RegisterDrawables(app.GetWindow());
-	Pong& pong = app.GetPongGame();
-	pong.Reset();
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
 {
 	PollEvents(app);
-	Pong& pong = app.GetPongGame();
+	m_PongDisplay.Update(app.GetPongGame());
 
-	pong.Update(deltaTime);
-	m_PongDisplay.Update(pong);
-
-	switch (pong.GameStateInfos())
-	{
-	case GameStateInfo::LeftWins:
-	{
-		++app.m_LeftScore;
-		break;
-	}
-	case GameStateInfo::RightWins:
-	{
-		++app.m_RightScore;
-		break;
-	}
-	default: return;
-	}
-
-	pong.Reset();
-
-	m_PongDisplay.SetScore(app.m_LeftScore, app.m_RightScore);
+	auto [leftScore, rightScore] = app.GetScores();
+	m_PongDisplay.SetScore(leftScore, rightScore);
 }
 
 void GameState::OnExit(ClientApp& app)

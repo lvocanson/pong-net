@@ -10,6 +10,8 @@ enum class MessageType
 	// Client -> Server
 
 	Connect,
+	QuickMatchRequest,
+	RoomCreationRequest,
 	RoomGroupRequest,
 	RoomJoinRequest,
 	InputUpdate,
@@ -35,11 +37,6 @@ struct Message
 	{
 		return static_cast<const T&>(*this);
 	}
-};
-
-struct Message_Connect : public Message
-{
-	Message_Connect() : Message(MessageType::Connect) {}
 };
 
 struct Message_ConnectResponse : public Message
@@ -106,13 +103,15 @@ struct Message_RoomJoinResponse : public Message
 		Accepted,
 	};
 
-	Message_RoomJoinResponse(JoinStatus status)
+	Message_RoomJoinResponse(JoinStatus status, uint16_t uuid)
 		: Message(MessageType::RoomJoinResponse)
 		, status(status)
+		, uuid(uuid)
 	{
 	}
 
 	JoinStatus status;
+	uint16_t uuid;
 };
 
 struct Message_GameUpdate : public Message

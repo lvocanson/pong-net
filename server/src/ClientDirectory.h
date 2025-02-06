@@ -20,9 +20,6 @@ public:
 	const Client& AddOrUpdate(const Client&);
 	const Client* FindBySignature(uint16_t) const;
 	bool RemoveBySignature(uint16_t);
-	size_t RemoveIfLastContactBefore(Client::lastContact_t);
-
-private:
-
+	
 	stc::swap_back_array<Client> m_Directory;
 };

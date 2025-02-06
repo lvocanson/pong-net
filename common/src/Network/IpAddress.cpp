@@ -53,17 +53,17 @@ IpAddress::IpAddress(IpPhrase phrase)
 		.sin_port = htons(DefaultPort),
 	}
 {
-	uint32_t decoded = 0;
+	std::ptrdiff_t decoded = 0;
 	for (int i = 0; i < 6; ++i)
 	{
 		const char* pos = strchr(Base64Alphabet, phrase.buffer[i]);
 		if (pos)
 		{
-			decoded = (decoded << 6) | (pos - Base64Alphabet);
+			decoded = (decoded << 6) | pos - Base64Alphabet;
 		}
 	}
 
-	addr.sin_addr.s_addr = htonl(decoded);
+	addr.sin_addr.s_addr = htonl(static_cast<u_long>(decoded));
 }
 
 IpAddress IpAddress::LocalAddress()
