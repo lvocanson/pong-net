@@ -252,5 +252,68 @@ void ClientApp::OnMessageReceived(const Message& message)
 		// TODO: signal connect success
 	}
 	break;
+	case RoomGroupResponse:
+	{
+		auto& response = message.As<Message_RoomGroupResponse>();
+		if (response.grpIdx > 0)
+		{
+			// TODO: enable "prev page" button
+		}
+		if (response.grpIdx < response.maxGrpIdx)
+		{
+			// TODO: enable "next page" button
+		}
+
+		for (auto uuid : response.group)
+		{
+			if (uuid == 0)
+				// End of the group
+				break;
+
+			// Todo add list entry "room #uuid" with button "join"
+		}
+	}
+	break;
+	case RoomJoinResponse:
+	{
+		auto& response = message.As<Message_RoomJoinResponse>();
+
+		switch (response.status)
+		{
+		case Message_RoomJoinResponse::Rejected:
+		{
+			// TODO: notify reject
+		}
+		break;
+		case Message_RoomJoinResponse::Accepted:
+		{
+			// TODO: ChangeState<GameState>();
+		}
+		break;
+		}
+	}
+	break;
+	case GameUpdate:
+	{
+		auto& update = message.As<Message_GameUpdate>();
+		m_PongGame = update.game;
+		m_LeftScore = update.leftScore;
+		m_RightScore = update.rightScore;
+
+		switch (update.status)
+		{
+		case Message_GameUpdate::Paused:
+		{
+			// TODO
+		}
+		break;
+		case Message_GameUpdate::Playing:
+		{
+			// TODO
+		}
+		break;
+		}
+	}
+	break;
 	}
 }
