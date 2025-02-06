@@ -15,6 +15,14 @@ class Window;
 class InputHandler;
 class FontRegistry;
 
+enum class ConnectionStateInfos
+{
+	None = 0,
+	FailedConnection,
+	IsConnected,
+	IsDisconnected
+};
+
 class ClientApp : public StateMachine<ClientApp>
 {
 public:
@@ -27,6 +35,7 @@ public:
 	sf::Music* GetMusic();
 	InputHandler* GetInputHandler();
 	sf::Font* GetFontByName(const std::string& fontName);
+	ConnectionStateInfos GetConnectionStateInfo() { return connectionStateInfo; };
 
 	void ConnectToServer(std::string_view address);
 
@@ -47,6 +56,7 @@ private: // variables
 	FontRegistry* m_font;
 
 	Timer m_Timer;
+	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication
 

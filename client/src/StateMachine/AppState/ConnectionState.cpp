@@ -71,7 +71,25 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 
     if (m_IsTryingToConnect)
     {
-        _currentFunction = ButtonFunction::GameScreen;
+        ConnectionStateInfos connectionState = app.GetConnectionStateInfo();
+
+        switch (connectionState)
+        {
+            case ConnectionStateInfos::FailedConnection: 
+            {
+                m_IsTryingToConnect = false;
+                break;
+            }
+
+            case ConnectionStateInfos::IsConnected:
+            {
+                _currentFunction = ButtonFunction::GameScreen;
+                break;
+            }
+
+            default:
+                break;
+        }
     }
 
     ActiveButtonFunction();
@@ -136,10 +154,6 @@ void ConnectionState::ShowIpField(const sf::Vector2f& pos)
 {
     std::string ipLabel = "Server Phrase";
     AddField(pos, ipLabel, m_font);
-
-    //#if defined(DEBUG) | defined(_DEBUG)
-    //_fields[_fields.size() - 1]->SetText(TcpIp::IpAddress::FromString(sf::IpAddress::getLocalAddress().toString()).ToPhrase());
-    //#endif
 }
 
 void ConnectionState::ShowNameField(const sf::Vector2f& pos)

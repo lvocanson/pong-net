@@ -372,15 +372,15 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 		}
 
 		room.game.Update(dt);
-		switch (room.game.GetGameState())
+		switch (room.game.GameStateInfos())
 		{
-		case GameState::LeftWins:
+		case GameStateInfo::LeftWins:
 		{
 			++room.leftScore;
 			room.game.Reset();
 			break;
 		}
-		case GameState::RightWins:
+		case GameStateInfo::RightWins:
 		{
 			++room.rightScore;
 			room.game.Reset();

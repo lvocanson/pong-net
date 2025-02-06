@@ -34,14 +34,14 @@ void GameState::OnUpdate(ClientApp& app, float deltaTime)
 	m_PongGame.Update(deltaTime);
 	m_PongDisplay->Update(m_PongGame);
 
-	switch (m_PongGame.GetGameState())
+	switch (m_PongGame.GameStateInfos())
 	{
-	case GameStateInfos::LeftWins:
+	case GameStateInfo::LeftWins:
 	{
 		++m_LeftScore;
 		break;
 	}
-	case GameStateInfos::RightWins:
+	case GameStateInfo::RightWins:
 	{
 		++m_RightScore;
 		break;

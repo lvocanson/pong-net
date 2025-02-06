@@ -39,6 +39,8 @@ ClientApp::ClientApp()
 
 	m_Music->play();
 	m_Music->setLooping(true);
+
+	connectionStateInfo = ConnectionStateInfos::None;
 }
 
 int ClientApp::Run()
@@ -112,6 +114,7 @@ void ClientApp::ConnectToServer(std::string_view address)
 	{
 		std::string_view error = NetHelper::GetWsaErrorExplanation();
 		// TODO: print error
+		connectionStateInfo = ConnectionStateInfos::FailedConnection;
 	}
 }
 
@@ -180,7 +183,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
-		// TODO: signal connect success
+		connectionStateInfo = ConnectionStateInfos::IsConnected;
 	}
 	break;
 	}
