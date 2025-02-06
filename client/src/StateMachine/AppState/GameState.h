@@ -8,7 +8,7 @@ class GameState : public State<ClientApp>
 public:
 #pragma region  Constructor
 
-    GameState();
+    GameState(sf::Font& font);
     GameState(const GameState& other) = delete;
     GameState& operator=(const GameState& other) = delete;
     ~GameState();
@@ -33,7 +33,7 @@ private:
 
 #pragma region  Variables
 
-    PongDisplay* m_PongDisplay;
+    PongDisplay m_PongDisplay;
 
 #pragma endregion
 };

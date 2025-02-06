@@ -5,8 +5,8 @@
 
 #pragma region  Constructor
 
-GameState::GameState()
-	: m_PongDisplay(nullptr)
+GameState::GameState(sf::Font& font)
+	: m_PongDisplay(font)
 {
 }
 
@@ -20,8 +20,7 @@ GameState::~GameState()
 
 void GameState::OnEnter(ClientApp& app)
 {
-	m_PongDisplay = new PongDisplay(*app.GetFontByName("JuliaMono-Regular.ttf"));
-	m_PongDisplay->RegisterDrawables(app.GetWindow());
+	m_PongDisplay.RegisterDrawables(app.GetWindow());
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
@@ -30,7 +29,7 @@ void GameState::OnUpdate(ClientApp& app, float deltaTime)
 	Pong pong = app.GetPongGame();
 
 	pong.Update(deltaTime);
-	m_PongDisplay->Update(pong);
+	m_PongDisplay.Update(pong);
 
 	switch (pong.GameStateInfos())
 	{
@@ -48,7 +47,7 @@ void GameState::OnUpdate(ClientApp& app, float deltaTime)
 	}
 
 	pong.Reset();
-	m_PongDisplay->SetScore(app.m_LeftScore, app.m_RightScore);
+	m_PongDisplay.SetScore(app.m_LeftScore, app.m_RightScore);
 }
 
 void GameState::OnExit(ClientApp& app)

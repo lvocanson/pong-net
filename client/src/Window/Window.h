@@ -47,15 +47,15 @@ public:
     /// <summary>
     /// Registers a drawable object to be rendered.
     /// </summary>
-    void RegisterDrawable(sf::Drawable* drawable) { m_Drawables.push_back(drawable); }
+    void RegisterDrawable(const sf::Drawable& drawable) { m_Drawables.push_back(&drawable); }
     /// <summary>
     /// Unregisters a drawable object.
     /// </summary>
-    void UnregisterDrawable(sf::Drawable* drawable) { m_Drawables.erase(std::remove(m_Drawables.begin(), m_Drawables.end(), drawable), m_Drawables.end()); }
+    void UnregisterDrawable(const sf::Drawable& drawable) { m_Drawables.erase(std::remove(m_Drawables.begin(), m_Drawables.end(), &drawable), m_Drawables.end()); }
     /// <summary>
     /// Returns all the registered drawable objects.
     /// </summary>
-    std::vector<sf::Drawable*>& GetDrawables() { return m_Drawables; }
+    const std::vector<const sf::Drawable*>& GetDrawables() const { return m_Drawables; }
 
     void ClearAllDrawables();
 
@@ -76,6 +76,6 @@ private:
     static bool m_IsFocused;
     static sf::RenderWindow* m_Window;
     sf::Color m_ClearColor;
-    std::vector<sf::Drawable*> m_Drawables;
+    std::vector<const sf::Drawable*> m_Drawables;
 
 };

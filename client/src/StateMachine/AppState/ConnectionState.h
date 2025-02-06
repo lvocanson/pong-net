@@ -11,7 +11,7 @@ class ConnectionState : public State<ClientApp>
 public:
 #pragma region  Constructor
 
-      ConnectionState();
+      ConnectionState(ClientApp& app);
       ConnectionState(const ConnectionState& other) = delete;
       ConnectionState& operator=(const ConnectionState& other) = delete;
       ~ConnectionState();
@@ -28,16 +28,12 @@ public:
 
 #pragma region  Class Methods
 
-    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size = BUTTON_SIZE_STANDARD);
-    void AddField(const sf::Vector2f& pos, const std::string& label, sf::Font* font);
-    InsertFieldComponent* FindFieldByText(const std::string& text);
+    void InitIpField(const sf::Vector2f& pos);
+    void InitUsernameField(const sf::Vector2f& pos);
+    void InitBackButton(const sf::Vector2f& pos);
+    void InitConnectButton(const sf::Vector2f& pos);
 
-    void ShowIpField(const sf::Vector2f& pos);
-    void ShowNameField(const sf::Vector2f& pos);
-    void ShowBackButton(const sf::Vector2f& pos);
-    void ShowConnectButton(const sf::Vector2f& pos);
-
-    void ActiveButtonFunction();
+    void ActiveButtonFunction(ClientApp& app);
 
 #pragma endregion
 
@@ -47,15 +43,34 @@ private:
 
     bool m_IsTryingToConnect = false;
 
-    std::string m_Name = "";
+    ClientApp* m_clientApp;
     sf::Font* m_font;
 
-    ClientApp* m_clientApp;
+    union
+    {
+        struct
+        {
+            ButtonComponent BackBtn;
+            ButtonComponent ConnectBtn;
+        };
 
-    std::vector< ButtonComponent*> _btns;
-    std::vector< InsertFieldComponent*> _fields;
+        std::array<ButtonComponent, 2> _btns;
+    };
+
+    union
+    {
+        struct
+        {
+            InsertFieldComponent IpField;
+            InsertFieldComponent UsernameField;
+        };
+
+        std::array<InsertFieldComponent, 2> _fields;
+    };
 
     ButtonFunction _currentFunction;
+
+    std::string m_Name = "";
 
 #pragma endregion
 };

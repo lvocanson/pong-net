@@ -7,13 +7,28 @@ constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
 
 #pragma region  Constructor
 
-ConnectionState::ConnectionState()
-    : m_clientApp(nullptr)
-    , m_font(nullptr)
+ConnectionState::ConnectionState(ClientApp& app)
+    : m_clientApp(&app)
+    , m_font(app.GetFontByName(FONT_DEFAULT))
+    , _currentFunction(ButtonFunction::None)
 {
-    _btns = std::vector<ButtonComponent*>();
-    _fields = std::vector<InsertFieldComponent*>();
-    _currentFunction = ButtonFunction::None;
+    sf::Vector2f sizeField = FIELD_SIZE;
+    float yOffset = app.GetWindow()->GetHeight() * 0.1f;
+    float xMiddleScreen = app.GetWindow()->GetWidth() * 0.5f;
+
+    sf::Vector2f fieldPos = sf::Vector2f(xMiddleScreen, 3.f * yOffset);
+
+    // Init all graphics element
+    sf::Vector2f backButtonPos = sf::Vector2f(xMiddleScreen, 6.f * yOffset);
+    sf::Vector2f connectButtonPos = sf::Vector2f(xMiddleScreen, 8.f * yOffset);
+
+    InitIpField(fieldPos);
+    fieldPos.y += yOffset;
+
+    InitUsernameField(fieldPos);
+
+    InitBackButton(backButtonPos);
+    InitConnectButton(connectButtonPos);
 }
 
 ConnectionState::~ConnectionState()
@@ -27,44 +42,23 @@ ConnectionState::~ConnectionState()
 
 void ConnectionState::OnEnter(ClientApp& app)
 {
-    m_clientApp = &app;
-    m_font = m_clientApp->GetFontByName(FONT_DEFAULT);
-    Window *m_window = m_clientApp->GetWindow();
+    m_clientApp->GetWindow()->RegisterDrawable(IpField);
+    m_clientApp->GetWindow()->RegisterDrawable(UsernameField);
 
-    sf::Vector2f sizeField = FIELD_SIZE;
-
-    float xBtnExtended = m_window->GetWidth() * 0.5f - (BUTTON_SIZE_EXTENDED.x * 0.5f);
-    float xBtnExtraExtended = m_window->GetWidth() * 0.5f - (BUTTON_SIZE_EXTRA_EXTENDED.x * 0.5f);
-
-    float xField = m_window->GetWidth() * 0.5f - (sizeField.x * 0.5f);
-    float yOffset = 100.f;
-
-    sf::Vector2f fieldPos = sf::Vector2f(xField, 2.f * yOffset);
-
-    // Init all graphics element
-    sf::Vector2f backButtonPos = sf::Vector2f(xBtnExtraExtended, 4.f * yOffset);
-    sf::Vector2f connectButtonPos = sf::Vector2f(xBtnExtended, 6.f * yOffset);
-
-    ShowIpField(fieldPos);
-    fieldPos.y += yOffset;
-
-    ShowNameField(fieldPos);
-
-    ShowBackButton(backButtonPos);
-
-    ShowConnectButton(connectButtonPos);
+    m_clientApp->GetWindow()->RegisterDrawable(BackBtn);
+    m_clientApp->GetWindow()->RegisterDrawable(ConnectBtn);
 }
 
 void ConnectionState::OnUpdate(ClientApp& app, float dt)
 {
-    for (auto field : _fields)
+    for (auto& field : _fields)
     {
-        field->Update(dt);
+        field.Update(dt);
     }
 
-    for (auto btn : _btns)
+    for (auto& btn : _btns)
     {
-        btn->Update(dt);
+        btn.Update(dt);
     }
 
     if (m_IsTryingToConnect)
@@ -90,24 +84,20 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
         }
     }
 
-    ActiveButtonFunction();
+    ActiveButtonFunction(app);
 }
 
 void ConnectionState::OnExit(ClientApp& app)
 {
-    for (auto it = _btns.begin(); it != _btns.end(); ++it)
+    for (auto& btn : _btns)
     {
-        app.GetWindow()->UnregisterDrawable(*it);
-        delete *it;
+        app.GetWindow()->UnregisterDrawable(btn);
     }
-    _btns.clear();
 
-    for (auto it = _fields.begin(); it != _fields.end(); ++it)
+    for (auto& field : _fields)
     {
-        app.GetWindow()->UnregisterDrawable(*it);
-        delete* it;
+        app.GetWindow()->UnregisterDrawable(field);
     }
-    _fields.clear();
 }
 
 
@@ -115,125 +105,103 @@ void ConnectionState::OnExit(ClientApp& app)
 
 #pragma region  Class Methods
 
-void ConnectionState::AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size)
-{
-    ButtonComponent* btn = new ButtonComponent(pos, color, m_clientApp->GetInputHandler(),size);
-    btn->SetButtonText(text, *font);
-    btn->SetOnClickCallback(function);
-
-    m_clientApp->GetWindow()->RegisterDrawable(btn);
-    _btns.push_back(btn);
-}
-
-void ConnectionState::AddField(const sf::Vector2f& pos, const std::string& label, sf::Font* font)
-{
-    InsertFieldComponent* field = new InsertFieldComponent(*font, m_clientApp->GetInputHandler());
-    field->SetPosition(pos);
-    field->SetLabel(label);
-
-    m_clientApp->GetWindow()->RegisterDrawable(field);
-    _fields.push_back(field);
-}
-
-InsertFieldComponent* ConnectionState::FindFieldByText(const std::string& text)
-{
-    for (auto field : _fields)
-    {
-        sf::Text textLabel = field->GetLabelComponent()->GetText();
-        if (textLabel.getString() == text)
-        {
-            return field;
-        }
-    }
-    return nullptr;
-}
-
-void ConnectionState::ShowIpField(const sf::Vector2f& pos)
+void ConnectionState::InitIpField(const sf::Vector2f& pos)
 {
     std::string ipLabel = "Server Phrase";
-    AddField(pos, ipLabel, m_font);
+
+    new (&IpField) InsertFieldComponent(*m_font, m_clientApp->GetInputHandler());
+    IpField.SetPosition(pos);
+    IpField.SetLabel(ipLabel);
 }
 
-void ConnectionState::ShowNameField(const sf::Vector2f& pos)
+void ConnectionState::InitUsernameField(const sf::Vector2f& pos)
 {
     std::string nameLabel = "Username";
-    AddField(pos, nameLabel, m_font);
+
+    new (&UsernameField) InsertFieldComponent(*m_font, m_clientApp->GetInputHandler());
+    UsernameField.SetPosition(pos);
+    UsernameField.SetLabel(nameLabel);
 }
 
-void ConnectionState::ShowBackButton(const sf::Vector2f& pos)
+void ConnectionState::InitBackButton(const sf::Vector2f& pos)
 {
     sf::Color OrangeRed(231, 62, 1);
     std::string btnText = "Return to menu";
-    sf::Vector2f size = BUTTON_SIZE_EXTRA_EXTENDED;
-
     std::function<void()> function = [this]()
         {
             _currentFunction = ButtonFunction::MenuScreen;
         };
 
-    AddButton(pos, OrangeRed, btnText, m_font, function, size);
+    new (&BackBtn) ButtonComponent(pos, *m_font, OrangeRed, m_clientApp->GetInputHandler(), BUTTON_SIZE_EXTRA_EXTENDED);
+    BackBtn.SetButtonText(btnText, *m_font);
+    BackBtn.SetOnClickCallback(function);
 }
 
-void ConnectionState::ShowConnectButton(const sf::Vector2f& pos)
+void ConnectionState::InitConnectButton(const sf::Vector2f& pos)
 {
     sf::Color Emerald(1, 215, 88);
     std::string btnText = "Connect";
-    sf::Vector2f size = BUTTON_SIZE_EXTENDED;
-
     std::function<void()> function = [this]()
         {
             _currentFunction = ButtonFunction::Connect;            
         };
 
-    AddButton(pos, Emerald, btnText, m_font, function, size);
+    new (&ConnectBtn) ButtonComponent(pos, *m_font, Emerald, m_clientApp->GetInputHandler());
+    ConnectBtn.SetButtonText(btnText, *m_font);
+    ConnectBtn.SetOnClickCallback(function);
 }
 
-void ConnectionState::ActiveButtonFunction()
+void ConnectionState::ActiveButtonFunction(ClientApp& app)
 {
     switch (_currentFunction)
     {
         case ButtonFunction::MenuScreen:
         {
-            m_clientApp->ChangeState<MenuState>();
+            m_clientApp->ChangeState<MenuState>(app);
             break;
         }
         case ButtonFunction::Connect:
         {
             if (m_IsTryingToConnect) return;
 
-            for (auto field : _fields)
+            for (auto& field : _fields)
             {
-                field->ClearErrorMessage();
+                field.ClearErrorMessage();
             }
-
-            InsertFieldComponent* nameField = FindFieldByText("Username");
 
             bool isNameValid = false;
-            if (nameField->GetText().empty())
+            if (UsernameField.GetText().empty())
             {
                 //DebugLog("Username should not be empty!\n");
-                nameField->ShowErrorMessage("Username should not be empty!");
+                UsernameField.ShowErrorMessage("Username should not be empty!");
             }
-            else if (nameField->GetText().size() < 3)
+            else if (UsernameField.GetText().size() < 3)
             {
                 //DebugLog("Username should be more than 2 characters!\n");
-                nameField->ShowErrorMessage("Username should be more than 2 characters!");
+                UsernameField.ShowErrorMessage("Username should be more than 2 characters!");
             }
             else
             {
                 isNameValid = true;
             }
 
-            m_Name = nameField->GetText();
+            m_Name = UsernameField.GetText();
 
-            InsertFieldComponent* ipField = FindFieldByText("Server Phrase");
-                m_clientApp->ConnectToServer(ipField->GetText());
+            if (isNameValid)
+            {
+                // m_clientApp->ConnectToServer("127.0.0.1");
+                m_clientApp->ConnectToServer(IpField.GetText());
                 m_IsTryingToConnect = true;
+            }
+            else
+            {
+                IpField.ShowErrorMessage("Invalid phrase!");
+            }
             break;
         }
         case ButtonFunction::GameScreen:
         {
-            m_clientApp->ChangeState<GameState>();
+            m_clientApp->ChangeState<GameState>(*app.GetFontByName("JuliaMono-Regular.ttf"));
             break;
         }
         default:

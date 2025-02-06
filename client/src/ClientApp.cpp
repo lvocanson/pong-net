@@ -15,7 +15,10 @@ using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
 
 ClientApp::ClientApp()
-	: m_Timer()
+	: m_PongGame()
+	, m_LeftScore(0)
+	, m_RightScore(0)
+	, m_Timer()
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr()
@@ -31,7 +34,7 @@ ClientApp::ClientApp()
 	m_font = new FontRegistry();
 	m_font->LoadFont("JuliaMono-Regular.ttf");
 
-	SetFirstState<MenuState>();
+	SetFirstState<MenuState>(*this);
 
 	if (m_WsaData.error || !m_Socket.IsValid())
 	{

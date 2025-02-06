@@ -12,7 +12,7 @@ class InputHandler;
 class ButtonComponent : public BaseComponent
 {
 public:
-    ButtonComponent(const sf::Vector2f pos, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size = BUTTON_SIZE_STANDARD);
+    ButtonComponent(const sf::Vector2f pos, const sf::Font& font, const sf::Color& idleColor, InputHandler* inputHandler, const sf::Vector2f size = BUTTON_SIZE_EXTENDED);
     ~ButtonComponent() override;
 
     void Update(float dt) override;
@@ -21,10 +21,10 @@ public:
     void SetPosition(const sf::Vector2f& position) override;
     sf::Vector2f GetPosition() const override;
     sf::Vector2f GetSize() const override;
-    const TextComponent* GetTextComponent() const;
+    const TextComponent& GetTextComponent() const;
 
     void SetOnClickCallback(std::function<void()> onClickCallback);
-    void SetButtonText(const std::string& text, sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE, TextAlignment textAlignment = TEXT_DEFAULT_ALIGNEMENT);
+    void SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE, TextAlignment textAlignment = TEXT_DEFAULT_ALIGNEMENT);
 
 private:
     sf::RectangleShape m_Shape;
@@ -35,7 +35,7 @@ private:
     std::function<void()> onClickCallback;
 
     InputHandler* m_inputHandler;
-    TextComponent* m_Text = nullptr;
+    TextComponent m_Text;
 
     bool IsMouseOver();
 };

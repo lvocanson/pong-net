@@ -29,8 +29,8 @@ void PongDisplay::Update(const Pong& pong)
 
 void PongDisplay::RegisterDrawables(Window* window)
 {
-	window->RegisterDrawable(&m_ScoreText);
-	window->RegisterDrawable(&m_Ball);
-	window->RegisterDrawable(&m_LeftPaddle);
-	window->RegisterDrawable(&m_RightPaddle);
+	window->RegisterDrawable(m_ScoreText);
+	window->RegisterDrawable(m_Ball);
+	window->RegisterDrawable(m_LeftPaddle);
+	window->RegisterDrawable(m_RightPaddle);
 }

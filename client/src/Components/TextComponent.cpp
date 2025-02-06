@@ -1,7 +1,7 @@
 #include "TextComponent.h"
 //#include "src/core/Managers/Resources/FontRegistry.h"
 
-TextComponent::TextComponent(sf::Font& font)
+TextComponent::TextComponent(const sf::Font& font)
     : m_Alignment(Center), 
     m_Text(font, "", 50u)
 {
@@ -13,17 +13,16 @@ TextComponent::TextComponent(sf::Font& font)
     SetPosition(sf::Vector2f(0, 0));
 }
 
-TextComponent::TextComponent(const std::string& text, sf::Font& font, BaseComponent* parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
+TextComponent::TextComponent(const std::string& text, sf::Font& font, BaseComponent& parentComponent, const sf::Color& color, unsigned int size, TextAlignment alignment)
     : m_Alignment(alignment),
     m_Text(font, "", 50u)
 {
-    m_ParentComponent = parentComponent;
     m_Text.setString(text);
     //m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
     m_Text.setFillColor(color);
     m_Text.setCharacterSize(size);
 
-    SetPosition(m_ParentComponent->GetPosition());
+    SetPosition(parentComponent.GetPosition());
 }
 
 void TextComponent::Update(float dt)

@@ -55,7 +55,8 @@ InsertFieldComponent::InsertFieldComponent(sf::Font& font, InputHandler* inputHa
     m_Rectangle.setOutlineColor(hoverColor);
     m_Rectangle.setOutlineThickness(outlineThickness);
 
-    SetPosition(sf::Vector2f(0.0f, 0.0f));
+    sf::Vector2f newPos = sf::Vector2f(pos.x - (size.x * 0.5f), pos.y - (size.y * 0.5f));
+    SetPosition(newPos);
 }
 
 void InsertFieldComponent::BlinkCursor(float dt)
@@ -194,13 +195,14 @@ void InsertFieldComponent::AppendCharacter(const char& c)
 
 void InsertFieldComponent::SetPosition(const sf::Vector2f& position)
 {
-    m_Rectangle.setPosition(position);
+    sf::Vector2f newPos = sf::Vector2f(position.x - (m_Rectangle.getSize().x * 0.5f), position.y - (m_Rectangle.getSize().y * 0.5f));
+    m_Rectangle.setPosition(newPos);
 
     m_Label->SetPosition(m_Rectangle.getPosition() - sf::Vector2f(0, m_Label->GetSize().y + m_Rectangle.getOutlineThickness() + 5));
     m_ErrorText.SetPosition(m_Rectangle.getPosition() + sf::Vector2f(0, m_Rectangle.getSize().y + m_Rectangle.getOutlineThickness()));
 
-    const float xPos = position.x + m_Rectangle.getOutlineThickness();
-    const float yPos = position.y + m_Rectangle.getOutlineThickness();
+    const float xPos = newPos.x + m_Rectangle.getOutlineThickness();
+    const float yPos = newPos.y + m_Rectangle.getOutlineThickness();
 
     m_Text.SetPosition(sf::Vector2f(xPos, yPos));
     ReplaceCursor();

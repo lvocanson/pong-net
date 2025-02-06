@@ -5,14 +5,14 @@
 #include "../../Components/ButtonComponent.h"
 #include "../../Components/SliderComponent.h"
 #include "../../Window/Window.h"
-
+#include <SFML/Graphics.hpp>
 
 class MenuState : public State<ClientApp>
 {
 public:
 #pragma region  Constructor
 
-    MenuState();
+    MenuState(ClientApp& app);
     MenuState(const MenuState& other) = delete;
     MenuState& operator=(const MenuState& other) = delete;
     ~MenuState() override;
@@ -29,16 +29,13 @@ public:
 
 #pragma region  Class Methods
 
-    void AddText(sf::Vector2f& pos, std::string msg);
-    void AddButton(const sf::Vector2f& pos, const sf::Color& color, const std::string& text, sf::Font* font, std::function<void()> function, const sf::Vector2f& size = BUTTON_SIZE_STANDARD);
-    void AddSlider(sf::Vector2f& pos, float width, float minValue, float maxValue);
-    ButtonComponent* FindButtonByText(const std::string& text);
-    void ShowPlayButton(const sf::Vector2f& pos);
-    void ShowConnectionButton(const sf::Vector2f& pos);
-    void ShowDisconnectButton(const sf::Vector2f& pos);
-    void ShowQuitButton(const sf::Vector2f& pos);
+    void InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue);
+    void InitPlayButton(const sf::Vector2f& pos);
+    void InitConnectionButton(const sf::Vector2f& pos);
+    void InitDisconnectButton(const sf::Vector2f& pos);
+    void InitQuitButton(const sf::Vector2f& pos);
 
-    void ActiveButtonFunction();
+    void ActiveButtonFunction(ClientApp& app);
 
 #pragma endregion
 
@@ -46,10 +43,22 @@ private:
 #pragma region  Variables
 
     ClientApp* m_clientApp;
-    std::vector<ButtonComponent*> _btns;
 
-    SliderComponent* _slider = nullptr;
-    TextComponent* _sliderText = nullptr;
+    union
+    {
+        struct
+        {
+            ButtonComponent PlayBtn;
+            ButtonComponent ConnectBtn;
+            ButtonComponent DisconnectBtn;
+            ButtonComponent QuitBtn;
+        };
+
+        std::array<ButtonComponent, 4> _btns;
+    }; 
+
+    SliderComponent _slider;
+    TextComponent _sliderText;
 
     ButtonFunction _currentFunction;
     

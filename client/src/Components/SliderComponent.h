@@ -17,6 +17,7 @@ private:
 
 
 public:
+    SliderComponent() = default;
     SliderComponent(sf::Vector2f& pos, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* music);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
