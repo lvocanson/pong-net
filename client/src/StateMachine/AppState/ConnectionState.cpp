@@ -23,7 +23,7 @@ ConnectionState::ConnectionState(ClientApp& app)
 	sf::Vector2f connectButtonPos = sf::Vector2f(xMiddleScreen, 8.f * yOffset);
 
 	InitIpField(fieldPos);
-	fieldPos.y += yOffset;
+	fieldPos.y += 1.5f * yOffset;
 
 	InitUsernameField(fieldPos);
 
@@ -85,15 +85,15 @@ void ConnectionState::OnExit(ClientApp& app)
 void ConnectionState::InitIpField(const sf::Vector2f& pos)
 {
 	std::string ipLabel = "Server Phrase";
-	m_IpField.SetPosition(pos);
 	m_IpField.SetLabel(ipLabel);
+	m_IpField.SetPosition(pos);
 }
 
 void ConnectionState::InitUsernameField(const sf::Vector2f& pos)
 {
 	std::string nameLabel = "Username";
-	m_UsernameField.SetPosition(pos);
 	m_UsernameField.SetLabel(nameLabel);
+	m_UsernameField.SetPosition(pos);
 }
 
 void ConnectionState::InitBackButton(const sf::Vector2f& pos)

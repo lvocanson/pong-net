@@ -24,7 +24,7 @@ public:
 	void ClearErrorMessage() { m_ErrorText.SetText(""); }
 
 	void SetText(const std::string& text);
-	void SetLabel(const std::string& label) { m_Label->SetText(label); }
+	void SetLabel(const std::string& label);
 	void SetPosition(const sf::Vector2f& position) override;
 	void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
 	void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }

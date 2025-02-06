@@ -43,11 +43,17 @@ void TextComponent::SetColor(const sf::Color& color)
 void TextComponent::SetCharacterSize(unsigned int size)
 {
 	m_Text.setCharacterSize(size);
+	m_Text.setOrigin(m_Text.getLocalBounds().getCenter());
 }
 
 void TextComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_Text, states);
+}
+
+const sf::Vector2f& TextComponent::GetBounds() const
+{
+	return m_Text.getLocalBounds().size;
 }
 
 sf::Vector2f TextComponent::GetPosition() const

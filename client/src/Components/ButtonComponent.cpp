@@ -25,6 +25,8 @@ void ButtonComponent::Update(float dt)
 	{
 		m_Shape.setFillColor(m_IdleColor);
 	}
+
+	m_Text.Update(dt);
 }
 
 void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -78,7 +80,7 @@ void ButtonComponent::SetOnClickCallback(std::function<void()>& callback)
 
 void ButtonComponent::SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor, unsigned int textSize)
 {
-	m_Text.SetText(text);
-	m_Text.SetColor(textColor);
 	m_Text.SetCharacterSize(textSize);
+	m_Text.SetColor(textColor);
+	m_Text.SetText(text);
 }
