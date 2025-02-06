@@ -1,5 +1,17 @@
 #pragma once
+#define NOMINMAX
 #include <WinSock2.h>
+#include <string_view>
+
+// More user friendly address (base 64)
+struct IpPhrase
+{
+	IpPhrase();
+	IpPhrase(std::string_view src);
+	std::string_view View() const;
+	
+	char buffer[6];
+};
 
 struct IpAddress
 {
@@ -11,12 +23,11 @@ struct IpAddress
 		Loopback
 	};
 
-	using String = char[22];
-
-	IpAddress(const char* address);
 	IpAddress(AddrSpecialType address = None);
-
-	void ToString(String buffer) const;
+	IpAddress(IpPhrase phrase);
+	static IpAddress LocalAddress();
+	
+	IpPhrase ToPhrase() const;
 
 	bool operator==(const IpAddress& lhs) const;
 

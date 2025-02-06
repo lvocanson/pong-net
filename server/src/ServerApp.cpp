@@ -62,9 +62,9 @@ int ServerApp::Run()
 
 	using namespace Console;
 	Out << TextColors::BrightFgBlack
-		<< "The server is running at port "
+		<< "The server is running at local address "
 		<< TextColors::BrightFgMagenta
-		<< m_Addr.addr.sin_port
+		<< IpAddress::LocalAddress().ToPhrase().View()
 		<< TextColors::BrightFgBlack
 		<< ".\nPress ESC to shutdown.\n"
 		<< TextColors::Reset;
@@ -314,7 +314,7 @@ void ServerApp::FlushLostPackets(TimePoint now)
 
 void ServerApp::CleanupDirectory(TimePoint now)
 {
-	if (m_LastClientsCleanup + ClientDirectoryCleanupInterval > now)
+	if (m_LastClientsCleanup + ClientDirectoryCleanupInterval < now)
 	{
 		size_t count = m_Clients.RemoveIfLastContactBefore(now - ClientDirectoryMaxLastContact);
 		m_LastClientsCleanup = now;

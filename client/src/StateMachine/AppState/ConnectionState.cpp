@@ -1,6 +1,4 @@
 #include "ConnectionState.h"
-
-#include <regex>
 #include "../../FontRegistry.h"
 #include "MenuState.h"
 #include "GameState.h"
@@ -229,18 +227,8 @@ void ConnectionState::ActiveButtonFunction()
             m_Name = nameField->GetText();
 
             InsertFieldComponent* ipField = FindFieldByText("Server Phrase");
-            const std::string ip = ipField->GetText();
-
-            if (isNameValid)
-            {
-                //m_clientApp->ConnectToServer(ip);
-                m_clientApp->ConnectToServer("127.0.0.1");
+                m_clientApp->ConnectToServer(ipField->GetText());
                 m_IsTryingToConnect = true;
-            }
-            else
-            {
-                ipField->ShowErrorMessage("Invalid phrase!");
-            }
             break;
         }
         case ButtonFunction::GameScreen:
@@ -253,12 +241,6 @@ void ConnectionState::ActiveButtonFunction()
             break;
         }
     }
-}
-
-bool ConnectionState::IsValidIpAddress(const char* ip)
-{
-    const std::regex ipRegex(R"(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)");
-    return std::regex_match(ip, ipRegex) || std::string("LOCALHOST")._Equal(ip);
 }
 
 #pragma endregion

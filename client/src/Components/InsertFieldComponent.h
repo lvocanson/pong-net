@@ -46,7 +46,7 @@ public:
     sf::Vector2f GetPosition() const override { return m_Rectangle.getPosition(); }
     sf::Vector2f GetSize() const override { return m_Rectangle.getSize(); }
     bool GetFocus() const { return m_Focus; }
-    std::string GetText() const { return m_TextContent; }
+    std::string_view GetText() const { return m_TextContent; }
     unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
     size_t GetTextSize() const { return m_TextContent.length(); }
     const TextComponent* GetLabelComponent() const { return m_Label; }

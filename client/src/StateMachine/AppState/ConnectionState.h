@@ -39,8 +39,6 @@ public:
 
     void ActiveButtonFunction();
 
-    bool IsValidIpAddress(const char* ip);
-
 #pragma endregion
 
 private:

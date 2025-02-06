@@ -39,7 +39,7 @@ public:
 	ConnectionStateInfos GetConnectionStateInfo() { return connectionStateInfo; };
 	Pong& GetPongGame() { return m_PongGame; };
 
-	void ConnectToServer(std::string_view address);
+	void ConnectToServer(IpPhrase phrase);
 
 	unsigned m_LeftScore, m_RightScore;
 

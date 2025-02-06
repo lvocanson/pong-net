@@ -109,9 +109,9 @@ void ClientApp::Update(float dt)
 	StateMachine::Update(dt);
 }
 
-void ClientApp::ConnectToServer(std::string_view address)
+void ClientApp::ConnectToServer(IpPhrase phrase)
 {
-	m_ServerAddr = address.data();
+	m_ServerAddr = phrase;
 
 	Message_Connect connect;
 	auto wrapper = PacketWrapper::Wrap(connect);
