@@ -48,9 +48,6 @@
     <ClInclude Include="src\Utils\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CoreDefinitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Pong.cpp">

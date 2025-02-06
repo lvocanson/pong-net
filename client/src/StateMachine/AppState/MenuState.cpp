@@ -2,7 +2,6 @@
 
 #include "ClientApp.h"
 #include "../../FontRegistry.h"
-#include "../../../../common/CoreDefinitions.h"
 #include "ConnectionState.h"
 
 #pragma region  Constructor
@@ -186,7 +185,7 @@ void MenuState::ActiveButtonFunction()
             ButtonComponent* btnConnect = FindButtonByText("Connection");
             m_clientApp->GetWindow()->UnregisterDrawable(btnConnect);
             sf::Vector2f pos = btnConnect->GetPosition();
-            RELEASE(btnConnect);
+            delete btnConnect;
 
             ShowConnectionButton(pos);
             ButtonComponent* btnDisconnect = FindButtonByText("Disconnect");

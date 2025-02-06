@@ -2,7 +2,6 @@
 
 #include <regex>
 #include "../../FontRegistry.h"
-#include "../../../../common/CoreDefinitions.h"
 #include "MenuState.h"
 
 constexpr float CONNECTION_TIMEOUT_TIME = 5.0f;
@@ -122,19 +121,19 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 
 void ConnectionState::OnExit(ClientApp& app)
 {
-    for (auto btn = _btns.begin(); btn != _btns.end();)
+    for (auto it = _btns.begin(); it != _btns.end(); ++it)
     {
-        app.GetWindow()->UnregisterDrawable(*btn);
-        RELEASE(*btn);  // Deletes the pointer and sets it to nullptr
-        btn = _btns.erase(btn);  // erase() returns the next valid iterator
+        app.GetWindow()->UnregisterDrawable(*it);
+        delete *it;
     }
+    _btns.clear();
 
-    for (auto field = _fields.begin(); field != _fields.end();)
+    for (auto it = _fields.begin(); it != _fields.end(); ++it)
     {
-        app.GetWindow()->UnregisterDrawable(*field);
-        RELEASE(*field);  // Deletes the pointer and sets it to nullptr
-        field = _fields.erase(field);  // erase() returns the next valid iterator
+        app.GetWindow()->UnregisterDrawable(*it);
+        delete* it;
     }
+    _fields.clear();
 }
 
 

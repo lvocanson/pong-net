@@ -167,7 +167,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CoreDefinitions.h" />
     <ClInclude Include="src\Game\Message.h" />
     <ClInclude Include="src\Game\Pong.h" />
     <ClInclude Include="src\Network\IpAddress.h" />

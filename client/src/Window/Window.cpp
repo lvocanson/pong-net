@@ -1,5 +1,4 @@
 #include "Window.h"
-#include "../CoreDefinitions.h"
 #include <functional>
 
 sf::RenderWindow* Window::m_Window = nullptr;
@@ -15,7 +14,7 @@ Window::~Window()
 {
     if (m_Window->isOpen())
         m_Window->close();
-    RELEASE(m_Window);
+    delete m_Window;
 }
 
 void Window::Create(const char* title, sf::Vector2u size)
@@ -74,7 +73,7 @@ void Window::ClearAllDrawables()
 {
     for (auto drawable : m_Drawables)
     {
-        RELEASE(drawable);
+        delete drawable;
     }
 
     m_Drawables.clear();

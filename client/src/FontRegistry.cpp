@@ -1,5 +1,4 @@
 #include "FontRegistry.h"
-#include "../CoreDefinitions.h"
 #include <SFML/Graphics/Font.hpp>
 
 FontRegistry::FontRegistry()
@@ -42,9 +41,9 @@ void FontRegistry::LoadFont(const std::string& fontName)
 
 void FontRegistry::ClearFonts()
 {
-    for (auto& pair : m_Fonts)
+    for (auto& [string, font] : m_Fonts)
     {
-        RELEASE(pair.second)
+        delete font;
     }
 
     m_Fonts.clear(); // Efface le contenu du map
