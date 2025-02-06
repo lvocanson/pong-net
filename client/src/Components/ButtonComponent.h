@@ -25,7 +25,7 @@ public:
 	const TextComponent& GetTextComponent() const;
 
 	void SetOnClickCallback(std::function<void()>& callback);
-	void SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE, TextAlignment textAlignment = TEXT_DEFAULT_ALIGNEMENT);
+	void SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE);
 
 private:
 	sf::RectangleShape m_Shape;

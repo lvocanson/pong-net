@@ -35,26 +35,13 @@ void ButtonComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
 bool ButtonComponent::IsMouseOver()
 {
-	sf::Vector2f mousePos = (sf::Vector2f)m_Input.GetMousePosition();
-	sf::Vector2f buttonPos = m_Shape.getPosition();
-	sf::Vector2f buttonSize = m_Shape.getSize();
-
-	float Right = buttonPos.x + buttonSize.x;
-	float Bottom = buttonPos.y + buttonSize.y;
-
-	return mousePos.x >= buttonPos.x && mousePos.x <= Right && mousePos.y >= buttonPos.y && mousePos.y <= Bottom;
+	return m_Shape.getGlobalBounds().contains(sf::Vector2f(m_Input.GetMousePosition()));
 }
 
 void ButtonComponent::SetPosition(const sf::Vector2f& position)
 {
 	m_Shape.setPosition(position);
-
-	sf::FloatRect buttonBounds = m_Shape.getLocalBounds();
-	sf::Vector2f buttonTextPosition = position;
-	buttonTextPosition.x += (buttonBounds.size.x - m_Text.GetSize().x) / 2.0f;
-	buttonTextPosition.y += (buttonBounds.size.y - m_Text.GetSize().y) / 2.0f;
-
-	m_Text.SetPosition(buttonTextPosition);
+	m_Text.SetPosition(position);
 }
 
 sf::Vector2f ButtonComponent::GetPosition() const
@@ -65,6 +52,7 @@ sf::Vector2f ButtonComponent::GetPosition() const
 void ButtonComponent::SetSize(sf::Vector2f size)
 {
 	m_Shape.setSize(size);
+	m_Shape.setOrigin(size / 2.f);
 }
 
 sf::Vector2f ButtonComponent::GetSize() const
@@ -88,15 +76,9 @@ void ButtonComponent::SetOnClickCallback(std::function<void()>& callback)
 	m_OnClickCallback = callback;
 }
 
-void ButtonComponent::SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor, unsigned int textSize, TextAlignment textAlignment)
+void ButtonComponent::SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor, unsigned int textSize)
 {
 	m_Text.SetText(text);
 	m_Text.SetColor(textColor);
 	m_Text.SetCharacterSize(textSize);
-	m_Text.SetTextAlignment(textAlignment);
-
-	sf::Vector2f buttonPosition = GetPosition();
-	sf::Vector2f buttonSize = GetSize();
-	sf::Vector2f textPosition = buttonPosition + sf::Vector2f((buttonSize.x - m_Text.GetSize().x) / 2.0f, (buttonSize.y - m_Text.GetSize().y) / 2.0f);
-	m_Text.SetPosition(textPosition);
 }
