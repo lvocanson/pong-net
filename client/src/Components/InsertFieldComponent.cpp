@@ -137,12 +137,7 @@ void InsertFieldComponent::draw(sf::RenderTarget& target, sf::RenderStates state
 
 bool InsertFieldComponent::IsMouseOver(Window& window)
 {
-	const sf::Vector2f mousePos = sf::Vector2f(m_Input.GetMousePosition(window));
-	const sf::Vector2f buttonPos = m_Rectangle.getPosition();
-	const sf::Vector2f buttonSize = m_Rectangle.getSize();
-
-	return mousePos.x >= buttonPos.x && mousePos.x <= buttonPos.x + buttonSize.x &&
-		mousePos.y >= buttonPos.y && mousePos.y <= buttonPos.y + buttonSize.y;
+	return m_Rectangle.getGlobalBounds().contains(sf::Vector2f(m_Input.GetMousePosition(window)));
 }
 
 void InsertFieldComponent::AppendCharacter(const sf::Event::TextEntered& text)
