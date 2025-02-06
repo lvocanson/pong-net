@@ -89,6 +89,7 @@ void MenuState::InitPlayButton(const sf::Vector2f& pos)
 		m_CurrentFunction = ButtonFunction::Play;
 	};
 
+	m_PlayBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_PlayBtn.SetPosition(pos);
 	m_PlayBtn.SetColor(Emerald);
 	m_PlayBtn.SetButtonText(btnText, m_ClientApp.GetFont());
@@ -105,6 +106,7 @@ void MenuState::InitConnectionButton(const sf::Vector2f& pos)
 		m_CurrentFunction = ButtonFunction::ConnectionScreen;
 	};
 
+	m_ConnectBtn.SetSize(size);
 	m_ConnectBtn.SetPosition(pos);
 	m_ConnectBtn.SetColor(Lime);
 	m_ConnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
@@ -119,6 +121,7 @@ void MenuState::InitDisconnectButton(const sf::Vector2f& pos)
 		m_CurrentFunction = ButtonFunction::Disconnect;
 	};
 
+	m_DisconnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_DisconnectBtn.SetPosition(pos);
 	m_DisconnectBtn.SetColor(sf::Color::Red);
 	m_DisconnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
@@ -134,6 +137,7 @@ void MenuState::InitQuitButton(const sf::Vector2f& pos)
 		m_CurrentFunction = ButtonFunction::Quit;
 	};
 
+	m_QuitBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_QuitBtn.SetPosition(pos);
 	m_QuitBtn.SetColor(OrangeRed);
 	m_QuitBtn.SetButtonText(btnText, m_ClientApp.GetFont());
