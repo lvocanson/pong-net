@@ -7,16 +7,26 @@ inline constexpr float BallBounceMaxAngle = std::numbers::pi_v<float> / 4.f;
 inline constexpr float BallStartSpeed = 400.f;
 inline constexpr float PaddleSpeed = 200.f;
 
-PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
+PaddlesBehaviour operator|(PaddlesBehaviour lhs, PaddlesBehaviour rhs)
 {
 	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) | static_cast<UType>(rhs));
+	return static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) | static_cast<UType>(rhs));
+}
+
+PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
+{
+	return lhs = lhs | rhs;
+}
+
+PaddlesBehaviour operator&(PaddlesBehaviour lhs, PaddlesBehaviour rhs)
+{
+	using UType = std::underlying_type_t<PaddlesBehaviour>;
+	return static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) & static_cast<UType>(rhs));
 }
 
 PaddlesBehaviour operator&=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs)
 {
-	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return lhs = static_cast<PaddlesBehaviour>(static_cast<UType>(lhs) & static_cast<UType>(rhs));
+	return lhs = lhs & rhs;
 }
 
 PaddlesBehaviour operator~(PaddlesBehaviour rhs)
@@ -45,29 +55,23 @@ void Pong::Reset()
 	BallDy = BallStartSpeed * std::sinf(angle);
 }
 
-static bool operator&(PaddlesBehaviour lhs, PaddlesBehaviour rhs)
-{
-	using UType = std::underlying_type_t<PaddlesBehaviour>;
-	return (static_cast<UType>(lhs) & static_cast<UType>(rhs)) != 0;
-}
-
 void Pong::Update(float dt)
 {
 	// paddles update
 	using enum PaddlesBehaviour;
-	if (Behaviours & LeftUp)
+	if ((Behaviours & LeftUp) != None)
 	{
 		LeftPaddle = std::clamp(LeftPaddle - dt * PaddleSpeed, 0.f, GameSizeY - PaddleHeight);
 	}
-	else if (Behaviours & LeftDown)
+	else if ((Behaviours & LeftDown) != None)
 	{
 		LeftPaddle = std::clamp(LeftPaddle + dt * PaddleSpeed, 0.f, GameSizeY - PaddleHeight);
 	}
-	if (Behaviours & RightUp)
+	if ((Behaviours & RightUp) != None)
 	{
 		RightPaddle = std::clamp(RightPaddle - dt * PaddleSpeed, 0.f, GameSizeY - PaddleHeight);
 	}
-	else if (Behaviours & RightDown)
+	else if ((Behaviours & RightDown) != None)
 	{
 		RightPaddle = std::clamp(RightPaddle + dt * PaddleSpeed, 0.f, GameSizeY - PaddleHeight);
 	}

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "ClientApp.h"
 #include "Network/NetHelper.h"
 #include "Network/PacketWrapper.h"
@@ -26,6 +27,7 @@ ClientApp::ClientApp()
 	, m_Socket()
 	, m_ServerAddr()
 	, m_Signature(0)
+	, m_LastPacketReceivedTp(TimePoint::min())
 {
 	m_Window.Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
 
@@ -84,9 +86,17 @@ void ClientApp::Update(float dt)
 {
 	StateMachine::Update(dt);
 
-	if (m_Playing)
+	if (m_Playing == PlayingState::Playing)
 	{
 		m_PongGame.Update(dt);
+	}
+
+	if (m_Playing != PlayingState::No)
+	{
+		Message_GameUpdate update(m_PongGame, m_Playing == PlayingState::No ? Message_GameUpdate::Playing : Message_GameUpdate::Paused, m_LeftScore, m_RightScore);
+		auto wrapper = PacketWrapper::Wrap(update);
+		wrapper.Sign(m_Signature);
+		wrapper.Send(m_Socket, m_ServerAddr);
 	}
 }
 
@@ -119,6 +129,7 @@ void ClientApp::CheckPendingPackets()
 			}
 			else
 			{
+				m_LastPacketReceivedTp = packet.header.timestamp;
 				OnPacketReceived(packet);
 			}
 		}
@@ -225,7 +236,26 @@ void ClientApp::OnMessageReceived(const Message& message)
 	case GameUpdate:
 	{
 		auto& update = message.As<Message_GameUpdate>();
-		m_PongGame = update.game;
+
+		TimePoint now = std::chrono::high_resolution_clock::now();
+		float diff = std::chrono::duration<float>(now - m_LastPacketReceivedTp).count();
+
+		// Make up for lost time
+		auto tempGame = update.game;
+		tempGame.Behaviours = m_PongGame.Behaviours;
+		tempGame.Update(diff);
+
+		using enum PaddlesBehaviour;
+		if ((m_PongGame.Behaviours & LeftUp) != None)
+			tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
+		else if ((m_PongGame.Behaviours & LeftDown) != None)
+			tempGame.LeftPaddle = std::max(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
+		if ((m_PongGame.Behaviours & RightUp) != None)
+			tempGame.RightPaddle = std::min(tempGame.RightPaddle, m_PongGame.RightPaddle);
+		else if ((m_PongGame.Behaviours & RightDown) != None)
+			tempGame.RightPaddle = std::max(tempGame.RightPaddle, m_PongGame.RightPaddle);
+
+		m_PongGame = tempGame;
 		m_LeftScore = update.leftScore;
 		m_RightScore = update.rightScore;
 
@@ -233,12 +263,12 @@ void ClientApp::OnMessageReceived(const Message& message)
 		{
 		case Message_GameUpdate::Paused:
 		{
-			m_Playing = false;
+			m_Playing = PlayingState::Paused;
 		}
 		break;
 		case Message_GameUpdate::Playing:
 		{
-			m_Playing = true;
+			m_Playing = PlayingState::Playing;
 		}
 		break;
 		}

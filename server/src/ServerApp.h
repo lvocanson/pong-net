@@ -29,7 +29,7 @@ private:
 
 	void CleanupDirectory(TimePoint now);
 
-	PongRoom& CreateRoom();
+	PongRoom& CreateRoom(const Client& applicant);
 	void MaintainRooms(TimePoint now, float dt);
 
 	void LogInfo(std::string_view info) const;

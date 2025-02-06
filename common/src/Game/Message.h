@@ -14,13 +14,15 @@ enum class MessageType
 	RoomCreationRequest,
 	RoomGroupRequest,
 	RoomJoinRequest,
-	InputUpdate,
 
 	// Server -> Client
 
 	ConnectResponse,
 	RoomGroupResponse,
 	RoomJoinResponse,
+
+	// Both ways
+
 	GameUpdate,
 
 	Count // Keep last
@@ -68,16 +70,6 @@ struct Message_RoomJoinRequest : public Message
 	}
 
 	uint16_t uuid;
-};
-
-struct Message_InputUpdate : public Message
-{
-	Message_InputUpdate(PaddlesBehaviour behaviour)
-		: Message(MessageType::InputUpdate)
-		, behaviour(behaviour)
-	{
-	}
-	PaddlesBehaviour behaviour;
 };
 
 struct Message_RoomGroupResponse : public Message

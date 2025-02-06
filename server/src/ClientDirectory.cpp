@@ -4,7 +4,8 @@ const Client& ClientDirectory::AddOrUpdate(const Client& client)
 {
 	for (auto& c : m_Directory)
 	{
-		if (c.signature == client.signature)
+		// Only update if packet is most recent
+		if (c.signature == client.signature && c.lastPacketSent < client.lastPacketSent)
 		{
 			c = client;
 			return c;

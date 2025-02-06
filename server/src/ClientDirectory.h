@@ -5,11 +5,11 @@
 
 struct Client
 {
-	using lastContact_t = std::chrono::high_resolution_clock::time_point;
+	using TimePoint = std::chrono::high_resolution_clock::time_point;
 
 	//char name[22];
 	uint16_t signature;
-	lastContact_t lastContact = std::chrono::high_resolution_clock::now();
+	TimePoint lastPacketSent;
 	IpAddress address;
 };
 

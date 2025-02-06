@@ -26,7 +26,9 @@ enum class PaddlesBehaviour
 	Right = RightUp | RightDown,
 };
 
+PaddlesBehaviour operator|(PaddlesBehaviour lhs, PaddlesBehaviour rhs);
 PaddlesBehaviour operator|=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs);
+PaddlesBehaviour operator&(PaddlesBehaviour lhs, PaddlesBehaviour rhs);
 PaddlesBehaviour operator&=(PaddlesBehaviour& lhs, PaddlesBehaviour rhs);
 PaddlesBehaviour operator~(PaddlesBehaviour rhs);
 

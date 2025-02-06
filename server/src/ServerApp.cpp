@@ -95,7 +95,6 @@ int ServerApp::Run()
 
 ServerApp::~ServerApp()
 {
-	using namespace Console;
 	LogInfo("The server is shuting down");
 
 	std::string_view reason = "Reason: Unknown";
@@ -140,12 +139,18 @@ void ServerApp::HandlePendingPackets()
 		{
 			auto& client = m_Clients.AddOrUpdate({
 				.signature = packet.header.signature,
+				.lastPacketSent = packet.header.timestamp,
 				.address = sender});
 			OnPacketReceived(packet, client);
 		}
 		else
 		{
-			LogWsaError("Error while receiving packet");
+			int error = WSAGetLastError();
+			if (error == WSAECONNRESET)
+				// Received if we try to send packets to closed client
+				continue;
+
+			LogWsaError("Error while receiving packet", error);
 		}
 	}
 }
@@ -238,8 +243,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 
 		if (!matchRoom)
 		{
-			matchRoom = &CreateRoom();
-			matchRoom->leftSignature = sender.signature;
+			matchRoom = &CreateRoom(sender);
 		}
 
 		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, matchRoom->uuid);
@@ -253,8 +257,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 	break;
 	case RoomCreationRequest:
 	{
-		auto& room = CreateRoom();
-		room.leftSignature = sender.signature;
+		auto& room = CreateRoom(sender);
 
 		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid);
 		auto wrapper = PacketWrapper::Wrap(response);
@@ -325,26 +328,71 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		}
 	}
 	break;
-	case InputUpdate:
+	case GameUpdate:
 	{
-		auto& update = message.As<Message_InputUpdate>();
-		PaddlesBehaviour updateBehaviour = update.behaviour;
+		auto& update = message.As<Message_GameUpdate>();
 
+		TimePoint now = std::chrono::high_resolution_clock::now();
+		float diff = std::chrono::duration<float>(now - sender.lastPacketSent).count();
+
+		bool wasPaused = false;
+		for (auto& room : m_PausedRooms)
+		{
+			if (room.leftSignature == sender.signature)
+			{
+				room.leftLastUpdate = sender.lastPacketSent;
+				wasPaused = true;
+			}
+			else if (room.rightSignature == sender.signature)
+			{
+				room.rightLastUpdate = sender.lastPacketSent;
+				wasPaused = true;
+			}
+		}
+
+		if (wasPaused)
+			// no need to update, all inputs are ignored
+			break;
+
+		Pong* pongGame = nullptr;
 		for (auto& room : m_PlayingRooms)
 		{
 			if (room.leftSignature == sender.signature)
 			{
 				room.game.Behaviours &= ~PaddlesBehaviour::Left; // Erase left bits
-				updateBehaviour &= PaddlesBehaviour::Left; // only keep left bits
-				room.game.Behaviours |= updateBehaviour; // merge both
+				room.game.Behaviours |= update.game.Behaviours & PaddlesBehaviour::Left; // only keep left bits, merge both
+				room.leftLastUpdate = sender.lastPacketSent;
+				pongGame = &room.game;
+				break;
 			}
 			else if (room.rightSignature == sender.signature)
 			{
 				room.game.Behaviours &= ~PaddlesBehaviour::Right; // Erase right bits
-				updateBehaviour &= PaddlesBehaviour::Right; // only keep right bits
-				room.game.Behaviours |= updateBehaviour; // merge both
+				room.game.Behaviours |= update.game.Behaviours & PaddlesBehaviour::Right; // only keep right bits, merge both
+				room.rightLastUpdate = sender.lastPacketSent;
+				pongGame = &room.game;
+				break;
 			}
 		}
+
+		if (!pongGame)
+			// receiving input of deleted game?
+			break;
+
+		// Make up for lost time
+		auto tempGame = update.game;
+		tempGame.Behaviours = pongGame->Behaviours;
+		tempGame.Update(diff);
+
+		using enum PaddlesBehaviour;
+		if ((pongGame->Behaviours & LeftUp) != None)
+			tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, pongGame->LeftPaddle);
+		else if ((pongGame->Behaviours & LeftDown) != None)
+			tempGame.LeftPaddle = std::max(tempGame.LeftPaddle, pongGame->LeftPaddle);
+		if ((pongGame->Behaviours & RightUp) != None)
+			tempGame.RightPaddle = std::min(tempGame.RightPaddle, pongGame->RightPaddle);
+		else if ((pongGame->Behaviours & RightDown) != None)
+			tempGame.RightPaddle = std::max(tempGame.RightPaddle, pongGame->RightPaddle);
 	}
 	break;
 	}
@@ -376,7 +424,7 @@ void ServerApp::CleanupDirectory(TimePoint now)
 
 		for (auto it = m_Clients.m_Directory.begin(); it != m_Clients.m_Directory.end();)
 		{
-			if (it->lastContact > maxLastContact)
+			if (it->lastPacketSent > maxLastContact)
 			{
 				++it;
 				continue;
@@ -391,7 +439,7 @@ void ServerApp::CleanupDirectory(TimePoint now)
 	}
 }
 
-PongRoom& ServerApp::CreateRoom()
+PongRoom& ServerApp::CreateRoom(const Client& applicant)
 {
 	uint16_t uuid = 0;
 	while (uuid == 0)
@@ -422,8 +470,21 @@ PongRoom& ServerApp::CreateRoom()
 		}
 	}
 
+	auto& room = m_PausedRooms.emplace_back(uuid);
+	if (rand() % 2)
+	{
+		room.leftSignature = applicant.signature;
+		room.leftLastUpdate = applicant.lastPacketSent;
+	}
+	else
+	{
+		room.rightSignature = applicant.signature;
+		room.rightLastUpdate = applicant.lastPacketSent;
+
+	}
+
 	LogInfo(std::format("Room {} created", uuid));
-	return m_PausedRooms.emplace_back(uuid);
+	return room;
 }
 
 void ServerApp::MaintainRooms(TimePoint now, float dt)
@@ -431,8 +492,8 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 	for (auto it = m_PausedRooms.begin(); it != m_PausedRooms.end();)
 	{
 		PongRoom& room = *it;
-		bool leftActive = now - room.leftLastUpdate < InactivityUpdateMissingTime;
-		bool rightActive = now - room.rightLastUpdate < InactivityUpdateMissingTime;
+		bool leftActive = room.leftLastUpdate + InactivityUpdateMissingTime > now;
+		bool rightActive = room.rightLastUpdate + InactivityUpdateMissingTime > now;
 
 		if (leftActive && rightActive)
 		{
@@ -469,13 +530,14 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 	for (auto it = m_PlayingRooms.begin(); it != m_PlayingRooms.end();)
 	{
 		PongRoom& room = *it;
-		bool leftActive = now - room.leftLastUpdate < InactivityUpdateMissingTime;
-		bool rightActive = now - room.rightLastUpdate < InactivityUpdateMissingTime;
+		bool leftActive = room.leftLastUpdate + InactivityUpdateMissingTime > now;
+		bool rightActive = room.rightLastUpdate + InactivityUpdateMissingTime > now;
 
 		if (!(leftActive && rightActive))
 		{
 			// Client disconnected
 			m_PausedRooms.emplace_back(std::move(room));
+			it = m_PlayingRooms.erase_swap(it);
 			continue;
 		}
 

@@ -61,7 +61,14 @@ private: // variables
 
 	Pong m_PongGame;
 	uint16_t m_LeftScore, m_RightScore;
-	bool m_Playing = false;
+
+	enum class PlayingState
+	{
+		No,
+		Paused,
+		Playing
+
+	} m_Playing = PlayingState::No;
 
 	ConnectionStateInfos connectionStateInfo;
 
@@ -71,5 +78,6 @@ private: // server communication
 	UdpSocket m_Socket;
 	IpAddress m_ServerAddr;
 	uint16_t m_Signature;
+	TimePoint m_LastPacketReceivedTp;
 	stc::swap_back_array<PacketUnwrapper> m_Unwrappers;
 };
