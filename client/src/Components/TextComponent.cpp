@@ -2,7 +2,7 @@
 //#include "src/core/Managers/Resources/FontRegistry.h"
 
 TextComponent::TextComponent(const sf::Font& font)
-    : m_Alignment(Center), 
+    : m_Alignment(TextAlignment::Center),
     m_Text(font, "", 50u)
 {
     m_Text.setString("");

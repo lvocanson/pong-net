@@ -8,11 +8,11 @@ class PongDisplay
 {
 public:
 
-	PongDisplay(sf::Font&);
+	PongDisplay(const sf::Font&);
 
 	void SetScore(unsigned left, unsigned right);
 	void Update(const Pong& pong);
-	void RegisterDrawables(Window* window);
+	void RegisterDrawables(Window& window);
 
 private:
 

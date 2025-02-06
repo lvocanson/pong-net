@@ -1,197 +1,176 @@
 #include "MenuState.h"
-
 #include "ClientApp.h"
-#include "../../FontRegistry.h"
 #include "ConnectionState.h"
 
-#pragma region  Constructor
-
 MenuState::MenuState(ClientApp& app)
-    : m_clientApp(&app)
-    , _sliderText(*app.GetFontByName(FONT_DEFAULT))
-    , _currentFunction(ButtonFunction::None)
+	: m_ClientApp(app)
+	, m_PlayBtn(app.GetFont(), app.GetInputHandler())
+	, m_ConnectBtn(app.GetFont(), app.GetInputHandler())
+	, m_DisconnectBtn(app.GetFont(), app.GetInputHandler())
+	, m_QuitBtn(app.GetFont(), app.GetInputHandler())
+	, m_Slider(app.GetInputHandler(), app.GetMusic())
+	, m_SliderText(app.GetFont())
+	, m_CurrentFunction(ButtonFunction::None)
 {
-    float yOffset = app.GetWindow()->GetHeight() * 0.1f;
-    float xMiddleScreen = app.GetWindow()->GetWidth() * 0.5f;
+	float yOffset = app.GetWindow().GetHeight() * 0.1f;
+	float xMiddleScreen = app.GetWindow().GetWidth() * 0.5f;
 
-    sf::Vector2f btnScreenPos = sf::Vector2f(xMiddleScreen, 4.f * yOffset);
-    sf::Vector2f sliderpos = sf::Vector2f(app.GetWindow()->GetWidth() * 0.8f, yOffset);
-    
-    InitSlider(sliderpos, app.GetWindow()->GetWidth() * 0.1f, 0, 100);
-    InitConnectionButton(btnScreenPos);
-    InitPlayButton(btnScreenPos);
+	sf::Vector2f btnScreenPos = sf::Vector2f(xMiddleScreen, 4.f * yOffset);
+	sf::Vector2f sliderpos = sf::Vector2f(app.GetWindow().GetWidth() * 0.8f, yOffset);
 
-    btnScreenPos.y += yOffset;
-    InitDisconnectButton(btnScreenPos);
+	InitSlider(sliderpos, app.GetWindow().GetWidth() * 0.1f, 0, 100);
+	InitConnectionButton(btnScreenPos);
+	InitPlayButton(btnScreenPos);
 
-    btnScreenPos.y += yOffset;
-    InitQuitButton(btnScreenPos);
+	btnScreenPos.y += yOffset;
+	InitDisconnectButton(btnScreenPos);
+
+	btnScreenPos.y += yOffset;
+	InitQuitButton(btnScreenPos);
 }
-
-MenuState::~MenuState()
-{
-
-}
-
-#pragma endregion
-
-#pragma region  Override
 
 void MenuState::OnEnter(ClientApp& app)
 {
-    if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
-    {
-        m_clientApp->GetWindow()->RegisterDrawable(PlayBtn);
-        m_clientApp->GetWindow()->RegisterDrawable(DisconnectBtn);
-    }
-    else
-    {
-        m_clientApp->GetWindow()->RegisterDrawable(ConnectBtn);
-    }
-    m_clientApp->GetWindow()->RegisterDrawable(QuitBtn);
-    m_clientApp->GetWindow()->RegisterDrawable(_slider);
-    m_clientApp->GetWindow()->RegisterDrawable(_sliderText);
+	if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
+	{
+		m_ClientApp.GetWindow().RegisterDrawable(m_PlayBtn);
+		m_ClientApp.GetWindow().RegisterDrawable(m_DisconnectBtn);
+	}
+	else
+	{
+		m_ClientApp.GetWindow().RegisterDrawable(m_ConnectBtn);
+	}
+	m_ClientApp.GetWindow().RegisterDrawable(m_QuitBtn);
+	m_ClientApp.GetWindow().RegisterDrawable(m_Slider);
+	m_ClientApp.GetWindow().RegisterDrawable(m_SliderText);
 }
 
 void MenuState::OnUpdate(ClientApp& app, float dt)
 {
-    for (auto& btn : _btns)
-    {
-        btn.Update(dt);
-    }
+	m_PlayBtn.Update(dt);
+	m_ConnectBtn.Update(dt);
+	m_DisconnectBtn.Update(dt);
+	m_QuitBtn.Update(dt);
+	m_Slider.Update(dt);
 
-    _slider.Update(dt);
-
-    ActiveButtonFunction(app);
+	ActiveButtonFunction(app);
 }
 
 void MenuState::OnExit(ClientApp& app)
 {
-    for (auto& btn : _btns)
-    {
-        app.GetWindow()->UnregisterDrawable(btn);
-    }
-    app.GetWindow()->UnregisterDrawable(_slider);
-    app.GetWindow()->UnregisterDrawable(_sliderText);
+	app.GetWindow().UnregisterDrawable(m_PlayBtn);
+	app.GetWindow().UnregisterDrawable(m_ConnectBtn);
+	app.GetWindow().UnregisterDrawable(m_DisconnectBtn);
+	app.GetWindow().UnregisterDrawable(m_QuitBtn);
+	app.GetWindow().UnregisterDrawable(m_Slider);
+	app.GetWindow().UnregisterDrawable(m_SliderText);
 
-    _slider.SaveVolumeValue();
-
-    m_clientApp = nullptr;
+	m_Slider.SaveVolumeValue();
 }
-
-#pragma endregion
-
-#pragma region  Class Methods
 
 void MenuState::InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue)
 {
-    std::string musicText = "Music Volume";
-    sf::Vector2f newPos = sf::Vector2f(pos.x + 10.f, pos.y - 40.f);
+	std::string musicText = "Music Volume";
+	sf::Vector2f newPos = sf::Vector2f(pos.x + 10.f, pos.y - 40.f);
 
-    _slider = SliderComponent(pos, width, minValue, maxValue, m_clientApp->GetInputHandler(), m_clientApp->GetMusic());
-    _sliderText = TextComponent(*m_clientApp->GetFontByName(FONT_DEFAULT));
-    _sliderText.SetPosition(newPos);
-    _sliderText.SetText(musicText);
+	m_Slider.SetPosition(pos);
+	m_Slider.SetWidth(width);
+	m_SliderText = TextComponent(m_ClientApp.GetFont());
+	m_SliderText.SetPosition(newPos);
+	m_SliderText.SetText(musicText);
 }
 
 void MenuState::InitPlayButton(const sf::Vector2f& pos)
 {
-    sf::Color Emerald(1, 215, 88);
-    std::string btnText = "Play";
-    std::function<void()> function = [this]()
-        {
-            _currentFunction = ButtonFunction::Play;
-        };
+	sf::Color Emerald(1, 215, 88);
+	std::string btnText = "Play";
+	std::function<void()> function = [this]()
+	{
+		m_CurrentFunction = ButtonFunction::Play;
+	};
 
-    const sf::Font& font = *m_clientApp->GetFontByName(FONT_DEFAULT);
-
-    new (&PlayBtn) ButtonComponent(pos, font, Emerald, m_clientApp->GetInputHandler());
-    PlayBtn.SetButtonText(btnText, font);
-    PlayBtn.SetOnClickCallback(function);
+	m_PlayBtn.SetPosition(pos);
+	m_PlayBtn.SetColor(Emerald);
+	m_PlayBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_PlayBtn.SetOnClickCallback(function);
 }
 
 void MenuState::InitConnectionButton(const sf::Vector2f& pos)
 {
-    sf::Color Emerald(1, 215, 88);
-    //sf::Color Lime(24, 165, 88);
-    sf::Vector2f size(300,100);
-    std::string btnText = "Connection";
-    std::function<void()> function = [this]()
-        {
-            _currentFunction = ButtonFunction::ConnectionScreen;
-        };
+	sf::Color Lime(24, 165, 88);
+	sf::Vector2f size(300, 100);
+	std::string btnText = "Connection";
+	std::function<void()> function = [this]()
+	{
+		m_CurrentFunction = ButtonFunction::ConnectionScreen;
+	};
 
-    const sf::Font& font = *m_clientApp->GetFontByName(FONT_DEFAULT);
-
-    new (&ConnectBtn) ButtonComponent(pos, font, Emerald, m_clientApp->GetInputHandler());
-    ConnectBtn.SetButtonText(btnText, font);
-    ConnectBtn.SetOnClickCallback(function);
+	m_ConnectBtn.SetPosition(pos);
+	m_ConnectBtn.SetColor(Lime);
+	m_ConnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_ConnectBtn.SetOnClickCallback(function);
 }
 
 void MenuState::InitDisconnectButton(const sf::Vector2f& pos)
 {
-    std::string btnText = "Disconnect";
-    std::function<void()> function = [this, pos]()
-        {
-            _currentFunction = ButtonFunction::Disconnect;
-        };
+	std::string btnText = "Disconnect";
+	std::function<void()> function = [this, pos]()
+	{
+		m_CurrentFunction = ButtonFunction::Disconnect;
+	};
 
-    const sf::Font& font = *m_clientApp->GetFontByName(FONT_DEFAULT);
-
-    new (&DisconnectBtn) ButtonComponent(pos, font, sf::Color::Red, m_clientApp->GetInputHandler());
-    DisconnectBtn.SetButtonText(btnText, font);
-    DisconnectBtn.SetOnClickCallback(function);
+	m_DisconnectBtn.SetPosition(pos);
+	m_DisconnectBtn.SetColor(sf::Color::Red);
+	m_DisconnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_DisconnectBtn.SetOnClickCallback(function);
 }
 
 void MenuState::InitQuitButton(const sf::Vector2f& pos)
 {
-    sf::Color OrangeRed(231, 62, 1);
-    std::string btnText = "Quit";
-    std::function<void()> function = [this]()
-        {
-            _currentFunction = ButtonFunction::Quit;
-        };
+	sf::Color OrangeRed(231, 62, 1);
+	std::string btnText = "Quit";
+	std::function<void()> function = [this]()
+	{
+		m_CurrentFunction = ButtonFunction::Quit;
+	};
 
-    const sf::Font& font = *m_clientApp->GetFontByName(FONT_DEFAULT);
-
-    new (&QuitBtn) ButtonComponent(pos, font, OrangeRed, m_clientApp->GetInputHandler());
-    QuitBtn.SetButtonText(btnText, font);
-    QuitBtn.SetOnClickCallback(function);
-    m_clientApp->GetWindow()->RegisterDrawable(QuitBtn);
+	m_QuitBtn.SetPosition(pos);
+	m_QuitBtn.SetColor(OrangeRed);
+	m_QuitBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_QuitBtn.SetOnClickCallback(function);
+	m_ClientApp.GetWindow().RegisterDrawable(m_QuitBtn);
 }
 
 void MenuState::ActiveButtonFunction(ClientApp& app)
 {
-    switch (_currentFunction)
-    {
-        case ButtonFunction::Play: 
-        {
-            //ChangedState<LobbyState>("LobbyState");
-            break;
-        }
-        case ButtonFunction::ConnectionScreen: 
-        {
-            m_clientApp->ChangeState<ConnectionState>(app);
-            break;
-        }
-        case ButtonFunction::Disconnect: 
-        {
-            m_clientApp->GetWindow()->UnregisterDrawable(ConnectBtn);
-            DisconnectBtn.SetPosition(ConnectBtn.GetPosition());
-            m_clientApp->GetWindow()->UnregisterDrawable(DisconnectBtn);
-            break;
-        }
-        case ButtonFunction::Quit: 
-        {
-            _slider.SaveVolumeValue();
-            m_clientApp->Shutdown();
-            break;
-        }     
-        default: 
-        {
-            break;
-        }   
-    }
+	switch (m_CurrentFunction)
+	{
+	case ButtonFunction::Play:
+	{
+		//ChangedState<LobbyState>("LobbyState");
+		break;
+	}
+	case ButtonFunction::ConnectionScreen:
+	{
+		m_ClientApp.ChangeState<ConnectionState>(app);
+		break;
+	}
+	case ButtonFunction::Disconnect:
+	{
+		m_ClientApp.GetWindow().UnregisterDrawable(m_ConnectBtn);
+		m_DisconnectBtn.SetPosition(m_ConnectBtn.GetPosition());
+		m_ClientApp.GetWindow().UnregisterDrawable(m_DisconnectBtn);
+		break;
+	}
+	case ButtonFunction::Quit:
+	{
+		m_Slider.SaveVolumeValue();
+		m_ClientApp.Shutdown();
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 }
-
-#pragma endregion

@@ -3,20 +3,10 @@
 #include "Window/Window.h"
 #include "Window/InputHandler.h"
 
-#pragma region  Constructor
-
-GameState::GameState(sf::Font& font)
+GameState::GameState(const sf::Font& font)
 	: m_PongDisplay(font)
 {
 }
-
-GameState::~GameState()
-{
-}
-
-#pragma endregion
-
-#pragma region  Override
 
 void GameState::OnEnter(ClientApp& app)
 {
@@ -24,7 +14,7 @@ void GameState::OnEnter(ClientApp& app)
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
-{	
+{
 	PollEvents(app);
 	Pong pong = app.GetPongGame();
 
@@ -54,54 +44,51 @@ void GameState::OnExit(ClientApp& app)
 {
 }
 
-#pragma endregion
-
-
 void GameState::PollEvents(ClientApp& app)
 {
-	InputHandler* input = app.GetInputHandler();
+	auto& input = app.GetInputHandler();
 	Pong pong = app.GetPongGame();
 
 	// PRESSED
 
-	if (input->IsKeyPressed(sf::Keyboard::Key::W) || input->IsKeyPressed(sf::Keyboard::Key::Z))
+	if (input.IsKeyPressed(sf::Keyboard::Key::W) || input.IsKeyPressed(sf::Keyboard::Key::Z))
 	{
 		pong.Behaviours |= PaddlesBehaviour::LeftUp;
-	}	
-	
-	if (input->IsKeyPressed(sf::Keyboard::Key::S))
+	}
+
+	if (input.IsKeyPressed(sf::Keyboard::Key::S))
 	{
 		pong.Behaviours |= PaddlesBehaviour::LeftDown;
-	}	
+	}
 
-	if (input->IsKeyPressed(sf::Keyboard::Key::Up))
+	if (input.IsKeyPressed(sf::Keyboard::Key::Up))
 	{
 		pong.Behaviours |= PaddlesBehaviour::RightUp;
-	}	
+	}
 
-	if (input->IsKeyPressed(sf::Keyboard::Key::Down))
+	if (input.IsKeyPressed(sf::Keyboard::Key::Down))
 	{
 		pong.Behaviours |= PaddlesBehaviour::RightDown;
-	}	
+	}
 
 	// RELEASED
 
-	if (input->IsKeyReleased(sf::Keyboard::Key::W) || input->IsKeyReleased(sf::Keyboard::Key::Z))
+	if (input.IsKeyReleased(sf::Keyboard::Key::W) || input.IsKeyReleased(sf::Keyboard::Key::Z))
 	{
 		pong.Behaviours &= ~PaddlesBehaviour::LeftUp;
 	}
 
-	if (input->IsKeyReleased(sf::Keyboard::Key::S))
+	if (input.IsKeyReleased(sf::Keyboard::Key::S))
 	{
 		pong.Behaviours &= ~PaddlesBehaviour::LeftDown;
 	}
 
-	if (input->IsKeyReleased(sf::Keyboard::Key::Up))
+	if (input.IsKeyReleased(sf::Keyboard::Key::Up))
 	{
 		pong.Behaviours &= ~PaddlesBehaviour::RightUp;
 	}
 
-	if (input->IsKeyReleased(sf::Keyboard::Key::Down))
+	if (input.IsKeyReleased(sf::Keyboard::Key::Down))
 	{
 		pong.Behaviours &= ~PaddlesBehaviour::RightDown;
 	}

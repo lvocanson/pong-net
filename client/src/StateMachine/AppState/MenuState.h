@@ -1,67 +1,40 @@
 #pragma once
-
 #include "ClientApp.h"
-#include "../StateMachine.h"
-#include "../../Components/ButtonComponent.h"
-#include "../../Components/SliderComponent.h"
-#include "../../Window/Window.h"
+#include "StateMachine/StateMachine.h"
+#include "Components/ButtonComponent.h"
+#include "Components/SliderComponent.h"
+#include "Window/Window.h"
 #include <SFML/Graphics.hpp>
 
 class MenuState : public State<ClientApp>
 {
 public:
-#pragma region  Constructor
 
-    MenuState(ClientApp& app);
-    MenuState(const MenuState& other) = delete;
-    MenuState& operator=(const MenuState& other) = delete;
-    ~MenuState() override;
+	MenuState(ClientApp& app);
 
-#pragma endregion
+	virtual void OnEnter(ClientApp& app) override;
+	virtual void OnUpdate(ClientApp& app, float deltaTime) override;
+	virtual void OnExit(ClientApp& app) override;
 
-#pragma region  Override
+	void InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue);
+	void InitPlayButton(const sf::Vector2f& pos);
+	void InitConnectionButton(const sf::Vector2f& pos);
+	void InitDisconnectButton(const sf::Vector2f& pos);
+	void InitQuitButton(const sf::Vector2f& pos);
 
-    virtual void OnEnter(ClientApp& app) override;
-    virtual void OnUpdate(ClientApp& app, float deltaTime) override;
-    virtual void OnExit(ClientApp& app) override;
-
-#pragma endregion
-
-#pragma region  Class Methods
-
-    void InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue);
-    void InitPlayButton(const sf::Vector2f& pos);
-    void InitConnectionButton(const sf::Vector2f& pos);
-    void InitDisconnectButton(const sf::Vector2f& pos);
-    void InitQuitButton(const sf::Vector2f& pos);
-
-    void ActiveButtonFunction(ClientApp& app);
-
-#pragma endregion
+	void ActiveButtonFunction(ClientApp& app);
 
 private:
-#pragma region  Variables
 
-    ClientApp* m_clientApp;
+	ClientApp& m_ClientApp;
 
-    union
-    {
-        struct
-        {
-            ButtonComponent PlayBtn;
-            ButtonComponent ConnectBtn;
-            ButtonComponent DisconnectBtn;
-            ButtonComponent QuitBtn;
-        };
+	ButtonComponent m_PlayBtn;
+	ButtonComponent m_ConnectBtn;
+	ButtonComponent m_DisconnectBtn;
+	ButtonComponent m_QuitBtn;
 
-        std::array<ButtonComponent, 4> _btns;
-    }; 
+	SliderComponent m_Slider;
+	TextComponent m_SliderText;
 
-    SliderComponent _slider;
-    TextComponent _sliderText;
-
-    ButtonFunction _currentFunction;
-    
-#pragma endregion
-
+	ButtonFunction m_CurrentFunction;
 };

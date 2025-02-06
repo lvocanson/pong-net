@@ -205,7 +205,6 @@ exit /b 0</Command>
   <ItemGroup>
     <ClCompile Include="src\StateMachine\AppState\GameState.cpp" />
     <ClCompile Include="src\Components\SliderComponent.cpp" />
-    <ClCompile Include="src\FontRegistry.cpp" />
     <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
     <ClCompile Include="src\StateMachine\AppState\MenuState.cpp" />
     <ClCompile Include="src\Window\InputHandler.cpp" />
@@ -225,7 +224,6 @@ exit /b 0</Command>
   <ItemGroup>
     <ClInclude Include="src\StateMachine\AppState\GameState.h" />
     <ClInclude Include="src\Components\SliderComponent.h" />
-    <ClInclude Include="src\FontRegistry.h" />
     <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
     <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
     <ClInclude Include="src\Window\InputHandler.h" />

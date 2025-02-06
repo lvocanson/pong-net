@@ -1,76 +1,40 @@
 #pragma once
 
 #include "ClientApp.h"
-#include "../StateMachine.h"
-#include "../../Window/Window.h"
-#include "../../Components/ButtonComponent.h"
-#include "../../Components/InsertFieldComponent.h"
+#include "StateMachine/StateMachine.h"
+#include "Components/ButtonComponent.h"
+#include "Components/InsertFieldComponent.h"
 
 class ConnectionState : public State<ClientApp>
 {
 public:
-#pragma region  Constructor
 
-      ConnectionState(ClientApp& app);
-      ConnectionState(const ConnectionState& other) = delete;
-      ConnectionState& operator=(const ConnectionState& other) = delete;
-      ~ConnectionState();
+	ConnectionState(ClientApp& app);
 
-#pragma endregion
+	void OnEnter(ClientApp& derived) override;
+	void OnUpdate(ClientApp& derived, float deltaTime) override;
+	void OnExit(ClientApp& derived) override;
 
-#pragma region  Override
+	void InitIpField(const sf::Vector2f& pos);
+	void InitUsernameField(const sf::Vector2f& pos);
+	void InitBackButton(const sf::Vector2f& pos);
+	void InitConnectButton(const sf::Vector2f& pos);
 
-      void OnEnter(ClientApp& derived) override;
-      void OnUpdate(ClientApp& derived, float deltaTime) override;
-      void OnExit(ClientApp& derived) override;
-
-#pragma endregion
-
-#pragma region  Class Methods
-
-    void InitIpField(const sf::Vector2f& pos);
-    void InitUsernameField(const sf::Vector2f& pos);
-    void InitBackButton(const sf::Vector2f& pos);
-    void InitConnectButton(const sf::Vector2f& pos);
-
-    void ActiveButtonFunction(ClientApp& app);
-
-#pragma endregion
+	void ActiveButtonFunction(ClientApp& app);
 
 private:
 
-#pragma region  Variables
+	bool m_IsTryingToConnect = false;
 
-    bool m_IsTryingToConnect = false;
+	ClientApp& m_ClientApp;
 
-    ClientApp* m_clientApp;
-    sf::Font* m_font;
+	ButtonComponent m_BackBtn;
+	ButtonComponent m_ConnectBtn;
 
-    union
-    {
-        struct
-        {
-            ButtonComponent BackBtn;
-            ButtonComponent ConnectBtn;
-        };
+	InsertFieldComponent m_IpField;
+	InsertFieldComponent m_UsernameField;
 
-        std::array<ButtonComponent, 2> _btns;
-    };
+	ButtonFunction m_CurrentFunction;
 
-    union
-    {
-        struct
-        {
-            InsertFieldComponent IpField;
-            InsertFieldComponent UsernameField;
-        };
-
-        std::array<InsertFieldComponent, 2> _fields;
-    };
-
-    ButtonFunction _currentFunction;
-
-    std::string m_Name = "";
-
-#pragma endregion
+	std::string m_Name = "";
 };

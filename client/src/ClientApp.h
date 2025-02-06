@@ -7,13 +7,10 @@
 #include "PongDisplay.h"
 #include "StateMachine/StateMachine.h"
 #include "Utils/Timer.h"
+#include "Window/InputHandler.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <swap_back_array.h>
-
-class Window;
-class InputHandler;
-class FontRegistry;
 
 enum class ConnectionStateInfos
 {
@@ -32,11 +29,13 @@ public:
 	int Run();
 	void Shutdown();
 
-	Window* GetWindow();
-	sf::Music* GetMusic();
-	InputHandler* GetInputHandler();
-	sf::Font* GetFontByName(const std::string& fontName);
-	ConnectionStateInfos GetConnectionStateInfo() { return connectionStateInfo; };
+public: // Getters
+
+	Window& GetWindow() { return m_Window; }
+	sf::Music& GetMusic() { return m_Music; }
+	const sf::Font& GetFont() const { return m_Font; }
+	const InputHandler& GetInputHandler() { return m_Input; }
+	ConnectionStateInfos GetConnectionStateInfo() const { return connectionStateInfo; };
 	Pong& GetPongGame() { return m_PongGame; };
 
 	void ConnectToServer(IpPhrase phrase);
@@ -55,13 +54,13 @@ private:
 
 private: // variables
 
-	Window* m_Window = nullptr;
-	sf::Music* m_Music;
-	InputHandler* m_inputHandler;
-	FontRegistry* m_font;
+
+	Window m_Window;
+	sf::Font m_Font;
+	sf::Music m_Music;
+	InputHandler m_Input;
 
 	Pong m_PongGame;
-	Timer m_Timer;
 	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication

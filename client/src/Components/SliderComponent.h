@@ -4,32 +4,33 @@
 
 class InputHandler;
 
-class SliderComponent : public BaseComponent 
+class SliderComponent : public BaseComponent
 {
 private:
-    sf::RectangleShape bar;
-    sf::CircleShape knob;
-    float minValue, maxValue, value;
-    bool isDragging = false;
-    InputHandler* m_inputHandler;
-    sf::Music* music;
-    std::string filename;
 
+	sf::RectangleShape m_Bar;
+	sf::CircleShape m_Knob;
+	float m_Value;
+	bool m_IsDragging = false;
+	const InputHandler& m_Input;
+	sf::Music& m_Music;
+	std::string m_Filename;
 
 public:
-    SliderComponent() = default;
-    SliderComponent(sf::Vector2f& pos, float width, float minValue, float maxValue, InputHandler* inputHandler, sf::Music* music);
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	SliderComponent(const InputHandler& inputHandler, sf::Music& music);
 
-    void Update(float dt) override;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    void SetPosition(const sf::Vector2f& position) override;
-    sf::Vector2f GetPosition() const override;
-    sf::Vector2f GetSize() const override;
+	void Update(float dt) override;
 
-    void SaveVolumeValue();
-    float LoadVolumeValue();
-    bool IsMouseOver();
-    float getValue() const { return value; }
+	void SetPosition(const sf::Vector2f& position) override;
+	sf::Vector2f GetPosition() const override;
+	void SetWidth(float width);
+	sf::Vector2f GetSize() const override;
+
+	void SaveVolumeValue() const;
+	float LoadVolumeValue() const;
+	bool IsMouseOver();
+	float getValue() const { return m_Value; }
 };

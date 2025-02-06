@@ -3,7 +3,7 @@
 #include "game/Pong.h"
 #include <Window/Window.h>
 
-PongDisplay::PongDisplay(sf::Font& font)
+PongDisplay::PongDisplay(const sf::Font& font)
 	: m_Ball(BallRadius)
 	, m_LeftPaddle({PaddleDistFromBorders, PaddleHeight})
 	, m_RightPaddle({PaddleDistFromBorders, PaddleHeight})
@@ -27,10 +27,10 @@ void PongDisplay::Update(const Pong& pong)
 	m_RightPaddle.setPosition({GameSizeX - PaddleDistFromBorders, pong.RightPaddle});
 }
 
-void PongDisplay::RegisterDrawables(Window* window)
+void PongDisplay::RegisterDrawables(Window& window)
 {
-	window->RegisterDrawable(m_ScoreText);
-	window->RegisterDrawable(m_Ball);
-	window->RegisterDrawable(m_LeftPaddle);
-	window->RegisterDrawable(m_RightPaddle);
+	window.RegisterDrawable(m_ScoreText);
+	window.RegisterDrawable(m_Ball);
+	window.RegisterDrawable(m_LeftPaddle);
+	window.RegisterDrawable(m_RightPaddle);
 }

@@ -1,38 +1,31 @@
 #include "ClientApp.h"
 #include "Network/NetHelper.h"
 #include "Network/PacketWrapper.h"
-#include <cstdlib>
-
-#include "Window/Window.h"
-#include "FontRegistry.h"
-
-#include "StateMachine/StateMachine.h"
 #include "StateMachine/AppState/MenuState.h"
 #include "StateMachine/AppState/ConnectionState.h"
 #include "Window/InputHandler.h"
+#include <cstdlib>
 
 using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
 
 ClientApp::ClientApp()
-	: m_PongGame()
+	: m_Window()
+	, m_Font("res/fonts/JuliaMono-Regular.ttf")
+	, m_Music("res/Su Turno.ogg")
+	, m_Input()
+	
+	, m_PongGame()
+	, connectionStateInfo(ConnectionStateInfos::None)
 	, m_LeftScore(0)
 	, m_RightScore(0)
-	, m_Timer()
+
 	, m_WsaData()
 	, m_Socket()
 	, m_ServerAddr()
 	, m_Signature(0)
 {
-	m_Window = new Window();
-	m_Window->Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
-
-	m_inputHandler = new InputHandler();
-
-	m_Music = new sf::Music("res/Su Turno.ogg");
-
-	m_font = new FontRegistry();
-	m_font->LoadFont("JuliaMono-Regular.ttf");
+	m_Window.Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
 
 	SetFirstState<MenuState>(*this);
 
@@ -43,15 +36,13 @@ ClientApp::ClientApp()
 		return;
 	}
 
-	m_Music->play();
-	m_Music->setLooping(true);
-
-	connectionStateInfo = ConnectionStateInfos::None;
+	m_Music.play();
+	m_Music.setLooping(true);
 }
 
 int ClientApp::Run()
 {
-	if (!m_Window->IsOpen())
+	if (!m_Window.IsOpen())
 	{
 		return EXIT_FAILURE;
 	}
@@ -64,47 +55,27 @@ int ClientApp::Run()
 		dtTimer.Restart();
 		
 		PollEvents();
-		m_inputHandler->Update();
+		m_Input.Update();
 
 		CheckPendingPackets();
 		FlushLostPackets(now);
 
 		Update(dt);
 
-		m_Window->Render();
-	} while (m_Window->IsOpen());
+		m_Window.Render();
+	} while (m_Window.IsOpen());
 
 	return EXIT_SUCCESS;
 }
 
 void ClientApp::Shutdown()
 {
-	m_Window->Close();
-}
-
-Window* ClientApp::GetWindow()
-{
-	return m_Window;
-}
-
-sf::Music* ClientApp::GetMusic()
-{
-	return m_Music;
-}
-
-InputHandler* ClientApp::GetInputHandler()
-{
-	return m_inputHandler;
-}
-
-sf::Font* ClientApp::GetFontByName(const std::string& fontName)
-{
-	return m_font->GetFont(fontName);
+	m_Window.Close();
 }
 
 void ClientApp::PollEvents()
 {
-	m_Window->PollEvents();
+	m_Window.PollEvents();
 }
 
 void ClientApp::Update(float dt)

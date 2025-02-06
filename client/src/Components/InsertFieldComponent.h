@@ -14,68 +14,53 @@ class InputHandler;
 class InsertFieldComponent : public BaseComponent
 {
 public:
-#pragma region Constructor
 
-    InsertFieldComponent(sf::Font& font, InputHandler* inputHandler);
-    InsertFieldComponent(sf::Font& font, InputHandler* inputHandler, const sf::Vector2f& pos, const sf::Vector2f& size,
-        const sf::Color& idleColor, const sf::Color& hoverColor,
-        float outlineThickness, unsigned int characterLimit);
-    ~InsertFieldComponent() override = default;
+	InsertFieldComponent(const sf::Font& font, const InputHandler& inputHandler);
+	InsertFieldComponent(const sf::Font& font, const InputHandler& inputHandler, const sf::Vector2f& pos, const sf::Vector2f& size,
+		const sf::Color& idleColor, const sf::Color& hoverColor,
+		float outlineThickness, unsigned int characterLimit);
 
-#pragma endregion
+	void Update(float dt) override;
+	void ClearErrorMessage() { m_ErrorText.SetText(""); }
 
-    void Update(float dt) override;
-    void ClearErrorMessage() { m_ErrorText.SetText(""); }
+	void SetText(const std::string& text);
+	void SetLabel(const std::string& label) { m_Label->SetText(label); }
+	void SetPosition(const sf::Vector2f& position) override;
+	void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
+	void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }
+	void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); }
+	void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); }
+	void SetCharacterLimit(unsigned int limit) { if (limit > 0) m_CharacterLimit = limit; }
+	void ShowErrorMessage(const std::string& message) { m_ErrorText.SetText(message); }
 
-#pragma region Setteur
-
-    void SetText(const std::string& text);
-    void SetLabel(const std::string& label) { m_Label->SetText(label); }
-    void SetPosition(const sf::Vector2f& position) override;
-    void SetSize(const sf::Vector2f& size) { m_Rectangle.setSize(size); }
-    void SetFillColor(const sf::Color& color) { m_Rectangle.setFillColor(color); }
-    void SetHoverColor(const sf::Color& color) { m_Rectangle.setOutlineColor(color); }
-    void SetOutlineThickness(float thickness) { m_Rectangle.setOutlineThickness(thickness); }
-    void SetCharacterLimit(unsigned int limit) { if (limit > 0) m_CharacterLimit = limit; }
-    void ShowErrorMessage(const std::string& message) { m_ErrorText.SetText(message); }
-
-#pragma endregion
-
-#pragma region Getteur
-
-    sf::Vector2f GetPosition() const override { return m_Rectangle.getPosition(); }
-    sf::Vector2f GetSize() const override { return m_Rectangle.getSize(); }
-    bool GetFocus() const { return m_Focus; }
-    std::string_view GetText() const { return m_TextContent; }
-    unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
-    size_t GetTextSize() const { return m_TextContent.length(); }
-    const TextComponent* GetLabelComponent() const { return m_Label; }
-
-#pragma endregion
+	sf::Vector2f GetPosition() const override { return m_Rectangle.getPosition(); }
+	sf::Vector2f GetSize() const override { return m_Rectangle.getSize(); }
+	bool GetFocus() const { return m_Focus; }
+	std::string_view GetText() const { return m_TextContent; }
+	unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
+	size_t GetTextSize() const { return m_TextContent.length(); }
+	const TextComponent* GetLabelComponent() const { return m_Label; }
 
 private:
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    bool IsMouseOver();
-    void ReplaceCursor();
-    void AppendCharacter(const char& c);
-    void BlinkCursor(float dt);
+	bool IsMouseOver();
+	void ReplaceCursor();
+	void AppendCharacter(const char& c);
+	void BlinkCursor(float dt);
 
 private:
-#pragma region Variables
 
-    sf::RectangleShape m_Rectangle;
-    TextComponent m_Text;
-    TextComponent* m_Label;
-    TextComponent m_Cursor;
-    TextComponent m_ErrorText;
-    std::string m_TextContent;
-    InputHandler* m_inputHandler;
+	sf::RectangleShape m_Rectangle;
+	TextComponent m_Text;
+	TextComponent* m_Label;
+	TextComponent m_Cursor;
+	TextComponent m_ErrorText;
+	std::string m_TextContent;
+	const InputHandler& m_Input;
 
-    unsigned int m_CharacterLimit;
-    bool m_Focus;
-    float m_CursorTimer;
-#pragma endregion
-
+	unsigned int m_CharacterLimit;
+	bool m_Focus;
+	float m_CursorTimer;
 };
