@@ -33,9 +33,7 @@ private:
 
 #pragma region  Variables
 
-    Pong m_PongGame;
     PongDisplay* m_PongDisplay;
-    unsigned m_LeftScore, m_RightScore;
 
 #pragma endregion
 };

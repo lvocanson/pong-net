@@ -6,10 +6,7 @@
 #pragma region  Constructor
 
 GameState::GameState()
-	: m_PongGame()
-	, m_PongDisplay(nullptr)
-	, m_LeftScore(0)
-	, m_RightScore(0)
+	: m_PongDisplay(nullptr)
 {
 }
 
@@ -30,27 +27,28 @@ void GameState::OnEnter(ClientApp& app)
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
 {	
 	PollEvents(app);
+	Pong pong = app.GetPongGame();
 
-	m_PongGame.Update(deltaTime);
-	m_PongDisplay->Update(m_PongGame);
+	pong.Update(deltaTime);
+	m_PongDisplay->Update(pong);
 
-	switch (m_PongGame.GameStateInfos())
+	switch (pong.GameStateInfos())
 	{
 	case GameStateInfo::LeftWins:
 	{
-		++m_LeftScore;
+		++app.m_LeftScore;
 		break;
 	}
 	case GameStateInfo::RightWins:
 	{
-		++m_RightScore;
+		++app.m_RightScore;
 		break;
 	}
 	default: return;
 	}
 
-	m_PongGame.Reset();
-	m_PongDisplay->SetScore(m_LeftScore, m_RightScore);
+	pong.Reset();
+	m_PongDisplay->SetScore(app.m_LeftScore, app.m_RightScore);
 }
 
 void GameState::OnExit(ClientApp& app)
@@ -63,48 +61,49 @@ void GameState::OnExit(ClientApp& app)
 void GameState::PollEvents(ClientApp& app)
 {
 	InputHandler* input = app.GetInputHandler();
+	Pong pong = app.GetPongGame();
 
 	// PRESSED
 
 	if (input->IsKeyPressed(sf::Keyboard::Key::W) || input->IsKeyPressed(sf::Keyboard::Key::Z))
 	{
-		m_PongGame.Behaviours |= PaddlesBehaviour::LeftUp;
+		pong.Behaviours |= PaddlesBehaviour::LeftUp;
 	}	
 	
 	if (input->IsKeyPressed(sf::Keyboard::Key::S))
 	{
-		m_PongGame.Behaviours |= PaddlesBehaviour::LeftDown;
+		pong.Behaviours |= PaddlesBehaviour::LeftDown;
 	}	
 
 	if (input->IsKeyPressed(sf::Keyboard::Key::Up))
 	{
-		m_PongGame.Behaviours |= PaddlesBehaviour::RightUp;
+		pong.Behaviours |= PaddlesBehaviour::RightUp;
 	}	
 
 	if (input->IsKeyPressed(sf::Keyboard::Key::Down))
 	{
-		m_PongGame.Behaviours |= PaddlesBehaviour::RightDown;
+		pong.Behaviours |= PaddlesBehaviour::RightDown;
 	}	
 
 	// RELEASED
 
 	if (input->IsKeyReleased(sf::Keyboard::Key::W) || input->IsKeyReleased(sf::Keyboard::Key::Z))
 	{
-		m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftUp;
+		pong.Behaviours &= ~PaddlesBehaviour::LeftUp;
 	}
 
 	if (input->IsKeyReleased(sf::Keyboard::Key::S))
 	{
-		m_PongGame.Behaviours &= ~PaddlesBehaviour::LeftDown;
+		pong.Behaviours &= ~PaddlesBehaviour::LeftDown;
 	}
 
 	if (input->IsKeyReleased(sf::Keyboard::Key::Up))
 	{
-		m_PongGame.Behaviours &= ~PaddlesBehaviour::RightUp;
+		pong.Behaviours &= ~PaddlesBehaviour::RightUp;
 	}
 
 	if (input->IsKeyReleased(sf::Keyboard::Key::Down))
 	{
-		m_PongGame.Behaviours &= ~PaddlesBehaviour::RightDown;
+		pong.Behaviours &= ~PaddlesBehaviour::RightDown;
 	}
 }

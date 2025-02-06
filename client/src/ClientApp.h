@@ -37,8 +37,11 @@ public:
 	InputHandler* GetInputHandler();
 	sf::Font* GetFontByName(const std::string& fontName);
 	ConnectionStateInfos GetConnectionStateInfo() { return connectionStateInfo; };
+	Pong& GetPongGame() { return m_PongGame; };
 
 	void ConnectToServer(std::string_view address);
+
+	unsigned m_LeftScore, m_RightScore;
 
 private:
 
@@ -57,6 +60,7 @@ private: // variables
 	InputHandler* m_inputHandler;
 	FontRegistry* m_font;
 
+	Pong m_PongGame;
 	Timer m_Timer;
 	ConnectionStateInfos connectionStateInfo;
 
