@@ -5,11 +5,12 @@
 
 MenuState::MenuState(ClientApp& app)
 	: m_ClientApp(app)
-	, m_PlayBtn(app.GetFont(), app.GetInputHandler())
 	, m_ConnectBtn(app.GetFont(), app.GetInputHandler())
 	, m_DisconnectBtn(app.GetFont(), app.GetInputHandler())
 	, m_QuitBtn(app.GetFont(), app.GetInputHandler())
 	, m_Slider(app.GetInputHandler(), app.GetMusic())
+	, m_IpField(app.GetFont(), app.GetInputHandler())
+	, m_UsernameField(app.GetFont(), app.GetInputHandler())
 	, m_SliderText(app.GetFont())
 	, m_executeFunction()
 	, m_callFunction(false)
@@ -17,12 +18,18 @@ MenuState::MenuState(ClientApp& app)
 	float yOffset = app.GetWindow().GetHeight() * 0.1f;
 	float xMiddleScreen = app.GetWindow().GetWidth() * 0.5f;
 
-	sf::Vector2f btnScreenPos = sf::Vector2f(xMiddleScreen, 4.f * yOffset);
+
+	sf::Vector2f fieldPos = sf::Vector2f(xMiddleScreen, 3.f * yOffset);
+	sf::Vector2f btnScreenPos = sf::Vector2f(xMiddleScreen, 6.f * yOffset);
 	sf::Vector2f sliderpos = sf::Vector2f(app.GetWindow().GetWidth() * 0.8f, yOffset);
 
 	InitSlider(sliderpos, app.GetWindow().GetWidth() * 0.1f, 0, 100, app.GetFont());
+
+	InitIpField(fieldPos);
+	fieldPos.y += 1.5f * yOffset;
+
+	InitUsernameField(fieldPos);
 	InitConnectionButton(btnScreenPos);
-	InitPlayButton(btnScreenPos);
 
 	btnScreenPos.y += yOffset;
 	InitDisconnectButton(btnScreenPos);
@@ -33,9 +40,11 @@ MenuState::MenuState(ClientApp& app)
 
 void MenuState::OnEnter(ClientApp& app)
 {
+	app.GetWindow().RegisterDrawable(m_IpField);
+	app.GetWindow().RegisterDrawable(m_UsernameField);
+
 	if (/*ClientConnectionHandler::GetInstance().IsConnected()*/ false)
 	{
-		app.GetWindow().RegisterDrawable(m_PlayBtn);
 		app.GetWindow().RegisterDrawable(m_DisconnectBtn);
 	}
 	else
@@ -49,21 +58,16 @@ void MenuState::OnEnter(ClientApp& app)
 
 void MenuState::OnUpdate(ClientApp& app, float dt)
 {
-	m_PlayBtn.Update(dt, app.GetWindow());
+	m_IpField.Update(dt, app.GetWindow());
+	m_UsernameField.Update(dt, app.GetWindow());
 	m_ConnectBtn.Update(dt, app.GetWindow());
 	m_DisconnectBtn.Update(dt, app.GetWindow());
 	m_QuitBtn.Update(dt, app.GetWindow());
 	m_Slider.Update(dt, app.GetWindow());
 
-	if (m_PlayBtn.IsPressed()) 
+	if (m_ConnectBtn.IsPressed())
 	{
-		//TODO go on LobbyState
-		//m_ClientApp.ChangeState<LobbyState>(m_ClientApp);
-		return;
-	}
-	else if (m_ConnectBtn.IsPressed())
-	{
-		m_ClientApp.ChangeState<ConnectionState>(m_ClientApp);
+		ShowLobbyFunction();
 		return;
 	}
 	else if (m_DisconnectBtn.IsPressed())
@@ -83,7 +87,9 @@ void MenuState::OnUpdate(ClientApp& app, float dt)
 
 void MenuState::OnExit(ClientApp& app)
 {
-	app.GetWindow().UnregisterDrawable(m_PlayBtn);
+	app.GetWindow().UnregisterDrawable(m_IpField);
+	app.GetWindow().UnregisterDrawable(m_UsernameField);
+
 	app.GetWindow().UnregisterDrawable(m_ConnectBtn);
 	app.GetWindow().UnregisterDrawable(m_DisconnectBtn);
 	app.GetWindow().UnregisterDrawable(m_QuitBtn);
@@ -91,6 +97,23 @@ void MenuState::OnExit(ClientApp& app)
 	app.GetWindow().UnregisterDrawable(m_SliderText);
 
 	m_Slider.SaveVolumeValue();
+}
+
+void MenuState::InitIpField(const sf::Vector2f& pos)
+{
+	std::string ipLabel = "Server Phrase";
+	m_IpField.SetSize(FIELD_SIZE);
+	m_IpField.SetLabel(ipLabel);
+	m_IpField.SetText(std::string(IpAddress::LocalAddress().ToPhrase().View()));
+	m_IpField.SetPosition(pos);
+}
+
+void MenuState::InitUsernameField(const sf::Vector2f& pos)
+{
+	std::string nameLabel = "Username";
+	m_IpField.SetSize(FIELD_SIZE);
+	m_UsernameField.SetLabel(nameLabel);
+	m_UsernameField.SetPosition(pos);
 }
 
 void MenuState::InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue, const sf::Font& font)
@@ -103,17 +126,6 @@ void MenuState::InitSlider(sf::Vector2f& pos, float width, float minValue, float
 	m_SliderText = TextComponent(font);
 	m_SliderText.SetPosition(newPos);
 	m_SliderText.SetText(musicText);
-}
-
-void MenuState::InitPlayButton(const sf::Vector2f& pos)
-{
-	sf::Color Emerald(1, 215, 88);
-	std::string btnText = "Play";
-
-	m_PlayBtn.SetSize(BUTTON_SIZE_EXTENDED);
-	m_PlayBtn.SetPosition(pos);
-	m_PlayBtn.SetColor(Emerald);
-	m_PlayBtn.SetButtonText(btnText);
 }
 
 void MenuState::InitConnectionButton(const sf::Vector2f& pos)
@@ -146,4 +158,38 @@ void MenuState::InitQuitButton(const sf::Vector2f& pos)
 	m_QuitBtn.SetPosition(pos);
 	m_QuitBtn.SetColor(OrangeRed);
 	m_QuitBtn.SetButtonText(btnText);
+}
+
+void MenuState::ShowLobbyFunction()
+{
+	m_UsernameField.ClearErrorMessage();
+	m_IpField.ClearErrorMessage();
+
+	bool isNameValid = false;
+	if (m_UsernameField.GetText().empty())
+	{
+		//DebugLog("Username should not be empty!\n");
+		m_UsernameField.ShowErrorMessage("Username should not be empty!");
+	}
+	else if (m_UsernameField.GetText().size() < 3)
+	{
+		//DebugLog("Username should be more than 2 characters!\n");
+		m_UsernameField.ShowErrorMessage("Username should be more than 2 characters!");
+	}
+	else
+	{
+		isNameValid = true;
+	}
+
+	m_Name = m_UsernameField.GetText();
+
+	if (isNameValid)
+	{
+		// m_clientApp->ConnectToServer("127.0.0.1");
+		m_ClientApp.ConnectToServer(m_IpField.GetText());
+	}
+	else
+	{
+		m_IpField.ShowErrorMessage("Invalid phrase!");
+	}
 }

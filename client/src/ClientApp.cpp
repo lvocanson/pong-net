@@ -183,7 +183,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
 
-		ChangeState<LobbyState>(*this);
+		ChangeState<ConnectionState>(*this);
 	}
 	break;
 	case RoomGroupResponse:

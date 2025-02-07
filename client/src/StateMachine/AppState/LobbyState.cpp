@@ -116,7 +116,7 @@ void LobbyState::OnExit(ClientApp& app)
 		void LobbyState::InitReturnButton(const sf::Vector2f& pos)
 	{
 		sf::Color OrangeRed(231, 62, 1);
-		std::string btnText = "Return to menu";
+		std::string btnText = "Return to connection";
 
 		m_ReturnButton.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 		m_ReturnButton.SetPosition(pos);
