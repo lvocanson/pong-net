@@ -76,6 +76,7 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 	}
 	else if (m_QuickGameBtn.IsPressed())
 	{
+		m_ClientApp.ConnectToServer(m_IpField.GetText());
 		Message request(MessageType::QuickMatchRequest);
 		auto wrapper = PacketWrapper::Wrap(request);
 		wrapper.Sign(m_ClientApp.GetSignature());
