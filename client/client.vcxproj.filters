@@ -18,84 +18,75 @@
     <ClCompile Include="src\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PongDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ClientApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Components\TextComponent.cpp">
+    <ClCompile Include="src\UI\Stuff\Text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Components\ButtonComponent.cpp">
+    <ClCompile Include="src\UI\Stuff\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Components\InsertFieldComponent.cpp">
+    <ClCompile Include="src\UI\Stuff\InsertFieldComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window\InputHandler.cpp">
+    <ClCompile Include="src\UI\Scenes\MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window\Window.cpp">
+    <ClCompile Include="src\UI\Scenes\ConnectionState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\StateMachine\AppState\MenuState.cpp">
+    <ClCompile Include="src\UI\Stuff\SliderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp">
+    <ClCompile Include="src\UI\Scenes\GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Components\SliderComponent.cpp">
+    <ClCompile Include="src\UI\Scenes\LobbyState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\StateMachine\AppState\GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StateMachine\AppState\LobbyState.cpp">
+    <ClCompile Include="src\UI\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\PongDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ClientApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\BaseComponent.h">
+    <ClInclude Include="src\UI\Stuff\Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\TextComponent.h">
+    <ClInclude Include="src\UI\Stuff\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\ButtonComponent.h">
+    <ClInclude Include="src\UI\Stuff\InsertFieldComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\InsertFieldComponent.h">
+    <ClInclude Include="src\StateMachine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Window\InputHandler.h">
+    <ClInclude Include="src\UI\Scenes\MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Window\Window.h">
+    <ClInclude Include="src\UI\Scenes\ConnectionState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine\StateMachine.h">
+    <ClInclude Include="src\UI\Stuff\SliderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine\AppState\MenuState.h">
+    <ClInclude Include="src\UI\Scenes\GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine\AppState\ConnectionState.h">
+    <ClInclude Include="src\UI\Scenes\LobbyState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\SliderComponent.h">
+    <ClInclude Include="src\UI\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine\AppState\GameState.h">
+    <ClInclude Include="src\UI\IDrawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine\AppState\LobbyState.h">
+    <ClInclude Include="src\UI\IEventConsumer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

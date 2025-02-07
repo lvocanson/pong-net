@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <SFML/Graphics.hpp>
 #include <sstream>
 #include "TextComponent.h"
@@ -39,7 +39,7 @@ public:
 	std::string_view GetText() const { return m_TextContent; }
 	unsigned int GetCharacterLimit() const { return m_CharacterLimit; }
 	size_t GetTextSize() const { return m_TextContent.length(); }
-	const TextComponent* GetLabelComponent() const { return m_Label; }
+	const Text* GetLabelComponent() const { return m_Label; }
 
 private:
 
@@ -53,10 +53,10 @@ private:
 private:
 
 	sf::RectangleShape m_Rectangle;
-	TextComponent m_Text;
-	TextComponent* m_Label;
-	TextComponent m_Cursor;
-	TextComponent m_ErrorText;
+	Text m_Text;
+	Text* m_Label;
+	Text m_Cursor;
+	Text m_ErrorText;
 	std::string m_TextContent;
 	const InputHandler& m_Input;
 
@@ -64,3 +64,4 @@ private:
 	bool m_Focus;
 	float m_CursorTimer;
 };
+*/

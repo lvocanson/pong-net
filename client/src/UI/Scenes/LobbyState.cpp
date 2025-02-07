@@ -1,4 +1,5 @@
 #include "LobbyState.h"
+/*
 #include "ConnectionState.h"
 #include "GameState.h"
 #include <Network/PacketWrapper.h>
@@ -41,7 +42,7 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
 	{
 		if (i >= m_LobbyBtns.size())
 		{
-			auto& [uuid, btn] = m_LobbyBtns.emplace_back(std::move(std::make_pair(roomIds[i], ButtonComponent(app.GetFont(), app.GetInputHandler()))));
+			auto& [uuid, btn] = m_LobbyBtns.emplace_back(std::move(std::make_pair(roomIds[i], NammedButton(app.GetFont(), app.GetInputHandler()))));
 			auto pos = firstButtonPos + sf::Vector2{0.f, BUTTON_LOBBY_SIZE.y * i};
 
 			sf::Color GreenColor(128, 192, 128);
@@ -52,7 +53,7 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
 
 			btn.SetSize(BUTTON_LOBBY_SIZE);
 			btn.SetPosition(pos);
-			btn.SetColor(GreenColor);
+			btn.SetBgColor(GreenColor);
 			app.GetWindow().RegisterDrawable(btn);
 		}
 
@@ -120,7 +121,7 @@ void LobbyState::OnExit(ClientApp& app)
 
 		m_ReturnButton.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 		m_ReturnButton.SetPosition(pos);
-		m_ReturnButton.SetColor(OrangeRed);
+		m_ReturnButton.SetBgColor(OrangeRed);
 		m_ReturnButton.SetButtonText(btnText);
 	}
 
@@ -131,7 +132,7 @@ void LobbyState::OnExit(ClientApp& app)
 
 		m_CreateButton.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 		m_CreateButton.SetPosition(pos);
-		m_CreateButton.SetColor(GreenColor);
+		m_CreateButton.SetBgColor(GreenColor);
 		m_CreateButton.SetButtonText(btnText);
 	}
 
@@ -141,3 +142,4 @@ void LobbyState::OnExit(ClientApp& app)
 
 		m_IsTryingToJoinLobby = true;
 	}
+*/

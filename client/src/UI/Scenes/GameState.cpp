@@ -1,5 +1,5 @@
 #include "GameState.h"
-
+/*
 #include "Window/Window.h"
 #include "Window/InputHandler.h"
 
@@ -137,6 +137,7 @@ void GameState::InitLoading()
 	m_LoadingCircle.setOrigin(m_LoadingCircle.getLocalBounds().getCenter());
 
 	m_LoadingText.SetPosition(sf::Vector2f(GameSizeX * 0.25f, 25.f));
-	m_LoadingText.SetColor(sf::Color(0xFFFFFF66));
+	m_LoadingText.SetBgColor(sf::Color(0xFFFFFF66));
 	m_LoadingText.SetText("Wainting for player...");
 }
+*/

@@ -203,19 +203,17 @@ exit /b 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\StateMachine\AppState\LobbyState.cpp" />
-    <ClCompile Include="src\StateMachine\AppState\GameState.cpp" />
-    <ClCompile Include="src\Components\SliderComponent.cpp" />
-    <ClCompile Include="src\StateMachine\AppState\ConnectionState.cpp" />
-    <ClCompile Include="src\StateMachine\AppState\MenuState.cpp" />
-    <ClCompile Include="src\Window\InputHandler.cpp" />
-    <ClCompile Include="src\Components\InsertFieldComponent.cpp" />
-    <ClCompile Include="src\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\UI\Scene.cpp" />
+    <ClCompile Include="src\UI\Scenes\LobbyState.cpp" />
+    <ClCompile Include="src\UI\Scenes\GameState.cpp" />
+    <ClCompile Include="src\UI\Stuff\SliderComponent.cpp" />
+    <ClCompile Include="src\UI\Scenes\ConnectionState.cpp" />
+    <ClCompile Include="src\UI\Scenes\MainMenu.cpp" />
+    <ClCompile Include="src\UI\Stuff\InsertFieldComponent.cpp" />
+    <ClCompile Include="src\UI\Stuff\Button.cpp" />
     <ClCompile Include="src\ClientApp.cpp" />
     <ClCompile Include="src\client.cpp" />
-    <ClCompile Include="src\PongDisplay.cpp" />
-    <ClCompile Include="src\Components\TextComponent.cpp" />
-    <ClCompile Include="src\Window\Window.cpp" />
+    <ClCompile Include="src\UI\Stuff\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
@@ -223,20 +221,19 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\StateMachine\AppState\LobbyState.h" />
-    <ClInclude Include="src\StateMachine\AppState\GameState.h" />
-    <ClInclude Include="src\Components\SliderComponent.h" />
-    <ClInclude Include="src\StateMachine\AppState\ConnectionState.h" />
-    <ClInclude Include="src\StateMachine\AppState\MenuState.h" />
-    <ClInclude Include="src\Window\InputHandler.h" />
-    <ClInclude Include="src\Components\InsertFieldComponent.h" />
-    <ClInclude Include="src\Components\ButtonComponent.h" />
+    <ClInclude Include="src\UI\IDrawable.h" />
+    <ClInclude Include="src\UI\IEventConsumer.h" />
+    <ClInclude Include="src\UI\Scene.h" />
+    <ClInclude Include="src\UI\Scenes\LobbyState.h" />
+    <ClInclude Include="src\UI\Scenes\GameState.h" />
+    <ClInclude Include="src\UI\Stuff\SliderComponent.h" />
+    <ClInclude Include="src\UI\Scenes\ConnectionState.h" />
+    <ClInclude Include="src\UI\Scenes\MainMenu.h" />
+    <ClInclude Include="src\UI\Stuff\InsertFieldComponent.h" />
+    <ClInclude Include="src\UI\Stuff\Button.h" />
     <ClInclude Include="src\ClientApp.h" />
-    <ClInclude Include="src\Components\BaseComponent.h" />
-    <ClInclude Include="src\PongDisplay.h" />
-    <ClInclude Include="src\Components\TextComponent.h" />
-    <ClInclude Include="src\Window\Window.h" />
-    <ClInclude Include="src\StateMachine\StateMachine.h" />
+    <ClInclude Include="src\UI\Stuff\Text.h" />
+    <ClInclude Include="src\StateMachine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

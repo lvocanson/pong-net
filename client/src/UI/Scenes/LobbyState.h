@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <ClientApp.h>
 #include "StateMachine/StateMachine.h"
 #include <Components/ButtonComponent.h>
@@ -26,10 +26,10 @@ private:
 	bool m_IsInLobby = false;
 	bool m_IsTryingToJoinLobby = false;
 
-	ButtonComponent m_ReturnButton;
-	ButtonComponent m_CreateButton;
+	NammedButton m_ReturnButton;
+	NammedButton m_CreateButton;
 
 	std::string m_LobbyGameMode;
-	std::vector<std::tuple<uint16_t, ButtonComponent>> m_LobbyBtns;
+	std::vector<std::tuple<uint16_t, NammedButton>> m_LobbyBtns;
 };
-
+*/

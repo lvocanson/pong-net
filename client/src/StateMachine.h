@@ -1,5 +1,6 @@
 #pragma once
-
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 #include <cassert>
 #include <memory>
 
@@ -10,7 +11,8 @@ public:
 	virtual ~State() = default;
 
 	virtual void OnEnter(Derived& derived) = 0;
-	virtual void OnUpdate(Derived& derived, float deltaTime) = 0;
+	virtual void Draw(sf::RenderWindow& wnd) const = 0;
+	virtual void OnEvent(Derived& derived, const sf::Event& event) = 0;
 	virtual void OnExit(Derived& derived) = 0;
 };
 
@@ -35,9 +37,14 @@ public:
 		m_currentState->OnEnter(static_cast<Derived&>(*this));
 	}
 
-	void Update(float deltaTime)
+	void Draw(sf::RenderWindow& wnd) const
 	{
-		m_currentState->OnUpdate(static_cast<Derived&>(*this), deltaTime);
+		m_currentState->Draw(wnd);
+	}
+
+	void OnEvent(const sf::Event& event)
+	{
+		m_currentState->OnEvent(static_cast<Derived&>(*this), event);
 	}
 
 protected:

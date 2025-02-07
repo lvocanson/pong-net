@@ -176,6 +176,7 @@
     <ClInclude Include="src\Network\PacketWrapper.h" />
     <ClInclude Include="src\Network\WsaData.h" />
     <ClInclude Include="src\Utils\Console.h" />
+    <ClInclude Include="src\Utils\EnumOperators.h" />
     <ClInclude Include="src\Utils\Timer.h" />
     <ClInclude Include="src\Utils\Misc.h" />
   </ItemGroup>
@@ -192,6 +193,9 @@
     <ClCompile Include="src\Utils\Console.cpp" />
     <ClCompile Include="src\Utils\Timer.cpp" />
     <ClCompile Include="src\Utils\Misc.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Utils\EnumOperators.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

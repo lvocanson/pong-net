@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include <ClientApp.h>
 #include "Game/Pong.h"
 #include <Components/TextComponent.h>
@@ -19,10 +20,10 @@ public:
 private:
 
 	PongDisplay m_PongDisplay;
-	TextComponent m_LoadingText;
+	Text m_LoadingText;
 	sf::CircleShape m_LoadingTriangle;
 	sf::CircleShape m_LoadingCircle;
 	float m_LoadingRotation = 0.0f;
 	Message_RoomJoinResponse::PlayerSide currentSide;
 };
-
+*/

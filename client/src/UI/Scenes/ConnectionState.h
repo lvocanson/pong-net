@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include "ClientApp.h"
 #include "StateMachine/StateMachine.h"
 #include "Components/ButtonComponent.h"
@@ -22,10 +22,11 @@ private:
 
 	ClientApp& m_ClientApp;
 
-	ButtonComponent m_BackBtn;
-	ButtonComponent m_ShowLobbyBtn;
-	ButtonComponent m_QuickGameBtn;
+	NammedButton m_BackBtn;
+	NammedButton m_ShowLobbyBtn;
+	NammedButton m_QuickGameBtn;
 
 	std::function<void()> m_executeFunction;
 	bool m_callFunction;
 };
+*/

@@ -1,4 +1,5 @@
 #include "SliderComponent.h"
+/*
 #include <Window/InputHandler.h>
 #include <fstream>
 #include <iostream>
@@ -124,3 +125,4 @@ void SliderComponent::draw(sf::RenderTarget& target, sf::RenderStates states) co
 	target.draw(m_Bar);
 	target.draw(m_Knob);
 }
+*/

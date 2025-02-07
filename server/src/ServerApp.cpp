@@ -4,6 +4,7 @@
 #include "Utils/Console.h"
 #include "Utils/Misc.h"
 #include "Utils/Timer.h"
+#include "Utils/EnumOperators.h"
 #include <thread>
 
 using namespace std::chrono_literals;

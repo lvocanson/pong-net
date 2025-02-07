@@ -2,21 +2,20 @@
 #include "ClientApp.h"
 #include "Network/NetHelper.h"
 #include "Network/PacketWrapper.h"
-#include "StateMachine/AppState/MenuState.h"
-#include "StateMachine/AppState/ConnectionState.h"
-#include "StateMachine/AppState/GameState.h"
-#include "Window/InputHandler.h"
+#include "Utils/EnumOperators.h"
+#include "Utils/Timer.h"
+#include "UI/Scenes/MainMenu.h"
 #include <cstdlib>
-#include <StateMachine/AppState/LobbyState.h>
 
 using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
 
 ClientApp::ClientApp()
-	: m_Window()
+	: m_Status(Running)
+
+	, m_Window(sf::VideoMode{sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY})}, "Pong")
 	, m_Font("res/fonts/JuliaMono-Regular.ttf")
 	, m_Music("res/Su Turno.ogg")
-	, m_Input()
 
 	, m_PongGame()
 	, connectionStateInfo(ConnectionStateInfos::None)
@@ -30,24 +29,27 @@ ClientApp::ClientApp()
 	, m_Signature(0)
 	, m_LastPacketReceivedTp(TimePoint::min())
 {
-	m_Window.Create("Pong", sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY}));
-
-	SetFirstState<MenuState>(*this);
-
-	if (m_WsaData.error || !m_Socket.IsValid())
+	if (!m_Window.isOpen())
 	{
-		// TODO: error handling
-		//m_Window.close();
+		m_Status = InitFailed;
 		return;
 	}
 
 	m_Music.play();
 	m_Music.setLooping(true);
+
+	if (m_WsaData.error || !m_Socket.IsValid())
+	{
+		m_Status = InitFailed;
+		return;
+	}
+
+	SetFirstState<MainMenu>(m_Font);
 }
 
 int ClientApp::Run()
 {
-	if (!m_Window.IsOpen())
+	if (m_Status != Running)
 	{
 		return EXIT_FAILURE;
 	}
@@ -59,46 +61,37 @@ int ClientApp::Run()
 		float dt = dtTimer.GetElapsedSeconds();
 		dtTimer.Restart();
 
-		PollEvents();
-		m_Input.Update();
+		UpdateUI(dt);
 
 		CheckPendingPackets();
 		FlushLostPackets(now);
 
-		Update(dt);
+		UpdatePong(dt);
 
-		m_Window.Render();
-	} while (m_Window.IsOpen());
+	} while (m_Status == Running);
 
 	return EXIT_SUCCESS;
 }
 
-void ClientApp::Shutdown()
+ClientApp::~ClientApp()
 {
-	m_Window.Close();
+	m_Music.stop();
+	m_Window.close();
 }
 
-void ClientApp::PollEvents()
+void ClientApp::UpdateUI(float dt)
 {
-	m_Window.PollEvents();
-}
-
-void ClientApp::Update(float dt)
-{
-	StateMachine::Update(dt);
-
-	if (m_Playing == PlayingState::Playing)
+	while (const std::optional event = m_Window.pollEvent())
 	{
-		m_PongGame.Update(dt);
+		if (event->is<sf::Event::Closed>())
+			Quit();
+
+		StateMachine::OnEvent(event.value());
 	}
 
-	if (m_Playing != PlayingState::No)
-	{
-		Message_GameUpdate update(m_PongGame, m_Playing == PlayingState::No ? Message_GameUpdate::Playing : Message_GameUpdate::Paused, m_LeftScore, m_RightScore);
-		auto wrapper = PacketWrapper::Wrap(update);
-		wrapper.Sign(m_Signature);
-		wrapper.Send(m_Socket, m_ServerAddr);
-	}
+	m_Window.clear();
+	StateMachine::Draw(m_Window);
+	m_Window.display();
 }
 
 void ClientApp::ConnectToServer(IpPhrase phrase)
@@ -183,7 +176,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
 
-		ChangeState<ConnectionState>(*this);
+		//ChangeState<ConnectionState>(*this);
 	}
 	break;
 	case RoomGroupResponse:
@@ -221,7 +214,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			ChangeState<GameState>(GetFont(), response.side);
+			//ChangeState<GameState>(GetFont(), response.side);
 		}
 		break;
 		}
@@ -269,6 +262,22 @@ void ClientApp::OnMessageReceived(const Message& message)
 		}
 	}
 	break;
+	}
+}
+
+void ClientApp::UpdatePong(float dt)
+{
+	if (m_Playing == PlayingState::Playing)
+	{
+		m_PongGame.Update(dt);
+	}
+
+	if (m_Playing != PlayingState::No)
+	{
+		Message_GameUpdate update(m_PongGame, m_Playing == PlayingState::No ? Message_GameUpdate::Playing : Message_GameUpdate::Paused, m_LeftScore, m_RightScore);
+		auto wrapper = PacketWrapper::Wrap(update);
+		wrapper.Sign(m_Signature);
+		wrapper.Send(m_Socket, m_ServerAddr);
 	}
 }
 

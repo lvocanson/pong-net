@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include "BaseComponent.h"
 #include <SFML/Audio.hpp>
 
@@ -33,3 +34,4 @@ public:
 	bool IsMouseOver(Window& window);
 	float getValue() const { return m_Value; }
 };
+*/

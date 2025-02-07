@@ -1,4 +1,5 @@
 #include "InsertFieldComponent.h"
+/*
 #include <Window/InputHandler.h>
 #include <Window/Window.h>
 #include <SFML/Window/Keyboard.hpp>
@@ -19,19 +20,19 @@ InsertFieldComponent::InsertFieldComponent(const sf::Font& font, const InputHand
 	m_Rectangle.setOutlineThickness(1.0f);
 	m_Rectangle.setOrigin(m_Rectangle.getLocalBounds().getCenter());
 
-	m_Text.SetColor(sf::Color::Black);
+	m_Text.SetBgColor(sf::Color::Black);
 
-	m_Label = new TextComponent(font);
+	m_Label = new Text(font);
 	m_Label->SetText("InsertField");
-	m_Label->SetColor(sf::Color(171, 171, 171));
+	m_Label->SetBgColor(sf::Color(171, 171, 171));
 	m_Label->SetCharacterSize(25);
 
 	m_Cursor.SetText("|");
-	m_Cursor.SetColor(sf::Color::Black);
+	m_Cursor.SetBgColor(sf::Color::Black);
 	m_Cursor.SetVisible(false);
 
 	m_ErrorText.SetText("");
-	m_ErrorText.SetColor(sf::Color::Red);
+	m_ErrorText.SetBgColor(sf::Color::Red);
 	m_ErrorText.SetCharacterSize(25);
 
 	SetPosition(sf::Vector2f(0.0f, 0.0f));
@@ -49,7 +50,7 @@ InsertFieldComponent::InsertFieldComponent(const sf::Font& font, const InputHand
 	, m_ErrorText(font)
 	, m_Input(inputHandler)
 {
-	m_Label = new TextComponent(font);
+	m_Label = new Text(font);
 	m_Rectangle.setSize(size);
 	m_Rectangle.setFillColor(idleColor);
 	m_Rectangle.setOutlineColor(hoverColor);
@@ -78,13 +79,13 @@ void InsertFieldComponent::Update(float dt, Window& window)
 	{
 		m_Rectangle.setOutlineThickness(2.0f);
 
-		if (m_Input.IsMouseButtonPressed(sf::Mouse::Button::Left))
+		if (m_Input.IsMouseButtonPressed(sf::Mouse::NammedButton::Left))
 		{
 			m_Focus = true;
 			m_Cursor.SetVisible(true);
 		}
 	}
-	else if (m_Input.IsKeyPressed(sf::Keyboard::Key::Enter) || m_Input.IsMouseButtonPressed(sf::Mouse::Button::Left))
+	else if (m_Input.IsKeyPressed(sf::Keyboard::Key::Enter) || m_Input.IsMouseButtonPressed(sf::Mouse::NammedButton::Left))
 	{
 		m_Focus = false;
 		m_Rectangle.setOutlineThickness(0.0f);
@@ -181,3 +182,4 @@ void InsertFieldComponent::ReplaceCursor()
 	
 	m_Cursor.SetPosition(m_Text.GetPosition() + sf::Vector2f(m_Text.GetBounds().x *0.5f , 0.f));
 }
+*/

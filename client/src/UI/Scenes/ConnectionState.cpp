@@ -1,4 +1,5 @@
 #include "ConnectionState.h"
+/*
 #include "MenuState.h"
 #include "GameState.h"
 #include <Network/PacketWrapper.h>
@@ -54,7 +55,7 @@ void ConnectionState::OnUpdate(ClientApp& app, float dt)
 	}
 	else if (m_BackBtn.IsPressed()) 
 	{
-		m_ClientApp.ChangeState<MenuState>(m_ClientApp);
+		m_ClientApp.ChangeState<MainMenu>(m_ClientApp);
 		return;
 	}
 	else if (m_QuickGameBtn.IsPressed())
@@ -81,7 +82,7 @@ void ConnectionState::InitBackButton(const sf::Vector2f& pos)
 
 	m_BackBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_BackBtn.SetPosition(pos);
-	m_BackBtn.SetColor(OrangeRed);
+	m_BackBtn.SetBgColor(OrangeRed);
 	m_BackBtn.SetButtonText(btnText);
 }
 
@@ -92,7 +93,7 @@ void ConnectionState::InitLobbyButton(const sf::Vector2f& pos)
 
 	m_ShowLobbyBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_ShowLobbyBtn.SetPosition(pos);
-	m_ShowLobbyBtn.SetColor(Emerald);
+	m_ShowLobbyBtn.SetBgColor(Emerald);
 	m_ShowLobbyBtn.SetButtonText(btnText);
 }
 
@@ -103,6 +104,7 @@ void ConnectionState::InitQuickGameButton(const sf::Vector2f& pos)
 
 	m_QuickGameBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_QuickGameBtn.SetPosition(pos);
-	m_QuickGameBtn.SetColor(Emerald);
+	m_QuickGameBtn.SetBgColor(Emerald);
 	m_QuickGameBtn.SetButtonText(btnText);
 }
+*/

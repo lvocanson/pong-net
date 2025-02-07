@@ -4,10 +4,7 @@
 #include "Network/UdpSocket.h"
 #include "Network/IpAddress.h"
 #include "Network/PacketUnwrapper.h"
-#include "PongDisplay.h"
-#include "StateMachine/StateMachine.h"
-#include "Utils/Timer.h"
-#include "Window/InputHandler.h"
+#include "StateMachine.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <swap_back_array.h>
@@ -25,7 +22,6 @@ enum class PlayingState
 	No,
 	Paused,
 	Playing
-
 };
 
 class ClientApp : public StateMachine<ClientApp>
@@ -35,7 +31,7 @@ public:
 
 	ClientApp();
 	int Run();
-	void Shutdown();
+	~ClientApp();
 
 public: // Getters
 
@@ -45,10 +41,8 @@ public: // Getters
 	uint16_t& GetSignature() { return m_Signature; }
 	const std::vector<uint16_t>& GetRoomIds() { return m_RoomIds; }
 	void ResetRoomIds() { m_RoomIds.clear(); }
-	Window& GetWindow() { return m_Window; }
 	sf::Music& GetMusic() { return m_Music; }
 	const sf::Font& GetFont() const { return m_Font; }
-	const InputHandler& GetInputHandler() { return m_Input; }
 
 	Pong& GetPongGame() { return m_PongGame; };
 	std::tuple<uint16_t, uint16_t> GetScores() { return {m_LeftScore, m_RightScore}; }
@@ -56,22 +50,34 @@ public: // Getters
 	void ConnectToServer(IpPhrase phrase);
 	ConnectionStateInfos GetConnectionStateInfo() const { return connectionStateInfo; };
 
-private:
+public: // Methods
 
-	void PollEvents();
-	void Update(float dt);
+	void Quit() { m_Status = QuitRequested; }
+
+private: // Main loop:
+
+	void UpdateUI(float dt);
 
 	void CheckPendingPackets();
 	void OnPacketReceived(const Packet& packet);
 	void OnMessageReceived(const Message& message);
 	void FlushLostPackets(TimePoint now);
 
+	void UpdatePong(float dt);
+
 private: // variables
 
-	Window m_Window;
+	enum
+	{
+		Running = 0,
+		InitFailed,
+		ErrorWhileRunning,
+		QuitRequested,
+	} m_Status;
+
+	sf::RenderWindow m_Window;
 	sf::Font m_Font;
 	sf::Music m_Music;
-	InputHandler m_Input;
 
 	Pong m_PongGame;
 	std::vector<uint16_t> m_RoomIds;

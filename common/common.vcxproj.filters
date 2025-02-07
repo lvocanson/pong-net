@@ -48,6 +48,9 @@
     <ClInclude Include="src\Utils\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\EnumOperators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Pong.cpp">
@@ -86,5 +89,10 @@
     <ClCompile Include="src\Utils\Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Utils\EnumOperators.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
