@@ -96,7 +96,7 @@ void MenuState::OnExit(ClientApp& app)
 void MenuState::InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue, const sf::Font& font)
 {
 	std::string musicText = "Music Volume";
-	sf::Vector2f newPos = sf::Vector2f(pos.x + 10.f, pos.y - 40.f);
+	sf::Vector2f newPos = sf::Vector2f(pos.x + 80.f, pos.y - 40.f);
 
 	m_Slider.SetPosition(pos);
 	m_Slider.SetWidth(width);
