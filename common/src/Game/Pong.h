@@ -41,6 +41,5 @@ struct Pong
 	float BallX, BallY;
 	float BallDx, BallDy;
 	float LeftPaddle, RightPaddle;
-	bool IsLeftPlayer;
 	PaddlesBehaviour Behaviours;
 };

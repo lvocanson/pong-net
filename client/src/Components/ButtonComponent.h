@@ -6,6 +6,7 @@
 inline constexpr auto BUTTON_SIZE_STANDARD = sf::Vector2f(200, 100);
 inline constexpr auto BUTTON_SIZE_EXTENDED = sf::Vector2f(300, 100);
 inline constexpr auto BUTTON_SIZE_EXTRA_EXTENDED = sf::Vector2f(500, 100);
+inline constexpr auto BUTTON_SIZE_EXTRA_EXTENDED_SMALL_Y = sf::Vector2f(500, 50);
 inline constexpr auto BUTTON_LOBBY_SIZE = sf::Vector2f(800, 50);
 
 class InputHandler;

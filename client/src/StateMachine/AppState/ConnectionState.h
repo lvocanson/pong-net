@@ -18,7 +18,9 @@ public:
 	void InitIpField(const sf::Vector2f& pos);
 	void InitUsernameField(const sf::Vector2f& pos);
 	void InitBackButton(const sf::Vector2f& pos);
-	void InitConnectButton(const sf::Vector2f& pos);
+	void InitLobbyButton(const sf::Vector2f& pos);
+	void InitQuickGameButton(const sf::Vector2f& pos);
+	void ShowLobbyFunction();
 
 private:
 
@@ -27,7 +29,8 @@ private:
 	ClientApp& m_ClientApp;
 
 	ButtonComponent m_BackBtn;
-	ButtonComponent m_ConnectBtn;
+	ButtonComponent m_ShowLobbyBtn;
+	ButtonComponent m_QuickGameBtn;
 
 	InsertFieldComponent m_IpField;
 	InsertFieldComponent m_UsernameField;
