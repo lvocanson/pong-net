@@ -9,22 +9,7 @@ GameState::GameState(const sf::Font& font)
 	, m_LoadingTriangle(15.f, 15)
 	, m_LoadingCircle(15.f, 15)
 {
-	m_LoadingTriangle.setFillColor(sf::Color::Transparent);
-	m_LoadingTriangle.setOutlineColor(sf::Color::Blue);
-	m_LoadingTriangle.setOutlineThickness(3.f);
-	m_LoadingTriangle.setPosition(sf::Vector2f(GameSizeX *0.5f, 25.f));
-	m_LoadingTriangle.setOrigin(m_LoadingTriangle.getLocalBounds().getCenter());
-	m_LoadingTriangle.setPointCount(4);
-
-	m_LoadingCircle.setFillColor(sf::Color::Transparent);
-	m_LoadingCircle.setOutlineColor(sf::Color::Magenta);
-	m_LoadingCircle.setOutlineThickness(3.f);
-	m_LoadingCircle.setPosition(sf::Vector2f(GameSizeX * 0.5f, 25.f));
-	m_LoadingCircle.setOrigin(m_LoadingCircle.getLocalBounds().getCenter());
-
-	m_LoadingText.SetPosition(sf::Vector2f(GameSizeX * 0.25f, 25.f));
-	m_LoadingText.SetColor(sf::Color(0xFFFFFF66));
-	m_LoadingText.SetText("Wainting for player...");
+	InitLoading();
 }
 
 void GameState::OnEnter(ClientApp& app)
@@ -133,4 +118,24 @@ void GameState::PollEvents(ClientApp& app)
     //    if (releaseUp) pong.Behaviours &= ~PaddlesBehaviour::RightUp;
     //    if (releaseDown) pong.Behaviours &= ~PaddlesBehaviour::RightDown;
     //}
+}
+
+void GameState::InitLoading()
+{
+	m_LoadingTriangle.setFillColor(sf::Color::Transparent);
+	m_LoadingTriangle.setOutlineColor(sf::Color::Blue);
+	m_LoadingTriangle.setOutlineThickness(3.f);
+	m_LoadingTriangle.setPosition(sf::Vector2f(GameSizeX * 0.5f, 25.f));
+	m_LoadingTriangle.setOrigin(m_LoadingTriangle.getLocalBounds().getCenter());
+	m_LoadingTriangle.setPointCount(4);
+
+	m_LoadingCircle.setFillColor(sf::Color::Transparent);
+	m_LoadingCircle.setOutlineColor(sf::Color::Magenta);
+	m_LoadingCircle.setOutlineThickness(3.f);
+	m_LoadingCircle.setPosition(sf::Vector2f(GameSizeX * 0.5f, 25.f));
+	m_LoadingCircle.setOrigin(m_LoadingCircle.getLocalBounds().getCenter());
+
+	m_LoadingText.SetPosition(sf::Vector2f(GameSizeX * 0.25f, 25.f));
+	m_LoadingText.SetColor(sf::Color(0xFFFFFF66));
+	m_LoadingText.SetText("Wainting for player...");
 }

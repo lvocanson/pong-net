@@ -14,14 +14,12 @@ enum class MessageType
 	RoomCreationRequest,
 	RoomGroupRequest,
 	RoomJoinRequest,
-	GetIdRoomRequest,
 
 	// Server -> Client
 
 	ConnectResponse,
 	RoomGroupResponse,
 	RoomJoinResponse,
-	GetIdRoomResponse,
 
 	// Both ways
 
@@ -105,25 +103,6 @@ struct Message_RoomJoinResponse : public Message
 	}
 
 	JoinStatus status;
-	uint16_t uuid;
-};
-
-struct Message_GetIdRoomRequest : public Message
-{
-	Message_GetIdRoomRequest()
-		: Message(MessageType::GetIdRoomRequest)
-	{
-	};
-};
-
-struct Message_GetIdRoomResponse : public Message
-{
-	Message_GetIdRoomResponse(uint16_t uuid)
-		: Message(MessageType::GetIdRoomResponse)
-		, uuid(uuid)
-	{
-	}
-
 	uint16_t uuid;
 };
 

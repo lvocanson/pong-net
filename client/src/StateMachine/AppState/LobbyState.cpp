@@ -27,12 +27,10 @@ void LobbyState::OnEnter(ClientApp& app)
     
     app.ResetRoomIds();
 
-    {
-        Message request(MessageType::GetIdRoomRequest);
-        auto wrapper = PacketWrapper::Wrap(request);
-        wrapper.Sign(app.GetSignature());
-        wrapper.Send(app.GetSocket(), app.GetServerAddr());
-    }
+    Message_RoomGroupRequest request(0);
+    auto wrapper = PacketWrapper::Wrap(request);
+    wrapper.Sign(app.GetSignature());
+    wrapper.Send(app.GetSocket(), app.GetServerAddr());
 }
 
 void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
@@ -78,12 +76,11 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
 
     if (m_CreateButton.IsPressed()) 
     {
-        {
-            Message request(MessageType::RoomCreationRequest);
-            auto wrapper = PacketWrapper::Wrap(request);
-            wrapper.Sign(m_ClientApp.GetSignature());
-            wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
-        }
+        Message request(MessageType::RoomCreationRequest);
+        auto wrapper = PacketWrapper::Wrap(request);
+        wrapper.Sign(m_ClientApp.GetSignature());
+        wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
+
         return;
     }
 
@@ -91,12 +88,11 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
     {
         if (m_LobbyBtns[i].IsPressed())
         {
-            {
-                Message request(MessageType::QuickMatchRequest);
-                auto wrapper = PacketWrapper::Wrap(request);
-                wrapper.Sign(m_ClientApp.GetSignature());
-                wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
-            }
+            Message_RoomJoinRequest request(m_ClientApp.GetRoomIds()[i]);
+            auto wrapper = PacketWrapper::Wrap(request);
+            wrapper.Sign(m_ClientApp.GetSignature());
+            wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
+
             //m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
             return;
         }

@@ -203,8 +203,8 @@ void ClientApp::OnMessageReceived(const Message& message)
 			if (uuid == 0)
 				// End of the group
 				break;
-
-			// Todo add list entry "room #uuid" with button "join"
+			
+			m_RoomIds.emplace_back(uuid);
 		}
 	}
 	break;
@@ -270,12 +270,6 @@ void ClientApp::OnMessageReceived(const Message& message)
 		m_PongGame = tempGame;
 		m_LeftScore = update.leftScore;
 		m_RightScore = update.rightScore;
-	}
-	break;
-	case GetIdRoomResponse:
-	{
-		auto& update = message.As<Message_GetIdRoomResponse>();
-		m_RoomIds.emplace_back(update.uuid);
 	}
 	break;
 	}

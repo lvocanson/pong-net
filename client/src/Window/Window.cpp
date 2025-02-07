@@ -1,7 +1,9 @@
 #include "Window.h"
 
 Window::Window()
-	: m_ClearColor(sf::Color::Color(51, 56, 63)), m_Drawables()
+	: m_ClearColor(sf::Color::Color(51, 56, 63))
+	, m_Drawables()
+	, m_IsFocused(false)
 {
 	m_windowRenderer = new sf::RenderWindow();
 }

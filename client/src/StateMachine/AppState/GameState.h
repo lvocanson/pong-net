@@ -14,6 +14,7 @@ public:
 	void OnExit(ClientApp& app) override;
 
 	void PollEvents(ClientApp& app);
+	void InitLoading();
 
 private:
 
