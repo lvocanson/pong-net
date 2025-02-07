@@ -221,7 +221,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			ChangeState<GameState>(GetFont());
+			ChangeState<GameState>(GetFont(), response.side);
 		}
 		break;
 		}

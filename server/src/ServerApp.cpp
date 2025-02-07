@@ -246,7 +246,11 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 			matchRoom = &CreateRoom(sender);
 		}
 
-		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, matchRoom->uuid);
+		Message_RoomJoinResponse::PlayerSide side = matchRoom->IsLeftSignature(sender.signature)
+			? Message_RoomJoinResponse::Left
+			: Message_RoomJoinResponse::Right;
+
+		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, matchRoom->uuid, side);
 		auto wrapper = PacketWrapper::Wrap(response);
 		wrapper.Sign(sender.signature);
 		if (!wrapper.Send(m_Socket, sender.address))
@@ -259,7 +263,11 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 	{
 		auto& room = CreateRoom(sender);
 
-		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid);
+		Message_RoomJoinResponse::PlayerSide side = room.IsLeftSignature(sender.signature)
+			? Message_RoomJoinResponse::Left
+			: Message_RoomJoinResponse::Right;
+
+		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid, side);
 		auto wrapper = PacketWrapper::Wrap(response);
 		wrapper.Sign(sender.signature);
 		if (!wrapper.Send(m_Socket, sender.address))
@@ -301,6 +309,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		auto& request = message.As<Message_RoomJoinRequest>();
 
 		Message_RoomJoinResponse::JoinStatus status = Message_RoomJoinResponse::Rejected;
+		Message_RoomJoinResponse::PlayerSide side = Message_RoomJoinResponse::Left;
 		for (auto& room : m_PausedRooms)
 		{
 			if (!room.IsFull() && room.uuid == request.uuid)
@@ -312,6 +321,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 				else
 				{
 					room.rightSignature = sender.signature;
+					side = Message_RoomJoinResponse::Right;
 				}
 
 				status = Message_RoomJoinResponse::Accepted;
@@ -319,7 +329,7 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 			}
 		}
 
-		Message_RoomJoinResponse response(status, request.uuid);
+		Message_RoomJoinResponse response(status, request.uuid, side);
 		auto wrapper = PacketWrapper::Wrap(response);
 		wrapper.Sign(sender.signature);
 		if (!wrapper.Send(m_Socket, sender.address))
