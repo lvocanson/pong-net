@@ -6,14 +6,6 @@ inline constexpr float BallRadius = 5.f;
 inline constexpr float PaddleDistFromBorders = 10.f;
 inline constexpr float PaddleHeight = 100.f;
 
-enum class PlayerSide
-{
-	No,
-	Left,
-	Right
-
-};
-
 enum class GameStateInfo
 {
 	Ongoing = 0,
@@ -45,11 +37,10 @@ struct Pong
 	void Reset();
 	void Update(float dt);
 	GameStateInfo GameStateInfos() const;
-	const PlayerSide& GamePlayerSide();
 
 	float BallX, BallY;
 	float BallDx, BallDy;
 	float LeftPaddle, RightPaddle;
-	bool isFirstPlayer;
+	bool isLeftPlayer;
 	PaddlesBehaviour Behaviours;
 };

@@ -1,6 +1,7 @@
 #include "LobbyState.h"
 #include "ConnectionState.h"
 #include "GameState.h"
+#include <Network/PacketWrapper.h>
 
 LobbyState::LobbyState(ClientApp& app)
     : m_ClientApp(app)
@@ -52,7 +53,13 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
         if (m_LobbyBtns[i].IsPressed())
         {
             int indexGame = i;
-            m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
+            {
+                Message request(MessageType::QuickMatchRequest);
+                auto wrapper = PacketWrapper::Wrap(request);
+                wrapper.Sign(m_ClientApp.GetSignature());
+                wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
+            }
+            //m_ClientApp.ChangeState<GameState>(m_ClientApp.GetFont());
             return;
         }
     }

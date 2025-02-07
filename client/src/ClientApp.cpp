@@ -22,7 +22,6 @@ ClientApp::ClientApp()
 	, connectionStateInfo(ConnectionStateInfos::None)
 	, m_LeftScore(0)
 	, m_RightScore(0)
-	, m_PlayerSide(PlayerSide::No)
 
 	, m_WsaData()
 	, m_Socket()
@@ -182,15 +181,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
-		//ChangeState<LobbyState>(*this);
-
-		// TODO: call this from UI
-		{
-			Message request(QuickMatchRequest);
-			auto wrapper = PacketWrapper::Wrap(request);
-			wrapper.Sign(m_Signature);
-			wrapper.Send(m_Socket, m_ServerAddr);
-		}
+		ChangeState<LobbyState>(*this);
 	}
 	break;
 	case RoomGroupResponse:
@@ -228,8 +219,8 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			//ChangeState<GameState>(GetFont());
-			ChangeState<LobbyState>(*this);
+			ChangeState<GameState>(GetFont());
+			//ChangeState<LobbyState>(*this);
 		}
 		break;
 		}
@@ -251,16 +242,15 @@ void ClientApp::OnMessageReceived(const Message& message)
 		{
 		case Message_GameUpdate::Paused:
 		{
-			tempGame.Reset();
-			m_PongGame = tempGame;
 			m_Playing = PlayingState::Paused;
+			tempGame.Reset();
 		}
 		break;
 		case Message_GameUpdate::Playing:
 		{
 			m_Playing = PlayingState::Playing;
-
 			tempGame.Update(diff);
+
 			using enum PaddlesBehaviour;
 			if ((m_PongGame.Behaviours & LeftUp) != None)
 				tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
@@ -274,6 +264,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 			m_PongGame = tempGame;
 			m_LeftScore = update.leftScore;
 			m_RightScore = update.rightScore;
+
 		}
 		break;
 		}

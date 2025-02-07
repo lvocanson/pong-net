@@ -157,13 +157,3 @@ GameStateInfo Pong::GameStateInfos() const
 
 	return GameStateInfo::Ongoing;
 }
-
-const PlayerSide& Pong::GamePlayerSide()
-{
-	if (!isFirstPlayer) 
-	{
-		isFirstPlayer = true;
-		return PlayerSide::Left;
-	}
-	return PlayerSide::Right;
-}

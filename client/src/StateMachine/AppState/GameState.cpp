@@ -11,7 +11,6 @@ GameState::GameState(const sf::Font& font)
 void GameState::OnEnter(ClientApp& app)
 {
 	m_PongDisplay.RegisterDrawables(app.GetWindow());
-	//app.SetPlayerSide(app.GetPongGame().GamePlayerSide());
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
@@ -74,64 +73,25 @@ void GameState::PollEvents(ClientApp& app)
 		pong.Behaviours &= ~PaddlesBehaviour::RightDown;
 	}
 
-	//PlayerSide& playerSide = app.GetPlayerSide();
-	//
-	//switch (playerSide) 
-	//{
-	//	case PlayerSide::Left :
-	//	{
-	//		// PRESSED
 
-	//		if (input.IsKeyPressed(sf::Keyboard::Key::W) || input.IsKeyPressed(sf::Keyboard::Key::Z))
-	//		{
-	//			pong.Behaviours |= PaddlesBehaviour::LeftUp;
-	//		}
+    //bool moveUp = input.IsKeyPressed(sf::Keyboard::Key::W) || input.IsKeyPressed(sf::Keyboard::Key::Z) || input.IsKeyPressed(sf::Keyboard::Key::Up);
+    //bool moveDown = input.IsKeyPressed(sf::Keyboard::Key::S) || input.IsKeyPressed(sf::Keyboard::Key::Down);
 
-	//		if (input.IsKeyPressed(sf::Keyboard::Key::S))
-	//		{
-	//			pong.Behaviours |= PaddlesBehaviour::LeftDown;
-	//		}
+    //bool releaseUp = input.IsKeyReleased(sf::Keyboard::Key::W) || input.IsKeyReleased(sf::Keyboard::Key::Z) || input.IsKeyReleased(sf::Keyboard::Key::Up);
+    //bool releaseDown = input.IsKeyReleased(sf::Keyboard::Key::S) || input.IsKeyReleased(sf::Keyboard::Key::Down);
 
-	//		// RELEASED
-
-	//		if (input.IsKeyReleased(sf::Keyboard::Key::W) || input.IsKeyReleased(sf::Keyboard::Key::Z))
-	//		{
-	//			pong.Behaviours &= ~PaddlesBehaviour::LeftUp;
-	//		}
-
-	//		if (input.IsKeyReleased(sf::Keyboard::Key::S))
-	//		{
-	//			pong.Behaviours &= ~PaddlesBehaviour::LeftDown;
-	//		}
-
-	//		break;
-	//	}
-	//	case PlayerSide::Right :
-	//	{
-	//		// PRESSED
-	//		if (input.IsKeyPressed(sf::Keyboard::Key::Up))
-	//		{
-	//			pong.Behaviours |= PaddlesBehaviour::RightUp;
-	//		}
-
-	//		if (input.IsKeyPressed(sf::Keyboard::Key::Down))
-	//		{
-	//			pong.Behaviours |= PaddlesBehaviour::RightDown;
-	//		}
-
-	//		// RELEASED
-
-	//		if (input.IsKeyReleased(sf::Keyboard::Key::Up))
-	//		{
-	//			pong.Behaviours &= ~PaddlesBehaviour::RightUp;
-	//		}
-
-	//		if (input.IsKeyReleased(sf::Keyboard::Key::Down))
-	//		{
-	//			pong.Behaviours &= ~PaddlesBehaviour::RightDown;
-	//		}
-
-	//		break;
-	//	}
-	//}
+    //if (pong.isLeftPlayer) 
+    //{
+    //    if (moveUp) pong.Behaviours |= PaddlesBehaviour::LeftUp;
+    //    if (moveDown) pong.Behaviours |= PaddlesBehaviour::LeftDown;
+    //    if (releaseUp) pong.Behaviours &= ~PaddlesBehaviour::LeftUp;
+    //    if (releaseDown) pong.Behaviours &= ~PaddlesBehaviour::LeftDown;
+    //}
+    //else 
+    //{
+    //    if (moveUp) pong.Behaviours |= PaddlesBehaviour::RightUp;
+    //    if (moveDown) pong.Behaviours |= PaddlesBehaviour::RightDown;
+    //    if (releaseUp) pong.Behaviours &= ~PaddlesBehaviour::RightUp;
+    //    if (releaseDown) pong.Behaviours &= ~PaddlesBehaviour::RightDown;
+    //}
 }
