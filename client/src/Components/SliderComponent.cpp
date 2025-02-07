@@ -5,7 +5,7 @@
 #include <filesystem>
 
 SliderComponent::SliderComponent(const InputHandler& inputHandler, sf::Music& music)
-	: m_Input(inputHandler), m_Music(music), m_Filename("Save.txt")
+	: m_Input(inputHandler), m_Music(music)
 {
 	m_Bar.setFillColor(sf::Color::White);
 	m_Knob.setRadius(10);
@@ -52,9 +52,18 @@ void SliderComponent::Update(float dt, Window& window)
 	}
 }
 
+static const std::filesystem::path VolumeFileName = "usr/volume.dat";
+
 void SliderComponent::SaveVolumeValue() const
 {
-	std::ofstream file(m_Filename);
+	auto directory = VolumeFileName;
+	directory.remove_filename();
+	if (!std::filesystem::exists(directory))
+	{
+		std::filesystem::create_directories(directory);
+	}
+
+	std::ofstream file(VolumeFileName);
 	if (file)
 	{
 		file << m_Music.getVolume();
@@ -64,14 +73,14 @@ void SliderComponent::SaveVolumeValue() const
 
 float SliderComponent::LoadVolumeValue() const
 {
-	std::ifstream file(m_Filename);
-	float m_Value = -1;
+	std::ifstream file(VolumeFileName);
+	float value = -1;
 	if (file)
 	{
-		file >> m_Value;
+		file >> value;
 		file.close();
 	}
-	return m_Value;
+	return value;
 }
 
 void SliderComponent::SetPosition(const sf::Vector2f& pos)

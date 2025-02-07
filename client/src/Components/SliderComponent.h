@@ -14,7 +14,6 @@ private:
 	bool m_IsDragging = false;
 	const InputHandler& m_Input;
 	sf::Music& m_Music;
-	std::string m_Filename;
 
 public:
 
