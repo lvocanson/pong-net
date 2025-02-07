@@ -51,7 +51,7 @@ void TextComponent::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	target.draw(m_Text, states);
 }
 
-const sf::Vector2f& TextComponent::GetBounds() const
+sf::Vector2f TextComponent::GetBounds() const
 {
 	return m_Text.getLocalBounds().size;
 }

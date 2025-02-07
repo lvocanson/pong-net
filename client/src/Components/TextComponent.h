@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseComponent.h"
 
-inline constexpr auto TEXT_SIZE = 50;
+inline constexpr auto TEXT_SIZE = 50u;
 inline constexpr auto TEXT_COLOR = sf::Color::White;
 
 class TextComponent : public BaseComponent
@@ -18,7 +18,7 @@ public:
 	void SetColor(const sf::Color& color);
 	void SetCharacterSize(unsigned int size);
 
-	const sf::Vector2f& GetBounds() const;
+	sf::Vector2f GetBounds() const;
 	sf::Vector2f GetPosition() const override;
 	const sf::Text& GetText() const;
 	sf::Vector2f GetSize() const override { return m_Text.getLocalBounds().size; }

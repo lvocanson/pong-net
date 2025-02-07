@@ -126,24 +126,22 @@ void ConnectionState::InitLobbyButton(const sf::Vector2f& pos)
 {
 	sf::Color Emerald(1, 215, 88);
 	std::string btnText = "Show lobby";
-	unsigned int textSize = TEXT_SIZE;
 
 	m_ShowLobbyBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED_SMALL_Y);
 	m_ShowLobbyBtn.SetPosition(pos);
 	m_ShowLobbyBtn.SetColor(Emerald);
-	m_ShowLobbyBtn.SetButtonText(btnText, TEXT_COLOR, textSize / 2.f);
+	m_ShowLobbyBtn.SetButtonText(btnText, TEXT_COLOR, TEXT_SIZE / 2u);
 }
 
 void ConnectionState::InitQuickGameButton(const sf::Vector2f& pos)
 {
 	sf::Color Emerald(1, 215, 88);
 	std::string btnText = "Quick Connect";
-	unsigned int textSize = TEXT_SIZE;
 
 	m_QuickGameBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED_SMALL_Y);
 	m_QuickGameBtn.SetPosition(pos);
 	m_QuickGameBtn.SetColor(Emerald);
-	m_QuickGameBtn.SetButtonText(btnText, TEXT_COLOR, textSize / 2.f);
+	m_QuickGameBtn.SetButtonText(btnText, TEXT_COLOR, TEXT_SIZE / 2u);
 }
 
 void ConnectionState::ShowLobbyFunction()
