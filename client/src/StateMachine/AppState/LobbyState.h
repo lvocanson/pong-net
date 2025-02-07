@@ -14,6 +14,7 @@ public:
 	virtual void OnExit(ClientApp& app) override;
 
     void InitReturnButton(const sf::Vector2f& pos);
+    void InitCreateButton(const sf::Vector2f& pos);
     void AddLobbyButton(const sf::Vector2f& pos);
 	void JoinLobbyRequest(int lobbyID);
 
@@ -27,6 +28,7 @@ private:
     bool m_IsTryingToJoinLobby = false;
 
     ButtonComponent m_ReturnButton;
+    ButtonComponent m_CreateButton;
 
     std::string m_LobbyGameMode;
     std::vector<ButtonComponent> m_LobbyBtns;

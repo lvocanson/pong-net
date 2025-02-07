@@ -6,11 +6,13 @@
 LobbyState::LobbyState(ClientApp& app)
     : m_ClientApp(app)
     , m_ReturnButton(app.GetFont(), app.GetInputHandler())
+    , m_CreateButton(app.GetFont(), app.GetInputHandler())
 {
     float width = app.GetWindow().GetWidth();
     float height = app.GetWindow().GetHeight();
 
-    InitReturnButton(sf::Vector2f(width * 0.5f, height * 0.8f));
+    InitCreateButton(sf::Vector2f(width * 0.75f, height * 0.8f));
+    InitReturnButton(sf::Vector2f(width * 0.25f, height * 0.8f));
 
     m_LobbyBtns = std::vector<ButtonComponent>();
 
@@ -24,6 +26,7 @@ void LobbyState::OnEnter(ClientApp& app)
     m_IsLobbyInit = false;
 
     app.GetWindow().RegisterDrawable(m_ReturnButton);
+    app.GetWindow().RegisterDrawable(m_CreateButton);
 
     for (auto& lobbyBtn : m_LobbyBtns)
     {
@@ -34,6 +37,7 @@ void LobbyState::OnEnter(ClientApp& app)
 void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
 {
     m_ReturnButton.Update(deltaTime, app.GetWindow());
+    m_CreateButton.Update(deltaTime, app.GetWindow());
 
     for (auto& lobbyBtn : m_LobbyBtns) 
     {
@@ -48,11 +52,23 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
         return;
     }
 
+    if (m_CreateButton.IsPressed()) 
+    {
+        {
+            Message request(MessageType::RoomCreationRequest);
+            auto wrapper = PacketWrapper::Wrap(request);
+            wrapper.Sign(m_ClientApp.GetSignature());
+            wrapper.Send(m_ClientApp.GetSocket(), m_ClientApp.GetServerAddr());
+        }
+        return;
+    }
+
     for (int i = 0; i < m_LobbyBtns.size(); i++)
     {
         if (m_LobbyBtns[i].IsPressed())
         {
             int indexGame = i;
+
             {
                 Message request(MessageType::QuickMatchRequest);
                 auto wrapper = PacketWrapper::Wrap(request);
@@ -68,6 +84,7 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
 void LobbyState::OnExit(ClientApp& app)
 {
     app.GetWindow().UnregisterDrawable(m_ReturnButton);
+    app.GetWindow().UnregisterDrawable(m_CreateButton);
 
     for (auto& lobbyBtn : m_LobbyBtns)
     {
@@ -88,19 +105,30 @@ void LobbyState::InitReturnButton(const sf::Vector2f& pos)
     m_ReturnButton.SetButtonText(btnText, m_ClientApp.GetFont());
 }
 
+void LobbyState::InitCreateButton(const sf::Vector2f& pos)
+{
+    sf::Color GreenColor(62, 231, 1);
+    std::string btnText = "Create Room";
+
+    m_CreateButton.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
+    m_CreateButton.SetPosition(pos);
+    m_CreateButton.SetColor(GreenColor);
+    m_CreateButton.SetButtonText(btnText, m_ClientApp.GetFont());
+}
+
 void LobbyState::AddLobbyButton(const sf::Vector2f& pos)
 {
     ButtonComponent& btn = m_LobbyBtns.emplace_back(m_ClientApp.GetFont(), m_ClientApp.GetInputHandler());
-    sf::Color OrangeRed(128, 192, 128);
+    sf::Color GreenColor(128, 192, 128);
     if (m_LobbyBtns.size() % 2 == 1) 
     {
-        OrangeRed += sf::Color(0, 64, 0);
+        GreenColor += sf::Color(0, 64, 0);
     }
     std::string btnText = "Connect to lobby : " + std::to_string(m_LobbyBtns.size());
 
     btn.SetSize(BUTTON_LOBBY_SIZE);
     btn.SetPosition(pos);
-    btn.SetColor(OrangeRed);
+    btn.SetColor(GreenColor);
     btn.SetButtonText(btnText, m_ClientApp.GetFont());
 }
 
