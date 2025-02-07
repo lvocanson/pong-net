@@ -27,7 +27,7 @@ public:
 	const TextComponent& GetTextComponent() const;
 
 	bool IsPressed() const { return m_IsPressed; }
-	void SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE);
+	void SetButtonText(const std::string& text, const sf::Color& textColor = TEXT_COLOR, unsigned int textSize = TEXT_SIZE);
 
 private:
 	sf::RectangleShape m_Shape;

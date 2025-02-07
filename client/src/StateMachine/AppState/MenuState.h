@@ -17,10 +17,10 @@ public:
 	virtual void OnExit(ClientApp& app) override;
 
 	void InitSlider(sf::Vector2f& pos, float width, float minValue, float maxValue, const sf::Font& font);
-	void InitPlayButton(const sf::Vector2f& pos, const sf::Font& font);
-	void InitConnectionButton(const sf::Vector2f& pos, const sf::Font& font);
-	void InitDisconnectButton(const sf::Vector2f& pos, const sf::Font& font);
-	void InitQuitButton(const sf::Vector2f& pos, const sf::Font& font);
+	void InitPlayButton(const sf::Vector2f& pos);
+	void InitConnectionButton(const sf::Vector2f& pos);
+	void InitDisconnectButton(const sf::Vector2f& pos);
+	void InitQuitButton(const sf::Vector2f& pos);
 
 private:
 

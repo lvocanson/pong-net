@@ -21,14 +21,14 @@ MenuState::MenuState(ClientApp& app)
 	sf::Vector2f sliderpos = sf::Vector2f(app.GetWindow().GetWidth() * 0.8f, yOffset);
 
 	InitSlider(sliderpos, app.GetWindow().GetWidth() * 0.1f, 0, 100, app.GetFont());
-	InitConnectionButton(btnScreenPos, app.GetFont());
-	InitPlayButton(btnScreenPos, app.GetFont());
+	InitConnectionButton(btnScreenPos);
+	InitPlayButton(btnScreenPos);
 
 	btnScreenPos.y += yOffset;
-	InitDisconnectButton(btnScreenPos, app.GetFont());
+	InitDisconnectButton(btnScreenPos);
 
 	btnScreenPos.y += yOffset;
-	InitQuitButton(btnScreenPos, app.GetFont());
+	InitQuitButton(btnScreenPos);
 }
 
 void MenuState::OnEnter(ClientApp& app)
@@ -105,7 +105,7 @@ void MenuState::InitSlider(sf::Vector2f& pos, float width, float minValue, float
 	m_SliderText.SetText(musicText);
 }
 
-void MenuState::InitPlayButton(const sf::Vector2f& pos, const sf::Font& font)
+void MenuState::InitPlayButton(const sf::Vector2f& pos)
 {
 	sf::Color Emerald(1, 215, 88);
 	std::string btnText = "Play";
@@ -113,10 +113,10 @@ void MenuState::InitPlayButton(const sf::Vector2f& pos, const sf::Font& font)
 	m_PlayBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_PlayBtn.SetPosition(pos);
 	m_PlayBtn.SetColor(Emerald);
-	m_PlayBtn.SetButtonText(btnText, font);
+	m_PlayBtn.SetButtonText(btnText);
 }
 
-void MenuState::InitConnectionButton(const sf::Vector2f& pos, const sf::Font& font)
+void MenuState::InitConnectionButton(const sf::Vector2f& pos)
 {
 	sf::Color Lime(24, 165, 88);
 	std::string btnText = "Connection";
@@ -124,20 +124,20 @@ void MenuState::InitConnectionButton(const sf::Vector2f& pos, const sf::Font& fo
 	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_ConnectBtn.SetPosition(pos);
 	m_ConnectBtn.SetColor(Lime);
-	m_ConnectBtn.SetButtonText(btnText, font);
+	m_ConnectBtn.SetButtonText(btnText);
 }
 
-void MenuState::InitDisconnectButton(const sf::Vector2f& pos, const sf::Font& font)
+void MenuState::InitDisconnectButton(const sf::Vector2f& pos)
 {
 	std::string btnText = "Disconnect";
 
 	m_DisconnectBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_DisconnectBtn.SetPosition(pos);
 	m_DisconnectBtn.SetColor(sf::Color::Red);
-	m_DisconnectBtn.SetButtonText(btnText, font);
+	m_DisconnectBtn.SetButtonText(btnText);
 }
 
-void MenuState::InitQuitButton(const sf::Vector2f& pos, const sf::Font& font)
+void MenuState::InitQuitButton(const sf::Vector2f& pos)
 {
 	sf::Color OrangeRed(231, 62, 1);
 	std::string btnText = "Quit";
@@ -145,5 +145,5 @@ void MenuState::InitQuitButton(const sf::Vector2f& pos, const sf::Font& font)
 	m_QuitBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_QuitBtn.SetPosition(pos);
 	m_QuitBtn.SetColor(OrangeRed);
-	m_QuitBtn.SetButtonText(btnText, font);
+	m_QuitBtn.SetButtonText(btnText);
 }

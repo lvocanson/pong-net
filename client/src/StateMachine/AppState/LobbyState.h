@@ -13,24 +13,23 @@ public:
 	virtual void OnUpdate(ClientApp& app, float deltaTime) override;
 	virtual void OnExit(ClientApp& app) override;
 
-    void InitReturnButton(const sf::Vector2f& pos);
-    void InitCreateButton(const sf::Vector2f& pos);
-    void AddLobbyButton(const sf::Vector2f& pos, const std::string idRoom);
+	void InitReturnButton(const sf::Vector2f& pos);
+	void InitCreateButton(const sf::Vector2f& pos);
 	void JoinLobbyRequest(int lobbyID);
 
 private:
 
-    ClientApp& m_ClientApp;
+	ClientApp& m_ClientApp;
 
-    int m_CurrentLobbyID;
-    bool m_IsLobbyInit = false;
-    bool m_IsInLobby = false;
-    bool m_IsTryingToJoinLobby = false;
+	int m_CurrentLobbyID;
+	bool m_IsLobbyInit = false;
+	bool m_IsInLobby = false;
+	bool m_IsTryingToJoinLobby = false;
 
-    ButtonComponent m_ReturnButton;
-    ButtonComponent m_CreateButton;
+	ButtonComponent m_ReturnButton;
+	ButtonComponent m_CreateButton;
 
-    std::string m_LobbyGameMode;
-    std::vector<ButtonComponent> m_LobbyBtns;
+	std::string m_LobbyGameMode;
+	std::vector<std::tuple<uint16_t, ButtonComponent>> m_LobbyBtns;
 };
 

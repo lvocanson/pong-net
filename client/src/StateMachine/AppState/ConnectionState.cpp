@@ -136,7 +136,7 @@ void ConnectionState::InitBackButton(const sf::Vector2f& pos)
 	m_BackBtn.SetSize(BUTTON_SIZE_EXTRA_EXTENDED);
 	m_BackBtn.SetPosition(pos);
 	m_BackBtn.SetColor(OrangeRed);
-	m_BackBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_BackBtn.SetButtonText(btnText);
 }
 
 void ConnectionState::InitConnectButton(const sf::Vector2f& pos)
@@ -147,5 +147,5 @@ void ConnectionState::InitConnectButton(const sf::Vector2f& pos)
 	m_ConnectBtn.SetSize(BUTTON_SIZE_EXTENDED);
 	m_ConnectBtn.SetPosition(pos);
 	m_ConnectBtn.SetColor(Emerald);
-	m_ConnectBtn.SetButtonText(btnText, m_ClientApp.GetFont());
+	m_ConnectBtn.SetButtonText(btnText);
 }

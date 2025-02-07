@@ -73,7 +73,7 @@ const TextComponent& ButtonComponent::GetTextComponent() const
 	return m_Text;
 }
 
-void ButtonComponent::SetButtonText(const std::string& text, const sf::Font& font, const sf::Color& textColor, unsigned int textSize)
+void ButtonComponent::SetButtonText(const std::string& text, const sf::Color& textColor, unsigned int textSize)
 {
 	m_Text.SetCharacterSize(textSize);
 	m_Text.SetColor(textColor);
