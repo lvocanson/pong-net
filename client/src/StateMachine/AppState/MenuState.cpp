@@ -166,14 +166,8 @@ void MenuState::ShowLobbyFunction()
 	m_IpField.ClearErrorMessage();
 
 	bool isNameValid = false;
-	if (m_UsernameField.GetText().empty())
+	if (m_UsernameField.GetText().size() < 3)
 	{
-		//DebugLog("Username should not be empty!\n");
-		m_UsernameField.ShowErrorMessage("Username should not be empty!");
-	}
-	else if (m_UsernameField.GetText().size() < 3)
-	{
-		//DebugLog("Username should be more than 2 characters!\n");
 		m_UsernameField.ShowErrorMessage("Username should be more than 2 characters!");
 	}
 	else
@@ -182,14 +176,5 @@ void MenuState::ShowLobbyFunction()
 	}
 
 	m_Name = m_UsernameField.GetText();
-
-	if (isNameValid)
-	{
-		// m_clientApp->ConnectToServer("127.0.0.1");
-		m_ClientApp.ConnectToServer(m_IpField.GetText());
-	}
-	else
-	{
-		m_IpField.ShowErrorMessage("Invalid phrase!");
-	}
+	m_ClientApp.ConnectToServer(m_IpField.GetText());
 }
