@@ -34,6 +34,8 @@ public: // Getters
 	UdpSocket& GetSocket() { return m_Socket; }
 	IpAddress& GetServerAddr() { return m_ServerAddr; }
 	uint16_t& GetSignature() { return m_Signature; }
+	const std::vector<uint16_t>& GetRoomIds() { return m_RoomIds; }
+	void ResetRoomIds() { m_RoomIds.clear(); }
 	Window& GetWindow() { return m_Window; }
 	sf::Music& GetMusic() { return m_Music; }
 	const sf::Font& GetFont() const { return m_Font; }
@@ -63,6 +65,7 @@ private: // variables
 	InputHandler m_Input;
 
 	Pong m_PongGame;
+	std::vector<uint16_t> m_RoomIds;
 	uint16_t m_LeftScore, m_RightScore;
 
 	enum class PlayingState

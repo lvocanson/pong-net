@@ -37,6 +37,7 @@ private:
 	void LogWarning(std::string_view warning) const;
 	void LogError(std::string_view error) const;
 	void LogWsaError(std::string_view what, int error = 0) const;
+	void GetRoomIds(const Client& sender) const;
 
 private:
 

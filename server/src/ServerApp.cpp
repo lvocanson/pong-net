@@ -253,6 +253,14 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		{
 			LogWsaError("Sending quick match response failed");
 		}
+
+		Message_GetIdRoomResponse responseId(matchRoom->uuid);
+		auto wrapperId = PacketWrapper::Wrap(responseId);
+		wrapperId.Sign(sender.signature);
+		if (!wrapperId.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Add room response failed");
+		}
 	}
 	break;
 	case RoomCreationRequest:
@@ -265,6 +273,14 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		if (!wrapper.Send(m_Socket, sender.address))
 		{
 			LogWsaError("Sending room creation response failed");
+		}
+
+		Message_GetIdRoomResponse responseId(room.uuid);
+		auto wrapperId = PacketWrapper::Wrap(responseId);
+		wrapperId.Sign(sender.signature);
+		if (!wrapperId.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Add room response failed");
 		}
 	}
 	break;
@@ -326,6 +342,12 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 		{
 			LogWsaError("Sending room join response failed");
 		}
+	}
+	break;
+	case GetIdRoomRequest:
+	{
+		auto& request = message.As<Message_GetIdRoomRequest>();
+		GetRoomIds(sender);
 	}
 	break;
 	case GameUpdate:
@@ -484,6 +506,7 @@ PongRoom& ServerApp::CreateRoom(const Client& applicant)
 	}
 
 	LogInfo(std::format("Room {} created", uuid));
+
 	return room;
 }
 
@@ -620,4 +643,28 @@ void ServerApp::LogWsaError(std::string_view what, int error) const
 		<< TextColors::BrightFgBlack << "Explanation: "
 		<< NetHelper::GetWsaErrorExplanation(error)
 		<< '\n';
+}
+
+void ServerApp::GetRoomIds(const Client& sender) const
+{
+	for (auto& room : m_PlayingRooms) 
+	{
+		Message_GetIdRoomResponse response(room.uuid);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending room join response failed");
+		}
+	}
+	for (auto& room : m_PausedRooms)
+	{
+		Message_GetIdRoomResponse response(room.uuid);
+		auto wrapper = PacketWrapper::Wrap(response);
+		wrapper.Sign(sender.signature);
+		if (!wrapper.Send(m_Socket, sender.address))
+		{
+			LogWsaError("Sending room join response failed");
+		}
+	}
 }

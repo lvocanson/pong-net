@@ -15,7 +15,7 @@ public:
 
     void InitReturnButton(const sf::Vector2f& pos);
     void InitCreateButton(const sf::Vector2f& pos);
-    void AddLobbyButton(const sf::Vector2f& pos);
+    void AddLobbyButton(const sf::Vector2f& pos, const std::string idRoom);
 	void JoinLobbyRequest(int lobbyID);
 
 private:

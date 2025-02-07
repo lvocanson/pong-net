@@ -181,6 +181,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 	{
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
+
 		ChangeState<LobbyState>(*this);
 	}
 	break;
@@ -268,6 +269,12 @@ void ClientApp::OnMessageReceived(const Message& message)
 		}
 		break;
 		}
+	}
+	break;
+	case GetIdRoomResponse:
+	{
+		auto& update = message.As<Message_GetIdRoomResponse>();
+		m_RoomIds.emplace_back(update.uuid);
 	}
 	break;
 	}

@@ -15,9 +15,6 @@ LobbyState::LobbyState(ClientApp& app)
     InitReturnButton(sf::Vector2f(width * 0.25f, height * 0.8f));
 
     m_LobbyBtns = std::vector<ButtonComponent>();
-
-    sf::Vector2f newPos = sf::Vector2f(width * 0.5f, height * 0.5f);
-    AddLobbyButton(newPos);
 }
 
 void LobbyState::OnEnter(ClientApp& app)
@@ -27,15 +24,42 @@ void LobbyState::OnEnter(ClientApp& app)
 
     app.GetWindow().RegisterDrawable(m_ReturnButton);
     app.GetWindow().RegisterDrawable(m_CreateButton);
+    
+    app.ResetRoomIds();
 
-    for (auto& lobbyBtn : m_LobbyBtns)
     {
-        app.GetWindow().RegisterDrawable(lobbyBtn);
+        Message request(MessageType::GetIdRoomRequest);
+        auto wrapper = PacketWrapper::Wrap(request);
+        wrapper.Sign(app.GetSignature());
+        wrapper.Send(app.GetSocket(), app.GetServerAddr());
     }
 }
 
 void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
-{
+{    
+    const std::vector<uint16_t>& roomIds = app.GetRoomIds();
+    for (int i = 0; i < roomIds.size(); i++)
+    {
+        if (m_LobbyBtns.size() <= i) 
+        {
+            sf::Vector2f newPos = sf::Vector2f(app.GetWindow().GetWidth() * 0.5f, app.GetWindow().GetHeight() * 0.1f);
+            
+            if (i < 0) 
+            {
+                newPos = m_LobbyBtns[m_LobbyBtns.size() - 1].GetPosition();
+                newPos.y += m_LobbyBtns[0].GetSize().y;
+            }
+
+            AddLobbyButton(newPos, std::to_string(roomIds[i]));
+            app.GetWindow().RegisterDrawable(m_LobbyBtns[i]);
+        }
+        //else 
+        //{
+        //    std::string btnText = "Connect to lobby : " + std::to_string(roomIds[i]);
+        //    m_LobbyBtns[i].SetButtonText(btnText, app.GetFont());
+        //}
+    }
+
     m_ReturnButton.Update(deltaTime, app.GetWindow());
     m_CreateButton.Update(deltaTime, app.GetWindow());
 
@@ -67,8 +91,6 @@ void LobbyState::OnUpdate(ClientApp& app, float deltaTime)
     {
         if (m_LobbyBtns[i].IsPressed())
         {
-            int indexGame = i;
-
             {
                 Message request(MessageType::QuickMatchRequest);
                 auto wrapper = PacketWrapper::Wrap(request);
@@ -116,7 +138,7 @@ void LobbyState::InitCreateButton(const sf::Vector2f& pos)
     m_CreateButton.SetButtonText(btnText, m_ClientApp.GetFont());
 }
 
-void LobbyState::AddLobbyButton(const sf::Vector2f& pos)
+void LobbyState::AddLobbyButton(const sf::Vector2f& pos, const std::string idRoom)
 {
     ButtonComponent& btn = m_LobbyBtns.emplace_back(m_ClientApp.GetFont(), m_ClientApp.GetInputHandler());
     sf::Color GreenColor(128, 192, 128);
@@ -124,7 +146,7 @@ void LobbyState::AddLobbyButton(const sf::Vector2f& pos)
     {
         GreenColor += sf::Color(0, 64, 0);
     }
-    std::string btnText = "Connect to lobby : " + std::to_string(m_LobbyBtns.size());
+    std::string btnText = "Connect to lobby : " + idRoom;
 
     btn.SetSize(BUTTON_LOBBY_SIZE);
     btn.SetPosition(pos);
