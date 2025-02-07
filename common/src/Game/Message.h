@@ -95,15 +95,23 @@ struct Message_RoomJoinResponse : public Message
 		Accepted,
 	};
 
-	Message_RoomJoinResponse(JoinStatus status, uint16_t uuid)
+	enum PlayerSide
+	{
+		Left = 0,
+		Right,
+	};
+
+	Message_RoomJoinResponse(JoinStatus status, uint16_t uuid, PlayerSide side)
 		: Message(MessageType::RoomJoinResponse)
 		, status(status)
 		, uuid(uuid)
+		, side(side)
 	{
 	}
 
 	JoinStatus status;
 	uint16_t uuid;
+	PlayerSide side;
 };
 
 struct Message_GameUpdate : public Message

@@ -3,8 +3,9 @@
 #include "Window/Window.h"
 #include "Window/InputHandler.h"
 
-GameState::GameState(const sf::Font& font)
+GameState::GameState(const sf::Font& font, const Message_RoomJoinResponse::PlayerSide& side)
 	: m_PongDisplay(font)
+	, currentSide(side)
 	, m_LoadingText(font)
 	, m_LoadingTriangle(15.f, 15)
 	, m_LoadingCircle(15.f, 15)

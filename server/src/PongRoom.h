@@ -9,6 +9,7 @@ struct PongRoom
 
 	bool IsFull() const { return !ContainsSignature(0); }
 	bool ContainsSignature(uint16_t sig) const { return leftSignature == sig || rightSignature == sig; }
+	bool IsLeftSignature(uint16_t signature) const { return leftSignature == signature; }
 
 	std::chrono::high_resolution_clock::time_point leftLastUpdate, rightLastUpdate;
 	uint16_t leftSignature, rightSignature;

@@ -7,7 +7,7 @@ class GameState : public State<ClientApp>
 {
 public:
 
-	GameState(const sf::Font& font);
+	GameState(const sf::Font& font, const Message_RoomJoinResponse::PlayerSide& side);
 
 	void OnEnter(ClientApp& app) override;
 	void OnUpdate(ClientApp& app, float deltaTime) override;
@@ -23,5 +23,6 @@ private:
 	sf::CircleShape m_LoadingTriangle;
 	sf::CircleShape m_LoadingCircle;
 	float m_LoadingRotation = 0.0f;
+	Message_RoomJoinResponse::PlayerSide currentSide;
 };
 
