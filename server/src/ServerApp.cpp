@@ -499,6 +499,7 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 		if (leftActive && rightActive)
 		{
 			// Missing client reconnected / joined
+			LogInfo(std::format("Room {} is now playing", it->uuid));
 			m_PlayingRooms.emplace_back(std::move(room));
 			it = m_PausedRooms.erase_swap(it);
 			continue;
@@ -537,6 +538,7 @@ void ServerApp::MaintainRooms(TimePoint now, float dt)
 		if (!(leftActive && rightActive))
 		{
 			// Client disconnected
+			LogInfo(std::format("Room {} was paused due to a disconnection", it->uuid));
 			m_PausedRooms.emplace_back(std::move(room));
 			it = m_PlayingRooms.erase_swap(it);
 			continue;

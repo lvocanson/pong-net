@@ -203,7 +203,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 			if (uuid == 0)
 				// End of the group
 				break;
-			
+
 			m_RoomIds.emplace_back(uuid);
 		}
 	}
@@ -222,7 +222,6 @@ void ClientApp::OnMessageReceived(const Message& message)
 		case Message_RoomJoinResponse::Accepted:
 		{
 			ChangeState<GameState>(GetFont());
-			//ChangeState<LobbyState>(*this);
 		}
 		break;
 		}
@@ -235,24 +234,22 @@ void ClientApp::OnMessageReceived(const Message& message)
 		TimePoint now = std::chrono::high_resolution_clock::now();
 		float diff = std::chrono::duration<float>(now - m_LastPacketReceivedTp).count();
 
-		// Make up for lost time
-
-		auto tempGame = update.game;
-		tempGame.Behaviours = m_PongGame.Behaviours;
-
 		switch (update.status)
 		{
 		case Message_GameUpdate::Paused:
 		{
 			m_Playing = PlayingState::Paused;
-			tempGame.Reset();
 		}
 		break;
 		case Message_GameUpdate::Playing:
 		{
 			m_Playing = PlayingState::Playing;
+
+			auto tempGame = update.game;
+			tempGame.Behaviours = m_PongGame.Behaviours;
 			tempGame.Update(diff);
 
+			// Make up for lost time
 			using enum PaddlesBehaviour;
 			if ((m_PongGame.Behaviours & LeftUp) != None)
 				tempGame.LeftPaddle = std::min(tempGame.LeftPaddle, m_PongGame.LeftPaddle);
@@ -263,13 +260,13 @@ void ClientApp::OnMessageReceived(const Message& message)
 			else if ((m_PongGame.Behaviours & RightDown) != None)
 				tempGame.RightPaddle = std::max(tempGame.RightPaddle, m_PongGame.RightPaddle);
 
+			m_PongGame = tempGame;
+			m_LeftScore = update.leftScore;
+			m_RightScore = update.rightScore;
+
 		}
 		break;
 		}
-
-		m_PongGame = tempGame;
-		m_LeftScore = update.leftScore;
-		m_RightScore = update.rightScore;
 	}
 	break;
 	}
