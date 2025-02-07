@@ -20,6 +20,14 @@ enum class ConnectionStateInfos
 	IsDisconnected
 };
 
+enum class PlayingState
+{
+	No,
+	Paused,
+	Playing
+
+};
+
 class ClientApp : public StateMachine<ClientApp>
 {
 	using TimePoint = std::chrono::high_resolution_clock::time_point;
@@ -31,6 +39,7 @@ public:
 
 public: // Getters
 
+	PlayingState& GetPlayingState() { return m_Playing; }
 	UdpSocket& GetSocket() { return m_Socket; }
 	IpAddress& GetServerAddr() { return m_ServerAddr; }
 	uint16_t& GetSignature() { return m_Signature; }
@@ -68,14 +77,7 @@ private: // variables
 	std::vector<uint16_t> m_RoomIds;
 	uint16_t m_LeftScore, m_RightScore;
 
-	enum class PlayingState
-	{
-		No,
-		Paused,
-		Playing
-
-	} m_Playing = PlayingState::No;
-
+	PlayingState m_Playing;
 	ConnectionStateInfos connectionStateInfo;
 
 private: // server communication

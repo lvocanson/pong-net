@@ -5,12 +5,34 @@
 
 GameState::GameState(const sf::Font& font)
 	: m_PongDisplay(font)
+	, m_LoadingText(font)
+	, m_LoadingTriangle(15.f, 15)
+	, m_LoadingCircle(15.f, 15)
 {
+	m_LoadingTriangle.setFillColor(sf::Color::Transparent);
+	m_LoadingTriangle.setOutlineColor(sf::Color::Blue);
+	m_LoadingTriangle.setOutlineThickness(3.f);
+	m_LoadingTriangle.setPosition(sf::Vector2f(GameSizeX *0.5f, 25.f));
+	m_LoadingTriangle.setOrigin(m_LoadingTriangle.getLocalBounds().getCenter());
+	m_LoadingTriangle.setPointCount(4);
+
+	m_LoadingCircle.setFillColor(sf::Color::Transparent);
+	m_LoadingCircle.setOutlineColor(sf::Color::Magenta);
+	m_LoadingCircle.setOutlineThickness(3.f);
+	m_LoadingCircle.setPosition(sf::Vector2f(GameSizeX * 0.5f, 25.f));
+	m_LoadingCircle.setOrigin(m_LoadingCircle.getLocalBounds().getCenter());
+
+	m_LoadingText.SetPosition(sf::Vector2f(GameSizeX * 0.25f, 25.f));
+	m_LoadingText.SetColor(sf::Color(0xFFFFFF66));
+	m_LoadingText.SetText("Wainting for player...");
 }
 
 void GameState::OnEnter(ClientApp& app)
 {
 	m_PongDisplay.RegisterDrawables(app.GetWindow());
+	app.GetWindow().RegisterDrawable(m_LoadingTriangle);
+	app.GetWindow().RegisterDrawable(m_LoadingCircle);
+	app.GetWindow().RegisterDrawable(m_LoadingText);
 }
 
 void GameState::OnUpdate(ClientApp& app, float deltaTime)
@@ -20,10 +42,27 @@ void GameState::OnUpdate(ClientApp& app, float deltaTime)
 
 	auto [leftScore, rightScore] = app.GetScores();
 	m_PongDisplay.SetScore(leftScore, rightScore);
+
+	if (app.GetPlayingState() == PlayingState::Paused)
+	{
+		m_LoadingRotation += 90.f * deltaTime;
+		m_LoadingTriangle.setRotation(sf::degrees(m_LoadingRotation));
+		m_LoadingCircle.setRotation(sf::degrees(m_LoadingRotation));
+	}
+	else 
+	{
+		app.GetWindow().UnregisterDrawable(m_LoadingTriangle);
+		app.GetWindow().UnregisterDrawable(m_LoadingCircle);
+		app.GetWindow().UnregisterDrawable(m_LoadingText);
+	}
 }
 
 void GameState::OnExit(ClientApp& app)
 {
+	m_PongDisplay.UnregisterDrawable(app.GetWindow());
+	app.GetWindow().UnregisterDrawable(m_LoadingTriangle);
+	app.GetWindow().UnregisterDrawable(m_LoadingCircle);
+	app.GetWindow().UnregisterDrawable(m_LoadingText);
 }
 
 void GameState::PollEvents(ClientApp& app)

@@ -22,6 +22,7 @@ ClientApp::ClientApp()
 	, connectionStateInfo(ConnectionStateInfos::None)
 	, m_LeftScore(0)
 	, m_RightScore(0)
+	, m_Playing(PlayingState::No)
 
 	, m_WsaData()
 	, m_Socket()
@@ -262,13 +263,13 @@ void ClientApp::OnMessageReceived(const Message& message)
 			else if ((m_PongGame.Behaviours & RightDown) != None)
 				tempGame.RightPaddle = std::max(tempGame.RightPaddle, m_PongGame.RightPaddle);
 
-			m_PongGame = tempGame;
-			m_LeftScore = update.leftScore;
-			m_RightScore = update.rightScore;
-
 		}
 		break;
 		}
+
+		m_PongGame = tempGame;
+		m_LeftScore = update.leftScore;
+		m_RightScore = update.rightScore;
 	}
 	break;
 	case GetIdRoomResponse:

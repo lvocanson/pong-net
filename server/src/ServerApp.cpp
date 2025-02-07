@@ -267,13 +267,13 @@ void ServerApp::OnMessageReceived(const Message& message, const Client& sender)
 	{
 		auto& room = CreateRoom(sender);
 
-		Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid);
-		auto wrapper = PacketWrapper::Wrap(response);
-		wrapper.Sign(sender.signature);
-		if (!wrapper.Send(m_Socket, sender.address))
-		{
-			LogWsaError("Sending room creation response failed");
-		}
+		//Message_RoomJoinResponse response(Message_RoomJoinResponse::Accepted, room.uuid);
+		//auto wrapper = PacketWrapper::Wrap(response);
+		//wrapper.Sign(sender.signature);
+		//if (!wrapper.Send(m_Socket, sender.address))
+		//{
+		//	LogWsaError("Sending room creation response failed");
+		//}
 
 		Message_GetIdRoomResponse responseId(room.uuid);
 		auto wrapperId = PacketWrapper::Wrap(responseId);

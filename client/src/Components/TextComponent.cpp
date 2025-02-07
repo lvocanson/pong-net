@@ -2,12 +2,12 @@
 //#include "src/core/Managers/Resources/FontRegistry.h"
 
 TextComponent::TextComponent(const sf::Font& font)
-	: m_Text(font, "", 50u)
+	: m_Text(font, "", 20u)
 {
 	m_Text.setString("");
 	//m_Text.setFont(*FontRegistry::GetFont("coolvetica.otf"));
 	m_Text.setFillColor(sf::Color::White);
-	m_Text.setCharacterSize(20);
+	m_Text.setCharacterSize(20u);
 
 	SetPosition(sf::Vector2f(0, 0));
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <ClientApp.h>
 #include "Game/Pong.h"
+#include <Components/TextComponent.h>
 
 class GameState : public State<ClientApp>
 {
@@ -17,5 +18,9 @@ public:
 private:
 
 	PongDisplay m_PongDisplay;
+	TextComponent m_LoadingText;
+	sf::CircleShape m_LoadingTriangle;
+	sf::CircleShape m_LoadingCircle;
+	float m_LoadingRotation = 0.0f;
 };
 

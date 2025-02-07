@@ -13,6 +13,7 @@ public:
 	void SetScore(unsigned left, unsigned right);
 	void Update(const Pong& pong);
 	void RegisterDrawables(Window& window);
+	void UnregisterDrawable(Window& window);
 
 private:
 

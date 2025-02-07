@@ -34,3 +34,11 @@ void PongDisplay::RegisterDrawables(Window& window)
 	window.RegisterDrawable(m_LeftPaddle);
 	window.RegisterDrawable(m_RightPaddle);
 }
+
+void PongDisplay::UnregisterDrawable(Window& window)
+{
+	window.UnregisterDrawable(m_ScoreText);
+	window.UnregisterDrawable(m_Ball);
+	window.UnregisterDrawable(m_LeftPaddle);
+	window.UnregisterDrawable(m_RightPaddle);
+}
