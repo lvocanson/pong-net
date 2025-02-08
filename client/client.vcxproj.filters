@@ -27,7 +27,7 @@
     <ClCompile Include="src\UI\Stuff\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\Stuff\InsertFieldComponent.cpp">
+    <ClCompile Include="src\UI\Stuff\TextField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Scenes\MainMenu.cpp">
@@ -59,10 +59,10 @@
     <ClInclude Include="src\UI\Stuff\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\Stuff\InsertFieldComponent.h">
+    <ClInclude Include="src\UI\Stuff\TextField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\StateMachine.h">
+    <ClInclude Include="src\UI\SceneMachine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\Scenes\MainMenu.h">
@@ -87,6 +87,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\IEventConsumer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\UIHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\IUpdatable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

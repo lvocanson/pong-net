@@ -1,12 +1,15 @@
 #pragma once
-#include "ClientApp.h"
-#include "StateMachine.h"
-#include <swap_back_array.h>
+#include "Utils/Misc.h"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
+#include <vector>
 
+class ClientApp;
 class IDrawable;
+class IUpdatable;
 class IEventConsumer;
 
-class Scene : public State<ClientApp>
+class Scene
 {
 protected:
 
@@ -17,10 +20,20 @@ protected:
 		{
 			m_Drawables.push_back(&obj);
 		}
+		if constexpr (std::is_base_of_v<IUpdatable, T>)
+		{
+			m_Updatables.push_back(&obj);
+		}
 		if constexpr (std::is_base_of_v<IEventConsumer, T>)
 		{
 			m_EventConsumers.push_back(&obj);
 		}
+	}
+
+	template <typename... Ts>
+	void Enable(Ts&... objs)
+	{
+		(Enable(objs), ...);
 	}
 
 	template <typename T>
@@ -29,25 +42,35 @@ protected:
 		if constexpr (std::is_base_of_v<IDrawable, T>)
 		{
 			auto it = std::find(m_Drawables.begin(), m_Drawables.end(), &obj);
-			m_Drawables.erase_swap(it);
+			m_Drawables.erase(it);
+		}
+		if constexpr (std::is_base_of_v<IDrawable, T>)
+		{
+			auto it = std::find(m_Updatables.begin(), m_Updatables.end(), &obj);
+			m_Updatables.erase(it);
 		}
 		if constexpr (std::is_base_of_v<IEventConsumer, T>)
 		{
 			auto it = std::find(m_EventConsumers.begin(), m_EventConsumers.end(), &obj);
-			m_EventConsumers.erase_swap(it);
+			m_EventConsumers.erase(it);
 		}
 	}
 
-protected:
+	template <typename... Ts>
+	void Disable(Ts&... objs)
+	{
+		(Disable(objs), ...);
+	}
 
-	// Inherited via State
-	virtual void OnEnter(ClientApp&) override {};
-	virtual void Draw(sf::RenderWindow& wnd) const override;
-	virtual void OnEvent(ClientApp&, const sf::Event& event) override;
-	virtual void OnExit(ClientApp&) override {};
+public:
+
+	virtual void Draw(sf::RenderWindow& wnd) const;
+	virtual void OnUpdate(float dt);
+	virtual void OnEvent(const sf::Event& event);
 
 private:
 
-	stc::swap_back_array<IDrawable*> m_Drawables;
-	stc::swap_back_array<IEventConsumer*> m_EventConsumers;
+	std::vector<IDrawable*> m_Drawables;
+	std::vector<IUpdatable*> m_Updatables;
+	std::vector<IEventConsumer*> m_EventConsumers;
 };

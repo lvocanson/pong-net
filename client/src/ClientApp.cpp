@@ -9,11 +9,12 @@
 
 using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
+inline constexpr sf::Vector2u ScreenSize = sf::Vector2u{sf::Vector2(GameSizeX, GameSizeY)};
 
 ClientApp::ClientApp()
 	: m_Status(Running)
 
-	, m_Window(sf::VideoMode{sf::Vector2u(sf::Vector2{GameSizeX, GameSizeY})}, "Pong")
+	, m_Window(sf::VideoMode(ScreenSize), "Pong")
 	, m_Font("res/fonts/JuliaMono-Regular.ttf")
 	, m_Music("res/Su Turno.ogg")
 
@@ -44,7 +45,7 @@ ClientApp::ClientApp()
 		return;
 	}
 
-	SetFirstState<MainMenu>(m_Font);
+	m_SceneMachine.SetFirstScene<MainMenu>(*this, m_Font, ScreenSize);
 }
 
 int ClientApp::Run()
@@ -86,11 +87,22 @@ void ClientApp::UpdateUI(float dt)
 		if (event->is<sf::Event::Closed>())
 			Quit();
 
-		StateMachine::OnEvent(event.value());
+		if (auto data = event->getIf<sf::Event::Resized>())
+		{
+			sf::View view = m_Window.getView();
+			auto sizef = sf::Vector2f(data->size);
+			view.setSize(sizef);
+			view.setCenter(sizef / 2.f);
+			m_Window.setView(view);
+		}
+
+		m_SceneMachine.OnEvent(event.value());
 	}
 
-	m_Window.clear();
-	StateMachine::Draw(m_Window);
+	m_SceneMachine.Update(dt);
+
+	m_Window.clear({51, 56, 63});
+	m_SceneMachine.Draw(m_Window);
 	m_Window.display();
 }
 

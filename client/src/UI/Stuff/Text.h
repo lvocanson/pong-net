@@ -2,9 +2,6 @@
 #include "UI/IDrawable.h"
 #include <SFML/Graphics.hpp>
 
-inline constexpr auto TEXT_SIZE = 50u;
-inline constexpr auto TEXT_COLOR = sf::Color::White;
-
 enum class TextAlignment : char
 {
 	None = 0,
@@ -35,8 +32,10 @@ public:
 
 	Text(const sf::Font& font);
 	
+	void SetPosition(sf::Vector2f position) { m_Text.setPosition(position); }
 	void SetString(const sf::String& string);
 	void SetAlignment(TextAlignment alignment);
+	void SetColor(sf::Color color) { m_Text.setFillColor(color); }
 
 protected:
 

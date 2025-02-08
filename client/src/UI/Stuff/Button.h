@@ -24,7 +24,7 @@ protected:
 
 protected:
 
-	sf::RectangleShape m_Backgroud;
+	sf::RectangleShape m_Background;
 	sf::Color m_Color;
 	enum : char
 	{

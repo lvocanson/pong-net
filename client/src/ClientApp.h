@@ -4,7 +4,7 @@
 #include "Network/UdpSocket.h"
 #include "Network/IpAddress.h"
 #include "Network/PacketUnwrapper.h"
-#include "StateMachine.h"
+#include "UI/SceneMachine.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <swap_back_array.h>
@@ -24,7 +24,7 @@ enum class PlayingState
 	Playing
 };
 
-class ClientApp : public StateMachine<ClientApp>
+class ClientApp
 {
 	using TimePoint = std::chrono::high_resolution_clock::time_point;
 public:
@@ -75,6 +75,7 @@ private: // variables
 		QuitRequested,
 	} m_Status;
 
+	SceneMachine m_SceneMachine;
 	sf::RenderWindow m_Window;
 	sf::Font m_Font;
 	sf::Music m_Music;

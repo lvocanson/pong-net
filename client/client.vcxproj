@@ -209,7 +209,7 @@ exit /b 0</Command>
     <ClCompile Include="src\UI\Stuff\SliderComponent.cpp" />
     <ClCompile Include="src\UI\Scenes\ConnectionState.cpp" />
     <ClCompile Include="src\UI\Scenes\MainMenu.cpp" />
-    <ClCompile Include="src\UI\Stuff\InsertFieldComponent.cpp" />
+    <ClCompile Include="src\UI\Stuff\TextField.cpp" />
     <ClCompile Include="src\UI\Stuff\Button.cpp" />
     <ClCompile Include="src\ClientApp.cpp" />
     <ClCompile Include="src\client.cpp" />
@@ -221,6 +221,8 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\UI\IUpdatable.h" />
+    <ClInclude Include="src\UI\UIHelper.h" />
     <ClInclude Include="src\UI\IDrawable.h" />
     <ClInclude Include="src\UI\IEventConsumer.h" />
     <ClInclude Include="src\UI\Scene.h" />
@@ -229,11 +231,11 @@ exit /b 0</Command>
     <ClInclude Include="src\UI\Stuff\SliderComponent.h" />
     <ClInclude Include="src\UI\Scenes\ConnectionState.h" />
     <ClInclude Include="src\UI\Scenes\MainMenu.h" />
-    <ClInclude Include="src\UI\Stuff\InsertFieldComponent.h" />
+    <ClInclude Include="src\UI\Stuff\TextField.h" />
     <ClInclude Include="src\UI\Stuff\Button.h" />
     <ClInclude Include="src\ClientApp.h" />
     <ClInclude Include="src\UI\Stuff\Text.h" />
-    <ClInclude Include="src\StateMachine.h" />
+    <ClInclude Include="src\UI\SceneMachine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

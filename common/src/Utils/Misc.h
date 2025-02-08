@@ -49,4 +49,6 @@ Generator<unsigned> FibonacciGen();
 
 uint16_t GenerateUUID();
 
+inline bool IsValidUnicodeChar(char32_t ch) { return (ch >= 0x20 && ch != 0x7F); }
+
 } // namespace Misc
