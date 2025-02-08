@@ -26,6 +26,7 @@ struct IpAddress
 	IpAddress(AddrSpecialType address = None);
 	IpAddress(IpPhrase phrase);
 	static IpAddress LocalAddress();
+	static IpAddress PublicAddress();
 	
 	IpPhrase ToPhrase() const;
 

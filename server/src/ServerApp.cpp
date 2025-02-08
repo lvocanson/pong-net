@@ -63,11 +63,15 @@ int ServerApp::Run()
 
 	using namespace Console;
 	Out << TextColors::BrightFgBlack
-		<< "The server is running at local address "
+		<< "The server is running:\n- local address: "
 		<< TextColors::BrightFgMagenta
 		<< IpAddress::LocalAddress().ToPhrase().View()
 		<< TextColors::BrightFgBlack
-		<< ".\nPress ESC to shutdown.\n"
+		<< "\n- public address: "
+		<< TextColors::BrightFgMagenta
+		<< IpAddress::PublicAddress().ToPhrase().View()
+		<< TextColors::BrightFgBlack
+		<< "\nPress ESC to shutdown.\n"
 		<< TextColors::Reset;
 
 	Timer dtTimer;
