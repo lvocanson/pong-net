@@ -9,18 +9,16 @@ Text::Text(const sf::Font& font)
 
 void Text::SetString(const sf::String& string)
 {
-	auto pos = m_Text.getPosition();
 	m_Text.setString(string);
-	m_Text.setPosition(pos);
+	SetAlignment(m_Alignment);
 }
 
 void Text::SetAlignment(TextAlignment alignment)
 {
 	m_Alignment = alignment;
-	const auto oldOrigin = m_Text.getOrigin();
-	const auto bounds = m_Text.getGlobalBounds();
 
-	sf::Vector2f newOrigin = oldOrigin;
+	const auto bounds = m_Text.getLocalBounds();
+	sf::Vector2f newOrigin = m_Text.getOrigin();
 	using enum TextAlignment;
 
 	if ((alignment & VTop) != None)
@@ -50,7 +48,7 @@ void Text::SetAlignment(TextAlignment alignment)
 	}
 
 	m_Text.setOrigin(newOrigin);
-	m_Text.setPosition(bounds.getCenter());
+	m_Text.setPosition(m_Text.getPosition());
 }
 
 void Text::Draw(sf::RenderWindow& wnd) const
