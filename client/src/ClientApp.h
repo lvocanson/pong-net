@@ -35,20 +35,13 @@ public:
 
 public: // Getters
 
-	PlayingState& GetPlayingState() { return m_Playing; }
-	UdpSocket& GetSocket() { return m_Socket; }
-	IpAddress& GetServerAddr() { return m_ServerAddr; }
-	uint16_t& GetSignature() { return m_Signature; }
-	const std::vector<uint16_t>& GetRoomIds() { return m_RoomIds; }
-	void ResetRoomIds() { m_RoomIds.clear(); }
-	sf::Music& GetMusic() { return m_Music; }
-	const sf::Font& GetFont() const { return m_Font; }
+	PlayingState GetPlayingState() const { return m_Playing; }
 
 	Pong& GetPongGame() { return m_PongGame; };
 	std::tuple<uint16_t, uint16_t> GetScores() { return {m_LeftScore, m_RightScore}; }
 
 	void ConnectToServer(IpPhrase phrase);
-	ConnectionStateInfos GetConnectionStateInfo() const { return connectionStateInfo; };
+	void SendQuickMatchRequest() const;
 
 public: // Methods
 

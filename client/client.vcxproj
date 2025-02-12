@@ -205,7 +205,7 @@ exit /b 0</Command>
   <ItemGroup>
     <ClCompile Include="src\UI\Scene.cpp" />
     <ClCompile Include="src\UI\Scenes\LobbyState.cpp" />
-    <ClCompile Include="src\UI\Scenes\GameState.cpp" />
+    <ClCompile Include="src\UI\Scenes\GameScene.cpp" />
     <ClCompile Include="src\UI\Stuff\SliderComponent.cpp" />
     <ClCompile Include="src\UI\Scenes\ConnectionState.cpp" />
     <ClCompile Include="src\UI\Scenes\MainMenu.cpp" />
@@ -227,7 +227,7 @@ exit /b 0</Command>
     <ClInclude Include="src\UI\IEventConsumer.h" />
     <ClInclude Include="src\UI\Scene.h" />
     <ClInclude Include="src\UI\Scenes\LobbyState.h" />
-    <ClInclude Include="src\UI\Scenes\GameState.h" />
+    <ClInclude Include="src\UI\Scenes\GameScene.h" />
     <ClInclude Include="src\UI\Stuff\SliderComponent.h" />
     <ClInclude Include="src\UI\Scenes\ConnectionState.h" />
     <ClInclude Include="src\UI\Scenes\MainMenu.h" />

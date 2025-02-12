@@ -5,6 +5,7 @@
 #include "Utils/EnumOperators.h"
 #include "Utils/Timer.h"
 #include "UI/Scenes/MainMenu.h"
+#include "UI/Scenes/GameScene.h"
 #include <cstdlib>
 
 using namespace std::chrono_literals;
@@ -121,6 +122,18 @@ void ClientApp::ConnectToServer(IpPhrase phrase)
 	}
 }
 
+void ClientApp::SendQuickMatchRequest() const
+{
+	Message request(MessageType::QuickMatchRequest);
+	auto wrapper = PacketWrapper::Wrap(request);
+	wrapper.Sign(m_Signature);
+	if (!wrapper.Send(m_Socket, m_ServerAddr))
+	{
+		std::string_view error = NetHelper::GetWsaErrorExplanation();
+		// TODO: print error
+	}
+}
+
 void ClientApp::CheckPendingPackets()
 {
 	while (m_Socket.CheckPendingPacket(1))
@@ -188,7 +201,8 @@ void ClientApp::OnMessageReceived(const Message& message)
 		auto& response = message.As<Message_ConnectResponse>();
 		m_Signature = response.signature;
 
-		//ChangeState<ConnectionState>(*this);
+		// TODO: make a menu instead
+		SendQuickMatchRequest();
 	}
 	break;
 	case RoomGroupResponse:
@@ -226,7 +240,7 @@ void ClientApp::OnMessageReceived(const Message& message)
 		break;
 		case Message_RoomJoinResponse::Accepted:
 		{
-			//ChangeState<GameState>(GetFont(), response.side);
+			m_SceneMachine.ChangeScene<GameScene>(*this, m_Font, m_Window.getSize());
 		}
 		break;
 		}

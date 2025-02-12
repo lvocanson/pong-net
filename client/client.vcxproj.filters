@@ -39,7 +39,7 @@
     <ClCompile Include="src\UI\Stuff\SliderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\Scenes\GameState.cpp">
+    <ClCompile Include="src\UI\Scenes\GameScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Scenes\LobbyState.cpp">
@@ -74,7 +74,7 @@
     <ClInclude Include="src\UI\Stuff\SliderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\Scenes\GameState.h">
+    <ClInclude Include="src\UI\Scenes\GameScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\Scenes\LobbyState.h">
