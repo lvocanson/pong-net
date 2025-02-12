@@ -16,7 +16,7 @@ TextField::TextField(const sf::Font& font)
 	auto textSize = static_cast<float>(m_Text.getCharacterSize());
 
 	m_Blinker.setSize({5.f, textSize});
-	m_Blinker.setOrigin({-5.f, 0.f});
+	m_Blinker.setOrigin({-5.f, textSize / 2.f});
 
 	m_Text.setOrigin({0, textSize / 2.f});
 	m_Text.setFillColor(sf::Color::Black);
@@ -56,8 +56,9 @@ void TextField::UpdateBlinkerColor()
 
 void TextField::UpdateBlinkerPos()
 {
+	auto position = m_Text.getPosition();
 	auto bounds = m_Text.getGlobalBounds();
-	m_Blinker.setPosition(bounds.position + sf::Vector2{bounds.size.x, 0.f});
+	m_Blinker.setPosition(position + sf::Vector2{bounds.size.x, 0.f});
 }
 
 void TextField::Draw(sf::RenderWindow& wnd) const
@@ -100,7 +101,7 @@ void TextField::OnEvent(const sf::Event& event)
 			{
 				m_Editing = false;
 			}
-			else if (e->code == Backspace)
+			else if (e->code == Backspace && !m_String.isEmpty())
 			{
 				size_t size = m_String.getSize();
 				m_String.erase(size - 1);
