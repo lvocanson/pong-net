@@ -6,11 +6,14 @@
 #include "Utils/Timer.h"
 #include "UI/Scenes/MainMenu.h"
 #include "UI/Scenes/GameScene.h"
+#include "UserData.h"
 #include <cstdlib>
 
 using namespace std::chrono_literals;
 inline constexpr auto TimeForLostPacket = 300ms;
 inline constexpr sf::Vector2u ScreenSize = sf::Vector2u{sf::Vector2(GameSizeX, GameSizeY)};
+
+static const std::filesystem::path VolumeFilename = "volume.dat";
 
 ClientApp::ClientApp()
 	: m_Status(Running)
@@ -35,6 +38,11 @@ ClientApp::ClientApp()
 	{
 		m_Status = InitFailed;
 		return;
+	}
+
+	if (float volume; UserData::Load(VolumeFilename, volume))
+	{
+		m_Music.setVolume(volume);
 	}
 
 	m_Music.play();
@@ -77,6 +85,7 @@ int ClientApp::Run()
 
 ClientApp::~ClientApp()
 {
+	UserData::Save(VolumeFilename, m_Music.getVolume());
 	m_Music.stop();
 	m_Window.close();
 }

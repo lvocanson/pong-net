@@ -36,7 +36,7 @@
     <ClCompile Include="src\UI\Scenes\ConnectionState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI\Stuff\SliderComponent.cpp">
+    <ClCompile Include="src\UI\Stuff\Slider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Scenes\GameScene.cpp">
@@ -46,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +74,7 @@
     <ClInclude Include="src\UI\Scenes\ConnectionState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI\Stuff\SliderComponent.h">
+    <ClInclude Include="src\UI\Stuff\Slider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\Scenes\GameScene.h">
@@ -93,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\IUpdatable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

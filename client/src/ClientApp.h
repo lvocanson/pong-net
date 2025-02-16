@@ -40,6 +40,9 @@ public: // Getters
 	Pong& GetPongGame() { return m_PongGame; };
 	std::tuple<uint16_t, uint16_t> GetScores() { return {m_LeftScore, m_RightScore}; }
 
+	float GetMusicVolume() const { return m_Music.getVolume(); }
+	void SetMusicVolume(float value) { return m_Music.setVolume(value); }
+
 	void ConnectToServer(IpPhrase phrase);
 	void SendQuickMatchRequest() const;
 

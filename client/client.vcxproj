@@ -206,7 +206,7 @@ exit /b 0</Command>
     <ClCompile Include="src\UI\Scene.cpp" />
     <ClCompile Include="src\UI\Scenes\LobbyState.cpp" />
     <ClCompile Include="src\UI\Scenes\GameScene.cpp" />
-    <ClCompile Include="src\UI\Stuff\SliderComponent.cpp" />
+    <ClCompile Include="src\UI\Stuff\Slider.cpp" />
     <ClCompile Include="src\UI\Scenes\ConnectionState.cpp" />
     <ClCompile Include="src\UI\Scenes\MainMenu.cpp" />
     <ClCompile Include="src\UI\Stuff\TextField.cpp" />
@@ -214,6 +214,7 @@ exit /b 0</Command>
     <ClCompile Include="src\ClientApp.cpp" />
     <ClCompile Include="src\client.cpp" />
     <ClCompile Include="src\UI\Stuff\Text.cpp" />
+    <ClCompile Include="src\UserData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
@@ -221,6 +222,7 @@ exit /b 0</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\UserData.h" />
     <ClInclude Include="src\UI\IUpdatable.h" />
     <ClInclude Include="src\UI\UIHelper.h" />
     <ClInclude Include="src\UI\IDrawable.h" />
@@ -228,7 +230,7 @@ exit /b 0</Command>
     <ClInclude Include="src\UI\Scene.h" />
     <ClInclude Include="src\UI\Scenes\LobbyState.h" />
     <ClInclude Include="src\UI\Scenes\GameScene.h" />
-    <ClInclude Include="src\UI\Stuff\SliderComponent.h" />
+    <ClInclude Include="src\UI\Stuff\Slider.h" />
     <ClInclude Include="src\UI\Scenes\ConnectionState.h" />
     <ClInclude Include="src\UI\Scenes\MainMenu.h" />
     <ClInclude Include="src\UI\Stuff\TextField.h" />

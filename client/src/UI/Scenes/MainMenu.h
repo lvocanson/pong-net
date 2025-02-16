@@ -1,6 +1,7 @@
 #pragma once
 #include "UI/Scene.h"
 #include "UI/Stuff/Button.h"
+#include "UI/Stuff/Slider.h"
 #include "UI/Stuff/Text.h"
 #include "UI/Stuff/TextField.h"
 
@@ -19,7 +20,8 @@ private:
 private:
 
 	ClientApp& m_App;
-	Text m_TitleTxt, m_ConnectTxt, m_QuitTxt;
+	Text m_TitleTxt, m_ConnectTxt, m_QuitTxt, m_VolumeTxt;
 	Button m_ConnectBtn, m_QuitBtn;
 	TextField m_AddressFld;
+	Slider m_VolumeSldr;
 };
